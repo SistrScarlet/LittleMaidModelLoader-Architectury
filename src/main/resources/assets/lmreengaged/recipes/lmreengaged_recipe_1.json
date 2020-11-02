@@ -1,0 +1,27 @@
+{
+	"type": "forge:ore_shaped",
+	"pattern": [
+		"ses",
+		"dcd",
+		"ses"
+	],
+	"key": {
+		"s": {
+			"item": "minecraft:sugar"
+		},
+		"d": {
+			"item": "minecraft:dye",
+			"data": 4
+		},
+		"c": {
+			"item": "minecraft:cake"
+		},
+		"e": {
+			"item": "minecraft:egg"
+		}
+	},
+	"result": {
+		"item": "lmreengaged:maid_carry",
+		"data": 0
+	}
+}

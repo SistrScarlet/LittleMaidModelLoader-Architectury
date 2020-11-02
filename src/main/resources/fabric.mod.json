@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "littlemaidmodelloader",
+  "version": "${version}",
+
+  "name": "LittleMaid ModelLoader",
+  "description": "This is Maid Model Loader.",
+  "authors": [
+    "Sistr"
+  ],
+  "contact": {
+    "homepage": "https://forum.civa.jp/viewtopic.php?f=3&t=119",
+    "sources": "https://github.com/SistrScarlet/LittleMaidModelLoader"
+  },
+
+  "license": "",
+  "icon": "assets/littlemaidmodelloader/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.sistr.lmml.LittleMaidModelLoader"
+    ],
+    "client": [
+      "net.sistr.lmml.setup.ClientSetup"
+    ],
+    "server": [
+      "net.sistr.lmml.setup.ServerSetup"
+    ]
+  },
+  "mixins": [
+    "littlemaidmodelloader.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
