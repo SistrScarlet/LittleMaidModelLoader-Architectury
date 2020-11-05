@@ -67,6 +67,7 @@ public class CustomMobSpawnPacket {
         float velocityX = buf.readShort() / 8000F;
         float velocityY = buf.readShort() / 8000F;
         float velocityZ = buf.readShort() / 8000F;
+        //そのまんまbuf渡すと、spawnが実行されるまでの間に読み込めなくなるため、コピーする
         PacketByteBuf additional = new PacketByteBuf(buf.copy());
         context.getTaskQueue().execute(() -> spawn(id, uuid, entityTypeId, x, y, z, yaw, pitch, headYaw,
                 velocityX, velocityY, velocityZ, additional));

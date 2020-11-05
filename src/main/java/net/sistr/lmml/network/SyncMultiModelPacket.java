@@ -61,32 +61,32 @@ public class SyncMultiModelPacket {
         }
         TextureColors color = attachedData.readEnumConstant(TextureColors.class);
         boolean isContract = attachedData.readBoolean();
-        context.getTaskQueue().execute(() -> {
-            World world = getWorld();
-            if (world == null) return;
-            Entity entity = world.getEntityById(entityId);
-            if (!(entity instanceof IHasMultiModel)) return;
-            IHasMultiModel multiModel = (IHasMultiModel) entity;
-            multiModel.setColor(color);
-            multiModel.setContract(isContract);
-            LMTextureManager textureManager = LMTextureManager.INSTANCE;
-            textureManager.getTexture(textureName).filter(textureHolder ->
-                    multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD))
-                    .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD));
-            for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
-                String armorName = armorTextureName.getArmor(part)
-                        .orElseThrow(() -> new IllegalStateException("テクスチャが存在しません。"));
-                textureManager.getTexture(armorName).filter(textureHolder ->
-                        multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.INNER, part))
-                        .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.INNER, part));
-            }
-        });
+        context.getTaskQueue().execute(() ->
+                applyMultiModelClient(entityId, isContract, color, textureName, armorTextureName));
     }
 
-    //context.getTaskQueue().execute()の中で@Environmentの効力が及ばないみたい
+    //context.getTaskQueue().execute()の中では@Environmentの効力が及ばないため別メソッドに分離
     @Environment(EnvType.CLIENT)
-    private static World getWorld() {
-        return MinecraftClient.getInstance().world;
+    public static void applyMultiModelClient(int entityId, boolean isContract, TextureColors color,
+                                             String textureName, ArmorSets<String> armorTextureName) {
+        World world = MinecraftClient.getInstance().world;
+        if (world == null) return;
+        Entity entity = world.getEntityById(entityId);
+        if (!(entity instanceof IHasMultiModel)) return;
+        IHasMultiModel multiModel = (IHasMultiModel) entity;
+        multiModel.setContract(isContract);
+        multiModel.setColor(color);
+        LMTextureManager textureManager = LMTextureManager.INSTANCE;
+        textureManager.getTexture(textureName).filter(textureHolder ->
+                multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD))
+                .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD));
+        for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
+            String armorName = armorTextureName.getArmor(part)
+                    .orElseThrow(() -> new IllegalStateException("テクスチャが存在しません。"));
+            textureManager.getTexture(armorName).filter(textureHolder ->
+                    multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.INNER, part))
+                    .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.INNER, part));
+        }
     }
 
     public static void receiveC2SPacket(PacketContext packetContext, PacketByteBuf attachedData) {
@@ -99,25 +99,30 @@ public class SyncMultiModelPacket {
         }
         TextureColors color = attachedData.readEnumConstant(TextureColors.class);
         boolean isContract = attachedData.readBoolean();
-        packetContext.getTaskQueue().execute(() -> {
-            Entity entity = player.world.getEntityById(entityId);
-            if (!(entity instanceof IHasMultiModel)) return;
-            IHasMultiModel multiModel = (IHasMultiModel) entity;
-            multiModel.setColor(color);
-            multiModel.setContract(isContract);
-            LMTextureManager textureManager = LMTextureManager.INSTANCE;
-            textureManager.getTexture(textureName).filter(textureHolder ->
-                    multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD))
-                    .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD));
-            for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
-                String armorName = armorTextureName.getArmor(part)
-                        .orElseThrow(() -> new IllegalStateException("テクスチャが存在しません。"));
-                textureManager.getTexture(armorName).filter(textureHolder ->
-                        multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.INNER, part))
-                        .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.INNER, part));
-            }
-            sendS2CPacket(entity, multiModel);
-        });
+        packetContext.getTaskQueue().execute(() ->
+                applyMultiModelServer(player, entityId, isContract, color, textureName, armorTextureName));
+    }
+
+    //クライアントに倣って分離
+    public static void applyMultiModelServer(PlayerEntity player, int entityId, boolean isContract, TextureColors color,
+                                             String textureName, ArmorSets<String> armorTextureName) {
+        Entity entity = player.world.getEntityById(entityId);
+        if (!(entity instanceof IHasMultiModel)) return;
+        IHasMultiModel multiModel = (IHasMultiModel) entity;
+        multiModel.setContract(isContract);
+        multiModel.setColor(color);
+        LMTextureManager textureManager = LMTextureManager.INSTANCE;
+        textureManager.getTexture(textureName).filter(textureHolder ->
+                multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD))
+                .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD));
+        for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
+            String armorName = armorTextureName.getArmor(part)
+                    .orElseThrow(() -> new IllegalStateException("テクスチャが存在しません。"));
+            textureManager.getTexture(armorName).filter(textureHolder ->
+                    multiModel.isAllowChangeTexture(entity, textureHolder, IHasMultiModel.Layer.INNER, part))
+                    .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, IHasMultiModel.Layer.INNER, part));
+        }
+        sendS2CPacket(entity, multiModel);
     }
 
 }

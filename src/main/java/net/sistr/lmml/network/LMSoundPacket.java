@@ -6,7 +6,9 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.server.PlayerStream;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.sistr.lmml.LittleMaidModelLoader;
@@ -28,12 +30,18 @@ public class LMSoundPacket {
     public static void receiveS2CPacket(PacketContext context, PacketByteBuf attachedData) {
         int entityId = attachedData.readVarInt();
         String soundName = attachedData.readString();
-        context.getTaskQueue().execute(() -> {
-            Entity entity = context.getPlayer().world.getEntityById(entityId);
-            if (entity instanceof SoundPlayable) {
-                ((SoundPlayable) entity).play(soundName);
-            }
-        });
+        context.getTaskQueue().execute(() ->
+                playSoundClient(entityId, soundName));
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void playSoundClient(int entityId, String soundName) {
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return;
+        Entity entity = player.world.getEntityById(entityId);
+        if (entity instanceof SoundPlayable) {
+            ((SoundPlayable) entity).play(soundName);
+        }
     }
 
 }

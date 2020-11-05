@@ -4,8 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.util.Identifier;
-import net.sistr.lmml.LittleMaidModelLoader;
 import net.sistr.lmml.SideChecker;
 
 public class Networking {
