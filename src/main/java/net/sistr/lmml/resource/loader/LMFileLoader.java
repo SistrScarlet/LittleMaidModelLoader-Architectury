@@ -52,30 +52,31 @@ public class LMFileLoader {
             }
         });
         long end = System.nanoTime();
-        LOGGER.debug("Loading end : " + ((double) (end - start) / 1000000D) + "ms");
+        LOGGER.debug("Loading end : " + ((end - start) / (1000D * 1000D)) + "ms");
     }
 
-    //todo ファイル内ファイルの読み込み
     private void fileLoad(Path folderPath, Path path) {
         if (isArchive(path)) {
             ZipInputStream zipStream;
             try {
                 zipStream = new ZipInputStream(Files.newInputStream(path));
             } catch (Exception e) {
+                LOGGER.debug("Can't load Zip! : " + path);
+                e.printStackTrace();
                 return;
             }
-            while (true) {
-                ZipEntry entry;
-                try {
-                    entry = zipStream.getNextEntry();
-                } catch (Exception e) {
-                    return;
+            ZipEntry entry;
+            try {
+                while ((entry = zipStream.getNextEntry()) != null) {
+                    ZipEntry finalEntry = entry;
+                    loaders.stream().filter(loader -> loader.canLoad(finalEntry.getName(), path, zipStream, true))
+                            .forEach(loader -> loader.load(finalEntry.getName(), path, zipStream, true));
                 }
-                if (entry == null) {
-                    break;
-                }
-                loaders.stream().filter(loader -> loader.canLoad(entry.getName(), path, zipStream, true))
-                        .forEach(loader -> loader.load(entry.getName(), path, zipStream, true));
+            } catch (Exception e) {
+                LOGGER.debug("Zipの読み込み中にエラーが発生。ファイルネームに日本語などが入ってると読み込めません。" +
+                        "An error occurs while reading a Zip file. If the file name contains Japanese characters, " +
+                        "it cannot be read. : " + path);
+                e.printStackTrace();
             }
         } else {
             try {
@@ -83,8 +84,8 @@ public class LMFileLoader {
                 InputStream inputStream = Files.newInputStream(path);
                 loaders.stream().filter(loader -> loader.canLoad(relPath, folderPath, inputStream, false))
                         .forEach(loader -> loader.load(relPath, folderPath, inputStream, false));
-            } catch (Exception ignore) {
-
+            } catch (Exception e) {
+                LOGGER.debug("Error! : " + e.getMessage() + " : " + path);
             }
         }
     }

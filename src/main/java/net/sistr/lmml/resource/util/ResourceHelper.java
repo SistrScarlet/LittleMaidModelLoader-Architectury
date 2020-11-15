@@ -1,5 +1,7 @@
 package net.sistr.lmml.resource.util;
 
+import net.minecraft.util.Identifier;
+
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -28,13 +30,17 @@ public class ResourceHelper {
      * assets/minecraft/textures/entity/littlemaid/[texture]_[model]/xxxx_[index].png
      * のうち、xxxx_[index].pngを抜き取る
      */
-    public static String getFileName(String path) {
-        int lastSplitter = path.lastIndexOf("/");
+    public static String getFileName(String path, boolean isArchive) {
+        String name = path;
+        if (!isArchive) {
+            name = name.replace("\\", "/");
+        }
+        int lastSplitter = name.lastIndexOf("/");
         if (lastSplitter == -1) {
-            return path;
+            return name;
         }
         //xxxx_[index].pngの前を削る
-        return path.substring(lastSplitter + 1);
+        return name.substring(lastSplitter + 1);
     }
 
     /**
@@ -55,8 +61,11 @@ public class ResourceHelper {
      * assets/minecraft/textures/entity/littlemaid/[texture]_[model]/xxxx_[index].png
      * のうち、[texture]_[model]を抜き取る
      */
-    public static Optional<String> getParentFolderName(String path) {
+    public static Optional<String> getParentFolderName(String path, boolean isArchive) {
         String name = path;
+        if (!isArchive) {
+            name = name.replace("\\", "/");
+        }
         int lastSplitter = name.lastIndexOf("/");
         if (lastSplitter == -1) {
             return Optional.empty();
@@ -160,10 +169,20 @@ public class ResourceHelper {
             return Optional.of(zipName.substring(0, zipName.lastIndexOf(".")));
         } else {
             //一番外側のフォルダの名前を取る
-            int firstSplitter = path.indexOf("/");
+            path = path.substring(1);
+            int firstSplitter = path.indexOf("\\");
             if (firstSplitter == -1) return Optional.empty();
             return Optional.of(path.substring(0, firstSplitter));
         }
+    }
+
+    /**
+     * ResourceWrapperに登録するファイル名を取得する。
+     * */
+    public static Identifier getLocation(String packName, String fileName) {
+        packName = packName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
+        fileName = fileName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
+        return new Identifier("littlemaidmodelloader", packName + "/" + fileName);
     }
 
 }

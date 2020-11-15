@@ -24,7 +24,7 @@ public class LMConfigLoader implements LMLoader {
 
     @Override
     public boolean canLoad(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        return path.endsWith(".cfg") && ResourceHelper.getFirstParentName(path, homePath, isArchive).isPresent();
+        return path.endsWith(".cfg");
     }
 
     @Override
@@ -36,10 +36,9 @@ public class LMConfigLoader implements LMLoader {
             e.printStackTrace();
             return;
         }
-        String packName = ResourceHelper.getFirstParentName(path, homePath, isArchive).orElseThrow(() ->
-                new IllegalArgumentException("引数が不正です。"));
-        String parentName = ResourceHelper.getParentFolderName(path).orElse("");
-        String fileName = getFileName(path);
+        String packName = ResourceHelper.getFirstParentName(path, homePath, isArchive).orElse("packName");
+        String parentName = ResourceHelper.getParentFolderName(path, isArchive).orElse("parentFolder");
+        String fileName = ResourceHelper.getFileName(path, isArchive);
         fileName = ResourceHelper.removeExtension(fileName);
         configManager.addConfig(packName, parentName, fileName, settings);
         if (LMMLConfig.isDebugMode())
@@ -60,12 +59,6 @@ public class LMConfigLoader implements LMLoader {
     public Stream<String> getTextStream(InputStream inputStream) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         return reader.lines();
-    }
-
-    public String getFileName(String path) {
-        int lastSplitter = path.lastIndexOf('/');
-        if (lastSplitter == -1) return path;
-        return path.substring(lastSplitter + 1);
     }
 
 }

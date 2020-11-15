@@ -33,17 +33,17 @@ public class LMTextureLoader implements LMLoader {
 
     @Override
     public boolean canLoad(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        return SideChecker.isClient() && path.endsWith(".png") && ResourceHelper.getParentFolderName(path).isPresent()
+        return SideChecker.isClient() && path.endsWith(".png") && ResourceHelper.getParentFolderName(path, isArchive).isPresent()
                 && ResourceHelper.getIndex(path) != -1;
     }
 
     @Override
     public void load(String path, Path homePath, InputStream inputStream, boolean isArchive) {
         Identifier texturePath = getResourceLocation(path);
-        String textureName = ResourceHelper.getParentFolderName(path).
+        String textureName = ResourceHelper.getParentFolderName(path, isArchive).
                 orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
         String modelName = ResourceHelper.getModelName(textureName);
-        textureManager.addTexture(ResourceHelper.getFileName(path), textureName, modelName,
+        textureManager.addTexture(ResourceHelper.getFileName(path, isArchive), textureName, modelName,
                 ResourceHelper.getIndex(path), texturePath);
         ResourceWrapper.addResourcePath(texturePath, path, homePath, isArchive);
     }

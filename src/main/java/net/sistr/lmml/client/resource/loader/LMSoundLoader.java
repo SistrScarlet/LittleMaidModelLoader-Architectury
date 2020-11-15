@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-//サーバーでは読み込む必要性が無いため読み込まない
+//サーバーでは読み込む必要が無いため読み込まない
 @Environment(EnvType.CLIENT)
 public class LMSoundLoader implements LMLoader {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -26,35 +26,20 @@ public class LMSoundLoader implements LMLoader {
 
     @Override
     public boolean canLoad(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        return path.endsWith(".ogg") && ResourceHelper.getParentFolderName(path).isPresent();
+        return path.endsWith(".ogg") && ResourceHelper.getParentFolderName(path, isArchive).isPresent();
     }
 
     @Override
     public void load(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        String packName = ResourceHelper.getParentFolderName(path)
+        String packName = ResourceHelper.getParentFolderName(path, isArchive)
                 .orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
-        String fileName = getFileName(path);
-        Identifier location = getLocation(packName, fileName);
+        String fileName = ResourceHelper.getFileName(path, isArchive);
+        Identifier location = ResourceHelper.getLocation(packName, fileName);
         fileName = ResourceHelper.removeExtension(fileName);
         fileName = ResourceHelper.removeNameLastIndex(fileName);
         soundManager.addSound(packName, fileName, location);
         ResourceWrapper.addResourcePath(location, path, homePath, isArchive);
         if (LMMLConfig.isDebugMode()) LOGGER.debug("Loaded Sound : " + packName + " : " + fileName);
-    }
-
-    /**
-     * ResourceWrapperに登録するファイル名を取得する。
-     * */
-    public Identifier getLocation(String packName, String fileName) {
-        packName = packName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
-        fileName = fileName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
-        return new Identifier("littlemaidmodelloader", packName + "/" + fileName);
-    }
-
-    public String getFileName(String path) {
-        int lastSplitter = path.lastIndexOf('/');
-        if (lastSplitter == -1) return path;
-        return path.substring(lastSplitter + 1);
     }
 
 }

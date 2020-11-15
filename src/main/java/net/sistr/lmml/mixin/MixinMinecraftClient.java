@@ -31,12 +31,12 @@ public class MixinMinecraftClient {
         //テクスチャを読み込む
         resourceLocations.forEach(resourcePath -> {
             String path = resourcePath.getPath();
-            ResourceHelper.getParentFolderName(path).ifPresent(textureName -> {
+            ResourceHelper.getParentFolderName(path, false).ifPresent(textureName -> {
                 String modelName = ResourceHelper.getModelName(textureName);
                 int index = ResourceHelper.getIndex(path);
                 if (index != -1) {
                     LMTextureManager.INSTANCE
-                            .addTexture(ResourceHelper.getFileName(path), textureName, modelName, index, resourcePath);
+                            .addTexture(ResourceHelper.getFileName(path, false), textureName, modelName, index, resourcePath);
                 }
             });
         });
