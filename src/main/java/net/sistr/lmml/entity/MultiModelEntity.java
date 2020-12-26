@@ -165,7 +165,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
                 .orElse(LMModelManager.INSTANCE.getDefaultModel());
         float height = model.getHeight(getCaps());
         float width = model.getWidth(getCaps());
-        dimensions = EntityDimensions.fixed(width, height);
+        dimensions = EntityDimensions.changing(width, height);
         return dimensions.scaled(getScaleFactor());
     }
 

@@ -116,13 +116,13 @@ public class ResourceHelper {
         }
         // colorIndexの変換
         if (index == OLD_ARMOR_1) {
-            index = TextureIndexes.ARMOR_1_ALIAS.getIndexMin();
+            index = TextureIndexes.ARMOR_1_DAMAGED.getIndexMin();
         }
         if (index == OLD_ARMOR_2) {
-            index = TextureIndexes.ARMOR_1_ALIAS.getIndexMin();
+            index = TextureIndexes.ARMOR_2_DAMAGED.getIndexMin();
         }
         if (index == OLD_WILD) {
-            index = TextureIndexes.WILD_ALIAS.getIndexMin() + 12;
+            index = TextureIndexes.COLOR_WILD.getIndexMin() + TextureColors.BROWN.getIndex();
         }
         return index;
     }

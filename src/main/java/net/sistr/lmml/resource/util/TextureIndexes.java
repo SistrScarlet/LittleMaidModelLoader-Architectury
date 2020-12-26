@@ -6,9 +6,6 @@ import org.apache.logging.log4j.Logger;
 public enum TextureIndexes {
     NONE(-1, -1),
     COLOR(0, 0xF),
-    ARMOR_1_ALIAS(0x11, 0x11),
-    ARMOR_2_ALIAS(0x12, 0x12),
-    WILD_ALIAS(0x10, 0x10),
     DEFAULT_CONTRACT_LIGHT(0x13, 0x13),
     DEFAULT_WILD_LIGHT(0x14, 0x14),
     GUI(0x20, 0x20),
@@ -31,8 +28,6 @@ public enum TextureIndexes {
 
     public boolean isArmor() {
         switch (this) {
-            case ARMOR_1_ALIAS:
-            case ARMOR_2_ALIAS:
             case ARMOR_1_DAMAGED:
             case ARMOR_2_DAMAGED:
             case ARMOR_1_DAMAGED_LIGHT:

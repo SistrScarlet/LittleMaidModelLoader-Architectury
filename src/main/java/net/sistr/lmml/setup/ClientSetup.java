@@ -3,23 +3,23 @@ package net.sistr.lmml.setup;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
 import net.sistr.lmml.SideChecker;
 import net.sistr.lmml.client.renderer.MultiModelRenderer;
 import net.sistr.lmml.entity.compound.IHasMultiModel;
-import net.sistr.lmml.maidmodel.ModelLittleMaid_Archetype;
-import net.sistr.lmml.maidmodel.ModelLittleMaid_Aug;
-import net.sistr.lmml.maidmodel.ModelLittleMaid_Orign;
-import net.sistr.lmml.maidmodel.ModelLittleMaid_SR2;
+import net.sistr.lmml.maidmodel.*;
 import net.sistr.lmml.network.Networking;
 import net.sistr.lmml.resource.loader.LMFileLoader;
 import net.sistr.lmml.client.resource.loader.LMSoundLoader;
 import net.sistr.lmml.client.resource.loader.LMTextureLoader;
+import net.sistr.lmml.resource.loader.LMMultiModelLoader;
 import net.sistr.lmml.resource.manager.LMModelManager;
 import net.sistr.lmml.client.AddableResourcePackProvider;
 import net.sistr.lmml.client.LMMLPackFinder;
 import net.sistr.lmml.client.resource.manager.LMSoundManager;
 import net.sistr.lmml.resource.manager.LMTextureManager;
 
+//todo Forgeの方だと鯖蔵同時に動くし、これモデルとテクスチャの鯖蔵同期ダメにしてね？
 public class ClientSetup implements ClientModInitializer {
 
     @Override
@@ -44,6 +44,8 @@ public class ClientSetup implements ClientModInitializer {
         modelManager.addModel("SR2", ModelLittleMaid_SR2.class);
         modelManager.addModel("Aug", ModelLittleMaid_Aug.class);
         modelManager.addModel("Archetype", ModelLittleMaid_Archetype.class);
+        modelManager.addModel("Steve", ModelMulti_Steve.class);
+        modelManager.addModel("Stef", ModelMulti_Stef.class);
         modelManager.setDefaultModel(modelManager.getModel("Default", IHasMultiModel.Layer.SKIN)
                 .orElseThrow(RuntimeException::new));
 

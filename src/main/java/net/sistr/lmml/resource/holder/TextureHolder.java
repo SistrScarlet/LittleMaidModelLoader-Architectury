@@ -51,6 +51,36 @@ public class TextureHolder {
     }
 
     public Optional<Identifier> getArmorTexture(IHasMultiModel.Layer layer, String armorName, float damagePercent, boolean isLight) {
+        if (armors.isEmpty()) {
+            return Optional.empty();
+        }
+        Optional<Identifier> optional = getArmorTextureInner(layer, armorName, damagePercent, isLight);
+        if (optional.isPresent()) {
+            return optional;
+        }
+        //それでもないならデフォルトで再試行
+        if (armors.containsKey("default") && !armorName.toLowerCase().equals("default")) {
+            return getArmorTextureInner(layer, "default", damagePercent, isLight);
+        }
+        //デフォすら無いなら何でもいいので適用
+        return armors.keySet().stream()
+                .filter(armors::containsKey)
+                .map(s -> getArmorTextureInner(layer, s, damagePercent, isLight).orElse(null))
+                .filter(Objects::nonNull)
+                .findAny();
+    }
+
+    public Optional<Identifier> getArmorTextureInner(IHasMultiModel.Layer layer, String armorName, float damagePercent, boolean isLight) {
+        //返すものが無いなら当然空
+        if (armors.isEmpty()) {
+            return Optional.empty();
+        }
+        Map<Integer, Identifier> armorTextures = armors.get(armorName.toLowerCase());
+        //全く無いならnullを返す
+        if (armorTextures == null || armorTextures.isEmpty()) {
+            return Optional.empty();
+        }
+        //Indexを取得
         int index;
         switch (layer) {
             case INNER:
@@ -63,39 +93,20 @@ public class TextureHolder {
                 throw new IllegalArgumentException("それは防具ではないかnullである");
         }
         int damageIndex = MathHelper.clamp((int) (damagePercent * 10F - 1F), 0, 9);
-        Map<Integer, Identifier> armorTextures = armors.get(armorName.toLowerCase());
-        if (armorTextures != null && !armorTextures.isEmpty()) {
-            //あればそのままのテクスチャを返す
-            Identifier armorTexture = armorTextures.get(index + damageIndex);
-            if (armorTexture != null) {
-                return Optional.of(armorTexture);
-            }
-            //ないならそれ以前のものを返す
-            for (int i = 1; i <= damageIndex; i++) {
-                Identifier temp = armorTextures.get(index + damageIndex - i);
-                if (temp != null) {
-                    return Optional.of(temp);
-                }
-            }
-            //それもないならエイリアスを返す
-            if (!isLight) {
-                Identifier location;
-                if (layer == IHasMultiModel.Layer.INNER) {
-                    location = armorTextures.get(TextureIndexes.ARMOR_1_ALIAS.getIndexMin());
-                } else {
-                    location = armorTextures.get(TextureIndexes.ARMOR_2_ALIAS.getIndexMin());
-                }
-                if (location != null) {
-                    return Optional.of(location);
-                }
+        //あればそのままのテクスチャを返す
+        Identifier armorTexture = armorTextures.get(index + damageIndex);
+        if (armorTexture != null) {
+            return Optional.of(armorTexture);
+        }
+        //ないならそれ以前のものを返す
+        for (int i = 1; i <= damageIndex; i++) {
+            Identifier temp = armorTextures.get(index + damageIndex - i);
+            if (temp != null) {
+                return Optional.of(temp);
             }
         }
-        //それでもないならデフォルトで再試行
-        if (!armorName.toLowerCase().equals("default")) {
-            return getArmorTexture(layer, "default", damagePercent, isLight);
-        }
-        //全く無いならnullを返す
-        return Optional.empty();
+        //それでもないならあればなんでも返す
+        return armorTextures.values().stream().findAny();
     }
 
     public Collection<String> getArmorNames() {

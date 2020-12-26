@@ -38,6 +38,14 @@ public class MultiModelRenderer<T extends LivingEntity & IHasMultiModel> extends
     }
 
     @Override
+    protected void scale(T entity, MatrixStack matrices, float amount) {
+        entity.getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD).ifPresent(model -> {
+            float scale = (float) model.getCapsValue(caps_ScaleFactor);
+            matrices.scale(scale, scale, scale);
+        });
+    }
+
+    @Override
     public void render(T livingEntity, float entityYaw, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         Profiler profiler = MinecraftClient.getInstance().getProfiler();
         profiler.push("lmml:mm");

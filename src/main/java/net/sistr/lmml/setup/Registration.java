@@ -20,7 +20,8 @@ public class Registration {
             Registry.ENTITY_TYPE,
             new Identifier(MODID, "multi_model_entity"),
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, MultiModelEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.8F, 1.2F)).build()
+                    .dimensions(EntityDimensions.changing(0.5F, 1.35F))
+                    .build()
     );
     public static final EntityType<ModelSelectScreen.DummyModelEntity> DUMMY_MODEL_ENTITY =
             Registry.register(
@@ -28,7 +29,7 @@ public class Registration {
                     new Identifier(MODID, "dummy_model_entity"),
                     FabricEntityTypeBuilder.<ModelSelectScreen.DummyModelEntity>create(SpawnGroup.MISC,
                             ModelSelectScreen.DummyModelEntity::new)
-                            .dimensions(EntityDimensions.fixed(0.8F, 1.2F))
+                            .dimensions(EntityDimensions.changing(0.5F, 1.35F))
                             .disableSummon().build()
             );
 
