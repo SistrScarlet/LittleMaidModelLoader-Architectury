@@ -23,11 +23,19 @@ public class LMTextureManager {
         TextureHolder textureHolder = textures.computeIfAbsent(textureName.toLowerCase(),
                 k -> new TextureHolder(textureName, modelName));
         if (TextureIndexes.getTextureIndexes(index).isArmor()) {
-            textureHolder.addArmorTexture(fileName.substring(0, fileName.indexOf('_')), index, texturePath);
+            textureHolder.addArmorTexture(getArmorName(fileName), index, texturePath);
         } else {
             textureHolder.addTexture(index, texturePath);
         }
         if (LMMLConfig.isDebugMode()) LOGGER.debug("Loaded Texture : " + texturePath);
+    }
+
+    public String getArmorName(String fileName) {
+        String name = fileName.substring(0, fileName.indexOf('_'));
+        if (name.contains("chainmail")) {
+            return name;
+        }
+        return name.replace("chain", "chainmail");
     }
 
     public Optional<TextureHolder> getTexture(String textureName) {

@@ -105,8 +105,8 @@ public class TextureHolder {
                 return Optional.of(temp);
             }
         }
-        //それでもないならあればなんでも返す
-        return armorTextures.values().stream().findAny();
+        //それでもないなら無い
+        return Optional.empty();
     }
 
     public Collection<String> getArmorNames() {
