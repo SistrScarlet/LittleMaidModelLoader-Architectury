@@ -1,7 +1,7 @@
 package net.sistr.lmml.maidmodel;
 
+import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -84,9 +84,10 @@ public class EntityCaps implements IModelCaps {
             case caps_ticksExisted:
                 return owner.age;
             case caps_currentArmor:
-                ItemStack aromor = ((List<ItemStack>) owner.getArmorItems()).get((Integer) pArg[0]);
-                if (aromor.isEmpty()) aromor = null;
-                return aromor;
+                List<ItemStack> stacks = Lists.newArrayList(owner.getArmorItems());
+                ItemStack armor = stacks.get((Integer) pArg[0]);
+                if (armor.isEmpty()) armor = null;
+                return armor;
             case caps_posX:
                 return owner.getX();
             case caps_posY:
