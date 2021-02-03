@@ -65,7 +65,7 @@ public class MultiModelClassTransformer {
             put("net/minecraft/entity/EntityLivingBase", "net/minecraft/entity/LivingEntity");
             put("net/minecraft/entity/passive/EntityAnimal", "net/minecraft/entity/passive/AnimalEntity");
             put("net/minecraft/entity/player/EntityPlayer", "net/minecraft/entity/player/PlayerEntity");
-            put("func_184187_bx", "getRidingEntity");
+            put("func_184187_bx", "method_5854");
 
             //NM
             put("net/blacklab/lmr/entity/littlemaid/EntityLittleMaid", "net/sistr/lmml/entity/EntityLittleMaid");

@@ -10,14 +10,14 @@ import java.util.Random;
 //TextureOffsetは死んだ。
 public abstract class ModelBase extends AbstractModelBase {
 
-    public static final float PI = (float)Math.PI;
+    public static final float PI = (float) Math.PI;
 
     public EntityRenderer<?> render;
 
     // ModelBaseとある程度互換
     public int textureWidth = 64;
     public int textureHeight = 32;
-    public float[] onGrounds = new float[] {0.0F, 0.0F};//R L
+    public float[] onGrounds = new float[]{0.0F, 0.0F};//R L
     public int dominantArm = 0;
     public boolean isRiding = false;
     public boolean isChild = true;
@@ -71,14 +71,10 @@ public abstract class ModelBase extends AbstractModelBase {
     // MathHelperトンネル関数群
 
     public static float mh_sin(float f) {
-        f = f % 6.283185307179586F;
-        f = (f < 0F) ? 360 + f : f;
         return MathHelper.sin(f);
     }
 
     public static float mh_cos(float f) {
-        f = f % 6.283185307179586F;
-        f = (f < 0F) ? 360 + f : f;
         return MathHelper.cos(f);
     }
 
@@ -115,7 +111,7 @@ public abstract class ModelBase extends AbstractModelBase {
     }
 
     public static boolean mh_stringNullOrLengthZero(String s) {
-        return s==null|| s.equals("");
+        return s == null || s.equals("");
     }
 
     public static int mh_getRandomIntegerInRange(Random random, int minimum, int maximum) {
