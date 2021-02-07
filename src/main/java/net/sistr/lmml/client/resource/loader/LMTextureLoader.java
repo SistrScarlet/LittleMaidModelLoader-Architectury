@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 画像ファイルを読み込み、ゲームに登録するクラス
@@ -39,9 +40,10 @@ public class LMTextureLoader implements LMLoader {
 
     @Override
     public void load(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        Identifier texturePath = getResourceLocation(path);
-        String textureName = ResourceHelper.getParentFolderName(path, isArchive).
-                orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
+        Identifier texturePath = getResourceLocation(path, isArchive)
+                .orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
+        String textureName = ResourceHelper.getParentFolderName(path, isArchive)
+                .orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
         String modelName = ResourceHelper.getModelName(textureName);
         textureManager.addTexture(ResourceHelper.getFileName(path, isArchive), textureName, modelName,
                 ResourceHelper.getIndex(path), texturePath);
@@ -57,23 +59,26 @@ public class LMTextureLoader implements LMLoader {
      * littlemaidmodelloader:textures.entity.littlemaid.[texture]_[model].xxxx_[index].png
      * に変換
      */
-    private Identifier getResourceLocation(String path) {
+    private Optional<Identifier> getResourceLocation(String path, boolean isArchive) {
         //小文字にする
         String texturePath = path.toLowerCase();
+        if (!isArchive) {
+            texturePath = texturePath.replace("\\", "/");
+        }
         //すべてminecraftから始まるように変換
         for (Map.Entry<String, String> entry : converter.entrySet()) {
             texturePath = texturePath.replace(entry.getKey(), entry.getValue());
         }
         //minecraft/なら9
-        int firstSplitter = texturePath.indexOf('/');
+        int firstSplitter = texturePath.indexOf("/");
         //ファイル階層が無い場合はnullを返す
         if (firstSplitter == -1) {
-            return null;
+            return Optional.empty();
         }
         //使用不能文字を変換
         texturePath = texturePath.replaceAll("[^a-z0-9/._\\-]", "-");
 
         String namePath = texturePath.substring(firstSplitter + 1);
-        return new Identifier("littlemaidmodelloader", namePath);
+        return Optional.of(new Identifier("littlemaidmodelloader", namePath));
     }
 }
