@@ -3,14 +3,18 @@ package net.sistr.lmml.network;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.network.PacketContext;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.api.server.PlayerStream;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.sistr.lmml.LittleMaidModelLoader;
@@ -34,7 +38,7 @@ public class SyncMultiModelPacket {
         }
         passedData.writeEnumConstant(hasMultiModel.getColor());
         passedData.writeBoolean(hasMultiModel.isContract());
-        ClientSidePacketRegistry.INSTANCE.sendToServer(ID, passedData);
+        ClientPlayNetworking.send(ID, passedData);
     }
 
     public static void sendS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
@@ -47,21 +51,22 @@ public class SyncMultiModelPacket {
         }
         passedData.writeEnumConstant(hasMultiModel.getColor());
         passedData.writeBoolean(hasMultiModel.isContract());
-        PlayerStream.watching(entity).forEach(watchingPlayer ->
-                ServerSidePacketRegistry.INSTANCE.sendToPlayer(watchingPlayer, ID, passedData));
+        PlayerLookup.tracking(entity).forEach(watchingPlayer ->
+                ServerPlayNetworking.send(watchingPlayer, ID, passedData));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void receiveS2CPacket(PacketContext context, PacketByteBuf attachedData) {
-        int entityId = attachedData.readInt();
-        String textureName = attachedData.readString();
+    public static void receiveS2CPacket(MinecraftClient client, ClientPlayNetworkHandler handler,
+                                        PacketByteBuf buf, PacketSender responseSender) {
+        int entityId = buf.readInt();
+        String textureName = buf.readString();
         ArmorSets<String> armorTextureName = new ArmorSets<>();
         for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
-            armorTextureName.setArmor(attachedData.readString(), part);
+            armorTextureName.setArmor(buf.readString(), part);
         }
-        TextureColors color = attachedData.readEnumConstant(TextureColors.class);
-        boolean isContract = attachedData.readBoolean();
-        context.getTaskQueue().execute(() ->
+        TextureColors color = buf.readEnumConstant(TextureColors.class);
+        boolean isContract = buf.readBoolean();
+        client.execute(() ->
                 applyMultiModelClient(entityId, isContract, color, textureName, armorTextureName));
     }
 
@@ -89,17 +94,17 @@ public class SyncMultiModelPacket {
         }
     }
 
-    public static void receiveC2SPacket(PacketContext packetContext, PacketByteBuf attachedData) {
-        PlayerEntity player = packetContext.getPlayer();
-        int entityId = attachedData.readInt();
-        String textureName = attachedData.readString(32767);
+    public static void receiveC2SPacket(MinecraftServer server, ServerPlayerEntity player,
+                                        ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        int entityId = buf.readInt();
+        String textureName = buf.readString(32767);
         ArmorSets<String> armorTextureName = new ArmorSets<>();
         for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
-            armorTextureName.setArmor(attachedData.readString(32767), part);
+            armorTextureName.setArmor(buf.readString(32767), part);
         }
-        TextureColors color = attachedData.readEnumConstant(TextureColors.class);
-        boolean isContract = attachedData.readBoolean();
-        packetContext.getTaskQueue().execute(() ->
+        TextureColors color = buf.readEnumConstant(TextureColors.class);
+        boolean isContract = buf.readBoolean();
+        server.execute(() ->
                 applyMultiModelServer(player, entityId, isContract, color, textureName, armorTextureName));
     }
 

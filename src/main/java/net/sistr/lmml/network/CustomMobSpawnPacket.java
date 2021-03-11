@@ -3,10 +3,10 @@ package net.sistr.lmml.network;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.PacketContext;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.impl.networking.PacketDebugOptions;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -50,11 +50,12 @@ public class CustomMobSpawnPacket {
         buf.writeShort(velocityY);
         buf.writeShort(velocityZ);
         ((CustomPacketEntity) entity).writeCustomPacket(buf);
-        return ServerSidePacketRegistry.INSTANCE.toPacket(ID, buf);
+        return ServerPlayNetworking.createS2CPacket(ID, buf);
     }
 
     @Environment(EnvType.CLIENT)
-    public static void receiveS2CPacket(PacketContext context, PacketByteBuf buf) {
+    public static void receiveS2CPacket(MinecraftClient client, ClientPlayNetworkHandler handler,
+                                        PacketByteBuf buf, PacketSender responseSender) {
         int id = buf.readVarInt();
         UUID uuid = buf.readUuid();
         int entityTypeId = buf.readVarInt();
@@ -69,7 +70,7 @@ public class CustomMobSpawnPacket {
         float velocityZ = buf.readShort() / 8000F;
         //そのまんまbuf渡すと、spawnが実行されるまでの間に読み込めなくなるため、コピーする
         PacketByteBuf additional = new PacketByteBuf(buf.copy());
-        context.getTaskQueue().execute(() -> spawn(id, uuid, entityTypeId, x, y, z, yaw, pitch, headYaw,
+        client.execute(() -> spawn(id, uuid, entityTypeId, x, y, z, yaw, pitch, headYaw,
                 velocityX, velocityY, velocityZ, additional));
     }
 
@@ -98,7 +99,7 @@ public class CustomMobSpawnPacket {
         } else {
             LOGGER.warn("Skipping Entity with id {}", entityTypeId);
         }
-        if (additional.refCnt() > 0 && !PacketDebugOptions.DISABLE_BUFFER_RELEASES) {
+        if (additional.refCnt() > 0) {
             additional.release();
         }
     }

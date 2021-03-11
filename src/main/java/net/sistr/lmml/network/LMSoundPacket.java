@@ -3,10 +3,11 @@ package net.sistr.lmml.network;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.PacketContext;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.api.server.PlayerStream;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -22,16 +23,16 @@ public class LMSoundPacket {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeVarInt(entity.getEntityId());
         passedData.writeString(soundName);
-        PlayerStream.watching(entity).forEach(watchingPlayer ->
-                ServerSidePacketRegistry.INSTANCE.sendToPlayer(watchingPlayer, ID, passedData));
+        PlayerLookup.tracking(entity).forEach(watchingPlayer ->
+                ServerPlayNetworking.send(watchingPlayer, ID, passedData));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void receiveS2CPacket(PacketContext context, PacketByteBuf attachedData) {
-        int entityId = attachedData.readVarInt();
-        String soundName = attachedData.readString();
-        context.getTaskQueue().execute(() ->
-                playSoundClient(entityId, soundName));
+    public static void receiveS2CPacket(MinecraftClient client, ClientPlayNetworkHandler handler,
+                                        PacketByteBuf buf, PacketSender responseSender) {
+        int entityId = buf.readVarInt();
+        String soundName = buf.readString();
+        client.execute(() -> playSoundClient(entityId, soundName));
     }
 
     @Environment(EnvType.CLIENT)
