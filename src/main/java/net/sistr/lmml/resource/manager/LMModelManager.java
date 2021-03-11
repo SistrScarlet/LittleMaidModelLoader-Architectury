@@ -38,10 +38,12 @@ public class LMModelManager {
         return model != null;
     }
 
+    //todo Optional外す
     public Optional<ModelMultiBase> getModel(String modelName, IHasMultiModel.Layer layer) {
         ModelHolder modelHolder = models.get(modelName.toLowerCase());
+        //存在しない場合
         if (modelHolder == null) {
-            return Optional.empty();
+            return getModel("default", layer);
         }
         ModelMultiBase model = modelHolder.getModel(layer);
         return Optional.of(model);
