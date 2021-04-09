@@ -201,8 +201,11 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public void setTextureHolder(TextureHolder textureHolder,  IHasMultiModel.Layer layer,  IHasMultiModel.Part part) {
+    public void setTextureHolder(TextureHolder textureHolder, Layer layer, Part part) {
         multiModel.setTextureHolder(textureHolder, layer, part);
+        if (layer == Layer.SKIN) {
+            calculateDimensions();
+        }
     }
 
     @Override
