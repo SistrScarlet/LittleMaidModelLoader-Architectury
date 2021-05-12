@@ -1,0 +1,11 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.sistr.littlemaidmodelloader.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [ "EntityTrackerAccessor", "ThreadedAnvilChunkStorageMixin" ],
+    "client": [ ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
