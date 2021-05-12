@@ -16,15 +16,16 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "net.sistr.lmml.LittleMaidModelLoader"
+            "net.sistr.littlemaidmodelloader.LittleMaidModelLoader"
         ],
         "client": [
-            "net.sistr.lmml.setup.ClientSetup"
+            "net.sistr.littlemaidmodelloader.setup.ClientSetup"
         ],
         "server": [
-            "net.sistr.lmml.setup.ServerSetup"
+            "net.sistr.littlemaidmodelloader.setup.ServerSetup"
         ]
     },
+    "accessWidener": "littlemaidmodelloader.accesswidener",
     "mixins": [
         "littlemaidmodelloader.mixins.json"
     ],
