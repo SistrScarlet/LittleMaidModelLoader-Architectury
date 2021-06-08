@@ -5,7 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
-import net.sistr.littlemaidmodelloader.client.LMPackProvider;
+import net.sistr.littlemaidmodelloader.client.resource.LMPackProvider;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

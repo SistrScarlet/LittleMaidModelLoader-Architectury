@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client;
+package net.sistr.littlemaidmodelloader.client.resource;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

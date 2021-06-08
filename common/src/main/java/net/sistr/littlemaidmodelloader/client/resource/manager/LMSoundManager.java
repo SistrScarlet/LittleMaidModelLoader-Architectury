@@ -6,7 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
-import net.sistr.littlemaidmodelloader.client.LMSoundInstance;
+import net.sistr.littlemaidmodelloader.client.resource.LMSoundInstance;
 import net.sistr.littlemaidmodelloader.client.resource.holder.SoundHolder;
 
 import java.util.HashMap;

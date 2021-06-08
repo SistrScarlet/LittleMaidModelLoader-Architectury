@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client;
+package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

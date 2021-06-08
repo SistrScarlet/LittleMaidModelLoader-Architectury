@@ -5,7 +5,7 @@ import me.shedaniel.architectury.registry.RegistrySupplier;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.registry.Registry;
-import net.sistr.littlemaidmodelloader.client.ModelSelectScreen;
+import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
 
 import static net.sistr.littlemaidmodelloader.LittleMaidModelLoader.MODID;

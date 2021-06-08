@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client;
+package net.sistr.littlemaidmodelloader.client.resource;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

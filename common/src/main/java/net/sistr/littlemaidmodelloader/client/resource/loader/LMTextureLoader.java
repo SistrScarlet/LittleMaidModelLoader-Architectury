@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.util.SideChecker;
-import net.sistr.littlemaidmodelloader.client.ResourceWrapper;
+import net.sistr.littlemaidmodelloader.client.resource.ResourceWrapper;
 import net.sistr.littlemaidmodelloader.resource.loader.LMLoader;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;

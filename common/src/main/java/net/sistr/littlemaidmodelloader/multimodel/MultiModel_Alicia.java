@@ -45,10 +45,10 @@ public class MultiModel_Alicia implements IMultiModel {
     private final ModelPart upperSkirtR;
     private final ModelPart lowerLegR;
     private final ModelPart lowerSkirtR;
-    private final FourTwoLerp lerpTM;
-    private final FourTwoLerp lerpM;
-    private final FourTwoLerp lerpBM;
-    private final FourTwoLerp lerpB;
+    private final EightPLerp lerpTM;
+    private final EightPLerp lerpM;
+    private final EightPLerp lerpBM;
+    private final EightPLerp lerpB;
     private final ModelAnimation wait;
     private final ModelAnimation walk;
     private final ModelAnimation sprint;
@@ -221,22 +221,22 @@ public class MultiModel_Alicia implements IMultiModel {
         sneak = createSneakAnimationBuilder(60, inOut).build();
         swim = createSwimAnimationBuilder(60, inOut).build();
 
-        lerpTM = new FourTwoLerp(
+        lerpTM = new EightPLerp(
                 new Angle(15, 15, 2.5F),
                 new Angle(25, 0, 0), new Angle(-90, 0, 0),
                 new Angle(30, 20, 10),
                 new Angle(-80, 0, -15));
-        lerpM = new FourTwoLerp(
+        lerpM = new EightPLerp(
                 new Angle(-15, 10, -2.5F),
                 new Angle(5, 0, 0), new Angle(-5, 0, 0),
                 new Angle(5, 10, 7.5F),
                 new Angle(-10, 15, 0));
-        lerpBM = new FourTwoLerp(
+        lerpBM = new EightPLerp(
                 new Angle(0, 10, 10F),
                 new Angle(-7.5F, 0, 0), new Angle(10, 0, 0),
                 new Angle(-10, 5, -2.5F),
                 new Angle(-2.5F, 15, 0));
-        lerpB = new FourTwoLerp(
+        lerpB = new EightPLerp(
                 new Angle(0, 5, -10F),
                 new Angle(7.5F, 0, 0), new Angle(-5, 0, 0),
                 new Angle(7.5F, -5, 0),

@@ -1,20 +1,20 @@
 package net.sistr.littlemaidmodelloader.multimodel.animation;
 
-public class FourTwoLerp {
+public class EightPLerp {
     private final TwoPLerp leftUp;
     private final TwoPLerp rightUp;
     private final TwoPLerp leftDown;
     private final TwoPLerp rightDown;
 
-    public FourTwoLerp(Angle left, Angle up, Angle down,
-                       Angle leftUp, Angle leftDown) {
+    public EightPLerp(Angle left, Angle up, Angle down,
+                      Angle leftUp, Angle leftDown) {
         this(left, new Angle(left.getPitch(), -left.getYaw(), -left.getRoll()), up, down,
                 leftUp, new Angle(leftUp.getPitch(), -leftUp.getYaw(), -leftUp.getRoll()),
                 leftDown, new Angle(leftDown.getPitch(), -leftDown.getYaw(), -leftDown.getRoll()));
     }
 
-    public FourTwoLerp(Angle left, Angle right, Angle up, Angle down,
-                       Angle leftUp, Angle rightUp, Angle leftDown, Angle rightDown) {
+    public EightPLerp(Angle left, Angle right, Angle up, Angle down,
+                      Angle leftUp, Angle rightUp, Angle leftDown, Angle rightDown) {
         this.leftUp = new TwoPLerp(left, up, leftUp);
         this.rightUp = new TwoPLerp(right, up, rightUp);
         this.leftDown = new TwoPLerp(left, down, leftDown);

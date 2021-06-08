@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
-import net.sistr.littlemaidmodelloader.client.ResourceWrapper;
+import net.sistr.littlemaidmodelloader.client.resource.ResourceWrapper;
 import net.sistr.littlemaidmodelloader.resource.loader.LMLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
 import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
