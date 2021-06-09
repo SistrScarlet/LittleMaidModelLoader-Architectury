@@ -1,5 +1,6 @@
 package net.sistr.littlemaidmodelloader;
 
+import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
@@ -8,8 +9,6 @@ import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.*;
-import net.sistr.littlemaidmodelloader.multimodel.MultiModel_Alicia;
-import net.sistr.littlemaidmodelloader.register.AttributeRegister;
 import net.sistr.littlemaidmodelloader.resource.classloader.MultiModelClassLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMConfigLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMFileLoader;
@@ -81,8 +80,8 @@ public class LittleMaidModelLoader {
     }
 
     public static void registerAttribute() {
-        AttributeRegister.register(Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
-        AttributeRegister.register(Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(() -> Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(() -> Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
     }
 
 }

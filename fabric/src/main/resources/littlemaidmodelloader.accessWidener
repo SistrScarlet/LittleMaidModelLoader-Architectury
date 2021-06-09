@@ -2,3 +2,4 @@ accessWidener v1 named
 
 accessible class net/minecraft/client/model/ModelPart$Vertex
 accessible class net/minecraft/client/model/ModelPart$Quad
+extendable class net/minecraft/client/model/ModelPart

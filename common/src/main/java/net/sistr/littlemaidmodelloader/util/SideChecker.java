@@ -1,6 +1,7 @@
 package net.sistr.littlemaidmodelloader.util;
 
-import me.shedaniel.architectury.annotations.ExpectPlatform;
+
+import dev.architectury.injectables.annotations.ExpectPlatform;
 
 public class SideChecker {
 

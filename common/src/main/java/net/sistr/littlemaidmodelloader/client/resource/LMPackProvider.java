@@ -7,6 +7,7 @@ import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.metadata.PackResourceMetadata;
+import net.minecraft.text.LiteralText;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -21,13 +22,13 @@ public class LMPackProvider implements ResourcePackProvider {
     public void register(Consumer<ResourcePackProfile> consumer, ResourcePackProfile.Factory factory) {
         String name = "littlemaidmodelloader";
         boolean isAlwaysEnabled = true;
-        Supplier<ResourcePack> supplier = () -> ResourceWrapper.INSTANCE;
+        Supplier<ResourcePack> packFactory = () -> ResourceWrapper.INSTANCE;
         ResourcePack resourcePack = ResourceWrapper.INSTANCE;
-        PackResourceMetadata resourcePackMeta = ResourceWrapper.PACK_INFO;
-        ResourcePackProfile.InsertionPosition priority = ResourcePackProfile.InsertionPosition.TOP;
-        ResourcePackSource decorator = ResourcePackSource.field_25347;
-        ResourcePackProfile info = factory.create(name, isAlwaysEnabled, supplier, resourcePack, resourcePackMeta,
-                priority, decorator);
+        PackResourceMetadata metadata = ResourceWrapper.PACK_INFO;
+        ResourcePackProfile.InsertionPosition initialPos = ResourcePackProfile.InsertionPosition.TOP;
+        ResourcePackSource source = ResourcePackSource.PACK_SOURCE_NONE;
+        ResourcePackProfile info = factory.create(name, new LiteralText(resourcePack.getName()), isAlwaysEnabled,
+                packFactory, metadata, initialPos, source);
         consumer.accept(info);
     }
 }
