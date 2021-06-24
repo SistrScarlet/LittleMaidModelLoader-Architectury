@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "5.0.0"
 }
 
 configurations {
@@ -19,7 +19,7 @@ loom {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    modApi "me.shedaniel:architectury-forge:${rootProject.architectury_version}"
 
     implementation(project(path: ":common")) {
         transitive = false

@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.network;
 
-import dev.architectury.networking.NetworkManager;
+import me.shedaniel.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.sistr.littlemaidmodelloader.util.SideChecker;

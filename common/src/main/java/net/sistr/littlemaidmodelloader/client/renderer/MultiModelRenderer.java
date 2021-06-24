@@ -5,7 +5,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
@@ -26,8 +25,8 @@ import static net.sistr.littlemaidmodelloader.maidmodel.IModelCaps.*;
 public class MultiModelRenderer<T extends LivingEntity & IHasMultiModel> extends LivingEntityRenderer<T, MultiModel<T>> {
     private static final Identifier NULL_TEXTURE = new Identifier(LittleMaidModelLoader.MODID, "null");
 
-    public MultiModelRenderer(EntityRendererFactory.Context ctx) {
-        super(ctx, new MultiModel<>(), 0.5F);
+    public MultiModelRenderer(EntityRenderDispatcher dispatcher) {
+        super(dispatcher, new MultiModel<>(), 0.5F);
         this.addFeature(new MultiModelArmorLayer<>(this));
         this.addFeature(new MultiModelHeldItemLayer<>(this));
         this.addFeature(new MultiModelLightLayer<>(this));

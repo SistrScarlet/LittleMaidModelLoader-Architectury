@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.setup;
 
-import dev.architectury.registry.level.entity.EntityRendererRegistry;
+import me.shedaniel.architectury.registry.entity.EntityRenderers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
@@ -9,8 +9,8 @@ import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
 public class ClientSetup {
 
     public static void init() {
-        EntityRendererRegistry.register(Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
-        EntityRendererRegistry.register(Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
+        EntityRenderers.register(Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
+        EntityRenderers.register(Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
     }
 
 }

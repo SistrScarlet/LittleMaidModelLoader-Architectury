@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.util;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import me.shedaniel.architectury.annotations.ExpectPlatform;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 

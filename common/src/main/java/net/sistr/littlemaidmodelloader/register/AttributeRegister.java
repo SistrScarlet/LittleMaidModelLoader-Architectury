@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.register;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import me.shedaniel.architectury.annotations.ExpectPlatform;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;

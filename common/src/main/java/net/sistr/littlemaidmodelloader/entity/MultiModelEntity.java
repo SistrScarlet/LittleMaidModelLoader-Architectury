@@ -14,7 +14,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
@@ -79,40 +79,40 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-        nbt.putByte("SkinColor", (byte) getColor().getIndex());
-        nbt.putBoolean("IsContract", isContract());
-        nbt.putString("SkinTexture", getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
+    public void writeCustomDataToTag(CompoundTag tag) {
+        super.writeCustomDataToTag(tag);
+        tag.putByte("SkinColor", (byte) getColor().getIndex());
+        tag.putBoolean("IsContract", isContract());
+        tag.putString("SkinTexture", getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
         for (Part part : Part.values()) {
-            nbt.putString("ArmorTextureInner" + part.getPartName(),
+            tag.putString("ArmorTextureInner" + part.getPartName(),
                     getTextureHolder(Layer.INNER, part).getTextureName());
-            nbt.putString("ArmorTextureOuter" + part.getPartName(),
+            tag.putString("ArmorTextureOuter" + part.getPartName(),
                     getTextureHolder(Layer.OUTER, part).getTextureName());
         }
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
-        if (nbt.contains("SkinColor")) {
-            setColor(TextureColors.getColor(nbt.getByte("SkinColor")));
+    public void readCustomDataFromTag(CompoundTag tag) {
+        super.readCustomDataFromTag(tag);
+        if (tag.contains("SkinColor")) {
+            setColor(TextureColors.getColor(tag.getByte("SkinColor")));
         }
-        setContract(nbt.getBoolean("IsContract"));
+        setContract(tag.getBoolean("IsContract"));
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
-        if (nbt.contains("SkinTexture")) {
-            textureManager.getTexture(nbt.getString("SkinTexture"))
+        if (tag.contains("SkinTexture")) {
+            textureManager.getTexture(tag.getString("SkinTexture"))
                     .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));
         }
         for (Part part : Part.values()) {
             String inner = "ArmorTextureInner" + part.getPartName();
             String outer = "ArmorTextureOuter" + part.getPartName();
-            if (nbt.contains(inner)) {
-                textureManager.getTexture(nbt.getString(inner))
+            if (tag.contains(inner)) {
+                textureManager.getTexture(tag.getString(inner))
                         .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.INNER, part));
             }
-            if (nbt.contains(outer)) {
-                textureManager.getTexture(nbt.getString(outer))
+            if (tag.contains(outer)) {
+                textureManager.getTexture(tag.getString(outer))
                         .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.OUTER, part));
             }
         }

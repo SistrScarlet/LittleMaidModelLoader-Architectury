@@ -398,7 +398,7 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
     }
 
     public static float mh_sqrt_double(double d) {
-        return MathHelper.sqrt((float) d);
+        return MathHelper.sqrt(d);
     }
 
     public static int mh_floor_float(float f) {

@@ -3,7 +3,7 @@ package net.sistr.littlemaidmodelloader.maidmodel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.client.util.math.Vector3f;
 
 public abstract class ModelBoxBase {
 	protected TexturedQuad[] quadList;
@@ -40,19 +40,19 @@ public abstract class ModelBoxBase {
 
 	@Environment(EnvType.CLIENT)
 	public static class PositionTextureVertex {
-		public final Vec3f position;
+		public final Vector3f position;
 		public final float textureU;
 		public final float textureV;
 
 		public PositionTextureVertex(float x, float y, float z, float texU, float texV) {
-			this(new Vec3f(x, y, z), texU, texV);
+			this(new Vector3f(x, y, z), texU, texV);
 		}
 
 		public PositionTextureVertex setTextureUV(float texU, float texV) {
 			return new PositionTextureVertex(this.position, texU, texV);
 		}
 
-		public PositionTextureVertex(Vec3f posIn, float texU, float texV) {
+		public PositionTextureVertex(Vector3f posIn, float texU, float texV) {
 			this.position = posIn;
 			this.textureU = texU;
 			this.textureV = texV;
@@ -62,7 +62,7 @@ public abstract class ModelBoxBase {
 	@Environment(EnvType.CLIENT)
 	public static class TexturedQuad {
 		public PositionTextureVertex[] vertexPositions;
-		public Vec3f normal;
+		public Vector3f normal;
 
 		public TexturedQuad(PositionTextureVertex[] positionsIn, float u1, float v1, float u2, float v2, float texWidth, float texHeight) {
 			this.vertexPositions = positionsIn;

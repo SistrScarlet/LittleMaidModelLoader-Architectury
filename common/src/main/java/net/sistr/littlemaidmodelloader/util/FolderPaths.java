@@ -1,7 +1,7 @@
 package net.sistr.littlemaidmodelloader.util;
 
-
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import me.shedaniel.architectury.annotations.ExpectPlatform;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Path;
 
