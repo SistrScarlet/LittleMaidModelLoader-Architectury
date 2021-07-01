@@ -1,8 +1,6 @@
 package net.sistr.littlemaidmodelloader.entrypoint;
 
 import me.shedaniel.architectury.platform.forge.EventBuses;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -28,7 +26,6 @@ public class ModEntryPoint {
         ModSetup.init();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void clientInit(FMLClientSetupEvent event) {
         ClientSetup.init();
     }
