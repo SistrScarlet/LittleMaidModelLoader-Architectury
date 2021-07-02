@@ -1,27 +1,26 @@
 package net.sistr.littlemaidmodelloader.resource.classloader;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 /**
  * 古いマルチモデルのロード用。
  * 使用しているクラスを置換えて新しいものへ対応。
  */
 public class MultiModelClassTransformer {
-    private static final Logger LOGGER = LogManager.getLogger();
-
+    //private static final Logger LOGGER = LogManager.getLogger();
     private static final String newPackageString = "net/sistr/littlemaidmodelloader/maidmodel/";
 
-    private static final Map<String, String> replaceMap = new HashMap<String, String>() {
+    private static final Map<String, String> replaceMap = new Object2ObjectOpenHashMap<>() {
         {
             //継承関係で整理
             //また、未使用っぽいのはコメントアウト
@@ -78,125 +77,98 @@ public class MultiModelClassTransformer {
         }
     };
 
+    private static final Set<String> glReplaceSet = new ObjectOpenHashSet<>() {
+        {
+            add("()V");
+            add("(I)V");
+            add("(FF)V");
+            add("(FFF)V");
+        }
+    };
+
     /**
      * バイナリを解析して古いクラスを置き換える。
      */
     public byte[] transform(byte[] basicClass) {
         ClassReader reader = new ClassReader(basicClass);
-
-        AtomicBoolean changed = new AtomicBoolean(false);
-
-        // 親クラスの置き換え
         ClassNode cNode = new ClassNode();
         reader.accept(cNode, 0);
-        replace(cNode.superName).ifPresent(superName -> {
-            changed.set(true);
-            cNode.superName = superName;
-        });
+
+        final AtomicBoolean changed = new AtomicBoolean(false);
+
+        // 親クラスの置き換え
+        tryReplace(changed, cNode.superName, superName -> cNode.superName = superName);
+
+        //パラレルで処理すると1.3倍くらい早くなった
 
         // フィールドの置き換え
-        for (FieldNode fNode : cNode.fields) {
-            replace(fNode.desc).ifPresent(desc -> {
-                changed.set(true);
-                fNode.desc = desc;
-            });
-        }
+        cNode.fields.parallelStream().forEach(fNode ->
+                tryReplace(changed, fNode.desc, desc -> fNode.desc = desc));
 
         // メソッドの置き換え
-        for (MethodNode mNode : cNode.methods) {
-            replace(mNode.desc).ifPresent(desc -> {
-                changed.set(true);
-                mNode.desc = desc;
-            });
+        cNode.methods.parallelStream().forEach(mNode -> {
+            tryReplace(changed, mNode.desc, desc -> mNode.desc = desc);
 
             if (mNode.localVariables != null) {
-                for (LocalVariableNode vNode : mNode.localVariables) {
-                    if (vNode.desc != null) {
-                        replace(vNode.desc).ifPresent(desc -> {
-                            changed.set(true);
-                            vNode.desc = desc;
-                        });
+                mNode.localVariables.parallelStream().forEach(lNode -> {
+                    if (lNode.desc != null) {
+                        tryReplace(changed, lNode.desc, desc -> lNode.desc = desc);
                     }
-                    if (vNode.name != null) {
-                        replace(vNode.name).ifPresent(name -> {
-                            changed.set(true);
-                            vNode.name = name;
-                        });
+                    if (lNode.name != null) {
+                        tryReplace(changed, lNode.name, name -> lNode.name = name);
                     }
-                    if (vNode.signature != null) {
-                       replace(vNode.signature).ifPresent(signature -> {
-                           changed.set(true);
-                           vNode.signature = signature;
-                       });
+                    if (lNode.signature != null) {
+                        tryReplace(changed, lNode.signature, signature -> lNode.signature = signature);
                     }
-                }
+                });
             }
 
             AbstractInsnNode aNode = mNode.instructions.getFirst();
             while (aNode != null) {
-                if (aNode instanceof FieldInsnNode) {//4
-                    FieldInsnNode fANode = (FieldInsnNode) aNode;
-                    replace(fANode.desc).ifPresent(desc -> {
+                if (aNode instanceof FieldInsnNode fANode) {//4
+                    tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
+                    tryReplace(changed, fANode.name, name -> fANode.name = name);
+                    tryReplace(changed, fANode.owner, owner -> fANode.owner = owner);
+                } else if (aNode instanceof InvokeDynamicInsnNode fANode) {//6
+                    tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
+                    tryReplace(changed, fANode.name, name -> fANode.name = name);
+                } else if (aNode instanceof MethodInsnNode fANode) {//5
+                    if (shouldRemove(fANode.owner)) {
                         changed.set(true);
-                        fANode.desc = desc;
-                    });
-                    replace(fANode.name).ifPresent(name -> {
-                        changed.set(true);
-                        fANode.name = name;
-                    });
-                    replace(fANode.owner).ifPresent(owner -> {
-                        changed.set(true);
-                        fANode.owner = owner;
-                    });
-                } else if (aNode instanceof InvokeDynamicInsnNode) {//6
-                    InvokeDynamicInsnNode fANode = (InvokeDynamicInsnNode) aNode;
-                    replace(fANode.desc).ifPresent(desc -> {
-                        changed.set(true);
-                        fANode.desc = desc;
-                    });
-                    replace(fANode.name).ifPresent(name -> {
-                        changed.set(true);
-                        fANode.name = name;
-                    });
-                } else if (aNode instanceof MethodInsnNode) {//5
-                    MethodInsnNode fANode = (MethodInsnNode) aNode;
-                    replace(fANode.desc).ifPresent(desc -> {
-                        changed.set(true);
-                        fANode.desc = desc;
-                    });
-                    replace(fANode.name).ifPresent(name -> {
-                        changed.set(true);
-                        fANode.name = name;
-                    });
-                    replace(fANode.owner).ifPresent(owner -> {
-                        changed.set(true);
-                        fANode.owner = owner;
-                    });
-                } else if (aNode instanceof MultiANewArrayInsnNode) {//13
-                    MultiANewArrayInsnNode fANode = (MultiANewArrayInsnNode) aNode;
-                    replace(fANode.desc).ifPresent(desc -> {
-                        changed.set(true);
-                        fANode.desc = desc;
-                    });
-                } else if (aNode instanceof TypeInsnNode) {//3
-                    TypeInsnNode fANode = (TypeInsnNode) aNode;
-                    replace(fANode.desc).ifPresent(desc -> {
-                        changed.set(true);
-                        fANode.desc = desc;
-                    });
+                        aNode = aNode.getNext();
+                        //可能であれば型を合わせて置き換える
+                        if (glReplaceSet.contains(fANode.desc)) {
+                            mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
+                                    "net/sistr/littlemaidmodelloader/resource/classloader/GLDummy",
+                                    "dummy",
+                                    fANode.desc));
+                        } else {
+                            mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
+                                    "net/sistr/littlemaidmodelloader/resource/classloader/GLDummy",
+                                    "dummy",
+                                    "()V"));
+                        }
+                        continue;
+                    }
+                    tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
+                    tryReplace(changed, fANode.name, name -> fANode.name = name);
+                    tryReplace(changed, fANode.owner, owner -> fANode.owner = owner);
+                } else if (aNode instanceof MultiANewArrayInsnNode fANode) {//13
+                    tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
+                } else if (aNode instanceof TypeInsnNode fANode) {//3
+                    tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                 }
                 aNode = aNode.getNext();
             }
-        }
+        });
 
         // バイナリコードの書き出し
         if (changed.get()) {
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             cNode.accept(writer);
-            byte[] newClass = writer.toByteArray();
             //必要性が薄い
             //if (LMMLConfig.isDebugMode()) LOGGER.debug("Replaced : " + name);
-            return newClass;
+            return writer.toByteArray();
         }
         return basicClass;
     }
@@ -204,7 +176,7 @@ public class MultiModelClassTransformer {
     /**
      * replaceMapに沿って置き換える
      */
-    private Optional<String> replace(String text) {
+    private void tryReplace(AtomicBoolean changed, String text, Consumer<String> replacer) {
         String newText = null;
         for (Entry<String, String> entry : replaceMap.entrySet()) {
             if ((text + ";").contains(entry.getKey() + ";")) {
@@ -217,7 +189,14 @@ public class MultiModelClassTransformer {
                 //return newText;
             }
         }
-        return Optional.ofNullable(newText);
+        if (newText != null) {
+            changed.set(true);
+            replacer.accept(newText);
+        }
+    }
+
+    private boolean shouldRemove(String text) {
+        return text.endsWith("GL11");
     }
 
 }

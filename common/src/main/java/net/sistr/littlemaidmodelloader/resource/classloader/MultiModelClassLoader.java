@@ -57,7 +57,7 @@ public class MultiModelClassLoader extends URLClassLoader {
         try {
             bytes = IOUtils.toByteArray(inputstream);
         } catch (Exception e) {
-            throw new ClassNotFoundException(className + ":toByteArray[" + e.toString() + "]");
+            throw new ClassNotFoundException(className + ":toByteArray[" + e + "]");
         }
         if (bytes == null) {
             throw new ClassNotFoundException(className + ":bytes");
@@ -67,9 +67,9 @@ public class MultiModelClassLoader extends URLClassLoader {
         try {
             return defineClass(className, transBytes, 0, transBytes.length);
         } catch (Exception e) {
-            throw new ClassNotFoundException(className + ":defineClass_Exception:[" + e.toString() + "]");
+            throw new ClassNotFoundException(className + ":defineClass_Exception:[" + e + "]");
         } catch (Error e) {
-            throw new ClassNotFoundException(className + ":defineClass_Error:[" + e.toString() + "]");
+            throw new ClassNotFoundException(className + ":defineClass_Error:[" + e + "]");
         }
     }
 }
