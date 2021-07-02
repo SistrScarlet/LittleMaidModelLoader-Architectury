@@ -56,7 +56,7 @@ public class LMMultiModelLoader implements LMLoader {
         try {
             return Class.forName(className, true, classLoader);
         } catch (Error e) {
-            throw new ClassNotFoundException(className + ":classForName_Error:[" + e.toString() + "]");
+            throw new ClassNotFoundException(className + ":classForName_Error:[" + e + "]");
         }
     }
 
