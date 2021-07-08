@@ -18,9 +18,9 @@ import java.util.function.Consumer;
  */
 public class MultiModelClassTransformer {
     //private static final Logger LOGGER = LogManager.getLogger();
-    private static final String newPackageString = "net/sistr/littlemaidmodelloader/maidmodel/";
+    private static final String PACKAGE_STRING = "net/sistr/littlemaidmodelloader/maidmodel/";
 
-    private static final Map<String, String> replaceMap = new Object2ObjectOpenHashMap<>() {
+    private static final Map<String, String> CODE_REPLACE_MAP = new Object2ObjectOpenHashMap<>() {
         {
             //継承関係で整理
             //また、未使用っぽいのはコメントアウト
@@ -71,18 +71,47 @@ public class MultiModelClassTransformer {
         }
 
         private void addTransformTarget(String className) {
-            put("MMM_" + className, newPackageString + className);
-            put("mmmlibx/lib/multiModel/model/mc162/" + className, newPackageString + className);
-            put("net/blacklab/lmr/entity/maidmodel/" + className, newPackageString + className);
+            put("MMM_" + className, PACKAGE_STRING + className);
+            put("mmmlibx/lib/multiModel/model/mc162/" + className, PACKAGE_STRING + className);
+            put("net/blacklab/lmr/entity/maidmodel/" + className, PACKAGE_STRING + className);
         }
     };
 
-    private static final Set<String> glReplaceSet = new ObjectOpenHashSet<>() {
+    private static final Set<String> GL_REPLACE_MODEL_RENDERER_SET = new ObjectOpenHashSet<>() {
+        {
+            add("glPushMatrix()V");
+            add("glPopMatrix()V");
+            add("glTranslatef(FFF)V");
+            add("glScalef(FFF)V");
+            add("glRotatef(FFFF)V");
+            add("glColor3f(FFF)V");
+            add("glMatrixMode(I)V");
+            add("glGetFloat(ILjava/nio/FloatBuffer;)V");
+            add("glLoadMatrix(Ljava/nio/FloatBuffer;)V");
+            add("glMultMatrix(Ljava/nio/FloatBuffer;)V");
+            add("glCallList(I)V");
+            add("glEnable(I)V");
+            add("glTexCoord2f(FF)V");
+            add("glNormal3f(FFF)V");
+            add("glVertex3f(FFF)V");
+            add("glPushAttrib(I)V");
+            add("glCullFace(I)V");
+            add("glBegin(I)V");
+            add("glEnd()V");
+            add("glPopAttrib()V");
+            add("glLoadIdentity()V");
+            add("");
+        }
+    };
+
+    private static final Set<String> GL_REPLACE_DUMMY_SET = new ObjectOpenHashSet<>() {
         {
             add("()V");
             add("(I)V");
             add("(FF)V");
             add("(FFF)V");
+            add("(Ljava/nio/FloatBuffer;)V");
+            add("(ILjava/nio/FloatBuffer;)V");
         }
     };
 
@@ -136,13 +165,22 @@ public class MultiModelClassTransformer {
                     if (shouldRemove(fANode.owner)) {
                         changed.set(true);
                         aNode = aNode.getNext();
-                        //可能であれば型を合わせて置き換える
-                        if (glReplaceSet.contains(fANode.desc)) {
+                        //置き換え対象があるならそちらへ
+                        if (GL_REPLACE_MODEL_RENDERER_SET.contains(fANode.name + fANode.desc)) {
+                            mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
+                                    "net/sistr/littlemaidmodelloader/maidmodel/ModelRenderer",
+                                    fANode.name,
+                                    fANode.desc));
+                        } else if (GL_REPLACE_DUMMY_SET.contains(fANode.desc)) {
+                            System.out.println(cNode.name + " : " + fANode.name + fANode.desc);
+                            //置き換え対象が無いならダミーに置き換え
                             mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
                                     "net/sistr/littlemaidmodelloader/resource/classloader/GLDummy",
                                     "dummy",
                                     fANode.desc));
                         } else {
+                            System.out.println(cNode.name + " : " + fANode.name + fANode.desc);
+                            //型の合わないメソッドは引数無しメソッドに書き換えるが、多分失敗する
                             mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
                                     "net/sistr/littlemaidmodelloader/resource/classloader/GLDummy",
                                     "dummy",
@@ -178,7 +216,7 @@ public class MultiModelClassTransformer {
      */
     private void tryReplace(AtomicBoolean changed, String text, Consumer<String> replacer) {
         String newText = null;
-        for (Entry<String, String> entry : replaceMap.entrySet()) {
+        for (Entry<String, String> entry : CODE_REPLACE_MAP.entrySet()) {
             if ((text + ";").contains(entry.getKey() + ";")) {
                 text = text.replace(entry.getKey(), entry.getValue());
                 newText = text;
