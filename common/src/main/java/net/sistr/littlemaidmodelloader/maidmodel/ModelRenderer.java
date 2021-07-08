@@ -3,9 +3,10 @@ package net.sistr.littlemaidmodelloader.maidmodel;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
-import net.minecraft.util.math.Matrix3f;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec2f;
+import net.sistr.littlemaidmodelloader.client.util.Matrix4fAccessor;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMVertexConsumer;
 import org.lwjgl.BufferUtils;
@@ -16,15 +17,173 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-//描画周りに大幅な仕様変更がなされたため、互換性の喪失を伴う変更を加えた
-//できる限りメソッドと変数を維持しているが、機能していないメソッドも多い
-//不要または機能不全なメソッドのうち、privateまたはprotectedなメソッドや変数は全部コメントアウトしている
-//旧バージョンで既にコメントアウト済みのものは削除している
-
-//GL11.glCallList(displayList);はrenderに置き換えている
-//元の仕様ではlistにキャッシュしてこのメソッドで呼び出していた(多分)
-//現在の仕様ではIVertexBuilderに頂点を追加するだけで自動的にキャッシュされる(多分)
 public class ModelRenderer {
+
+    //17~追加
+
+    public static ModelRenderer modelRenderer;
+    public static int mode = GL11.GL_MODELVIEW;
+    public float scale = 0.0625F;
+
+    public static void glPushMatrix() {
+        if (mode == GL11.GL_MODELVIEW) {
+            matrixStack.push();
+        }
+    }
+
+    public static void glPopMatrix() {
+        if (mode == GL11.GL_MODELVIEW) {
+            matrixStack.pop();
+        }
+    }
+
+    public static void glTranslatef(float x, float y, float z) {
+        if (mode == GL11.GL_MODELVIEW) {
+            matrixStack.translate(x, y, z);
+        }
+    }
+
+    public static void glScalef(float x, float y, float z) {
+        if (mode == GL11.GL_MODELVIEW) {
+            matrixStack.scale(x, y, z);
+        }
+    }
+
+    public static void glRotatef(float deg, float x, float y, float z) {
+        if (mode == GL11.GL_MODELVIEW) {
+            if (x == 1F) {
+                matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(deg));
+            } else if (y == 1F) {
+                matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(deg));
+            } else if (z == 1F) {
+                matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(deg));
+            }
+
+        }
+    }
+
+    public static void glColor3f(float red, float green, float blue) {
+        ModelRenderer.red = red;
+        ModelRenderer.green = green;
+        ModelRenderer.blue = blue;
+    }
+
+    public static void glMatrixMode(int mode) {
+        ModelRenderer.mode = mode;
+    }
+
+    //現在のマトリックスを書き込む
+    public static void glGetFloat(int mode, FloatBuffer buf) {
+        if (mode == GL11.GL_MODELVIEW_MATRIX) {
+            matrixStack.peek().getModel().writeToBuffer(buf);
+        }
+    }
+
+    //バッファを読み込む
+    public static void glLoadMatrix(FloatBuffer buf) {
+        if (mode == GL11.GL_MODELVIEW) {
+            ((Matrix4fAccessor) (Object) matrixStack.peek().getModel()).readColumnMajor(buf);
+        }
+    }
+
+    public static void glMultMatrix(FloatBuffer buf) {
+        if (mode == GL11.GL_MODELVIEW) {
+            //透過バグは直るが当然位置がおかしくなる
+            //float num = buf.get(7);
+            //buf.put(7, num * 0);
+            Matrix4f matrix4f = new Matrix4f();
+            ((Matrix4fAccessor) (Object) matrix4f).readColumnMajor(buf);
+            matrixStack.peek().getModel().multiply(matrix4f);
+            //buf.put(7, num);
+        }
+    }
+
+    private static int pack(int x, int y) {
+        return y * 4 + x;
+    }
+
+    public static void glCallList(int i) {
+        for (ModelBoxBase boxBase : modelRenderer.cubeList) {
+            boxBase.render(matrixStack, buffer, light, overlay, red, green, blue, alpha, modelRenderer.scale);
+        }
+    }
+
+    public static void glLoadIdentity() {
+        matrixStack.peek().getModel().loadIdentity();
+    }
+
+    private static int renderMode;
+    private static ModelBoxBase.PositionTextureVertex vertexCurrent;
+    private static ModelBoxBase.PositionTextureVertex vertexPrev1;
+    private static ModelBoxBase.PositionTextureVertex vertexPrev2;
+    private static Vector3f pos;
+    private static Vec2f tex;
+
+    public static void glBegin(int i) {
+        if (i == GL11.GL_TRIANGLE_STRIP) {
+            renderMode = i;
+        }
+    }
+
+    public static void glEnd() {
+        if (renderMode == GL11.GL_TRIANGLE_STRIP) {
+            vertexCurrent = null;
+            vertexPrev1 = null;
+            vertexPrev2 = null;
+            pos = null;
+            tex = null;
+        }
+        renderMode = 0;
+    }
+
+    public static void glVertex3f(float x, float y, float z) {
+        if (renderMode == GL11.GL_TRIANGLE_STRIP) {
+            pos = new Vector3f(x, y, z);
+            combine();
+        }
+
+    }
+
+    public static void glNormal3f(float f, float f2, float f3) {
+
+    }
+
+    public static void glTexCoord2f(float u, float v) {
+        if (renderMode == GL11.GL_TRIANGLE_STRIP) {
+            tex = new Vec2f(u, v);
+            combine();
+        }
+    }
+
+    private static void combine() {
+        if (tex != null && pos != null) {
+            vertexPrev2 = vertexPrev1;
+            vertexPrev1 = vertexCurrent;
+            vertexCurrent = new ModelBoxBase.PositionTextureVertex(pos, tex.x, tex.y);
+            pos = null;
+            tex = null;
+            if (vertexPrev2 != null) {
+                ModelBoxBase.TexturedQuad quad = new ModelBoxBase.TexturedQuad(
+                        new ModelBoxBase.PositionTextureVertex[]{vertexPrev2, vertexPrev1, vertexCurrent, vertexCurrent});
+                quad.draw(matrixStack, buffer, light, overlay, red, green, blue, alpha, 1F);
+            }
+        }
+    }
+
+    public static void glPushAttrib(int i) {
+    }
+
+    public static void glPopAttrib() {
+    }
+
+    public static void glCullFace(int i) {
+
+    }
+
+    public static void glEnable(int i) {
+        //32826 GL_ALPHA?
+        //GL11.glEnable(i);
+    }
 
     //15~追加
 
@@ -33,106 +192,23 @@ public class ModelRenderer {
     //引数の不足を補う
     public static MatrixStack matrixStack;
     public static VertexConsumer buffer;
-    public static int packedLight;
-    public static int packedOverlay;
+    public static int light;
+    public static int overlay;
     public static float red;
     public static float green;
     public static float blue;
     public static float alpha;
 
-    public static void setParam(MMMatrixStack matrixStack, MMVertexConsumer buffer, int packedLight, int packedOverlay,
+    public static void setParam(MMMatrixStack matrixStack, MMVertexConsumer buffer, int light, int overlay,
                                 float red, float green, float blue, float alpha) {
         ModelRenderer.matrixStack = matrixStack.getVanillaMatrixStack();
         ModelRenderer.buffer = buffer.getVanillaVertexConsumer();
-        ModelRenderer.packedLight = packedLight;
-        ModelRenderer.packedOverlay = packedOverlay;
+        ModelRenderer.light = light;
+        ModelRenderer.overlay = overlay;
         ModelRenderer.red = red;
         ModelRenderer.green = green;
         ModelRenderer.blue = blue;
         ModelRenderer.alpha = alpha;
-
-    }
-
-    //15のModelRendererからコピペしたメソッドたち
-    public void render(MatrixStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn) {
-        this.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    public void render(MatrixStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        if (isHidden) return;
-        if (!showModel) return;
-
-        matrixStackIn.push();
-        matrixStackIn.translate(offsetX, offsetY, offsetZ);
-
-        matrixStackIn.translate(this.rotationPointX / 16.0F, this.rotationPointY / 16.0F, this.rotationPointZ / 16.0F);
-        setRotation();
-
-        matrixStackIn.push();
-        matrixStackIn.scale(scaleX, scaleY, scaleZ);
-        this.doRender(matrixStackIn.peek(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        matrixStackIn.pop();
-
-        if (this.childModels != null) {
-            for (ModelRenderer modelrenderer : this.childModels) {
-                modelrenderer.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            }
-        }
-
-        matrixStackIn.pop();
-    }
-
-    private void doRender(MatrixStack.Entry matrixEntryIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        Matrix4f matrix4f = matrixEntryIn.getModel();
-        Matrix3f matrix3f = matrixEntryIn.getNormal();
-
-        for (ModelBoxBase modelBoxBase : this.cubeList) {
-            for (ModelBoxBase.TexturedQuad quad : modelBoxBase.quadList) {
-                //本来であればnormalはコンストラクタで必ず指定されるため、コピーだけで済むが、
-                //互換性のためにnormalを@Nullableにしているため、ここで計算する
-                if (quad.normal == null) {
-                    Vector3f n1 = quad.vertexPositions[0].position.copy();
-                    Vector3f n2 = quad.vertexPositions[2].position.copy();
-                    n1.subtract(quad.vertexPositions[1].position);
-                    n2.subtract(quad.vertexPositions[1].position);
-                    n2.cross(n1);
-                    n2.normalize();
-                    quad.normal = n2;
-                }
-                Vector3f normal = quad.normal.copy();
-                normal.transform(matrix3f);
-                float normalX = normal.getX();
-                float normalY = normal.getY();
-                float normalZ = normal.getZ();
-
-                for (int i = 0; i < 4; ++i) {
-                    ModelBoxBase.PositionTextureVertex vertex = quad.vertexPositions[i];
-                    float f3 = vertex.position.getX() / 16.0F;
-                    float f4 = vertex.position.getY() / 16.0F;
-                    float f5 = vertex.position.getZ() / 16.0F;
-                    Vector4f vector4f = new Vector4f(f3, f4, f5, 1.0F);
-                    vector4f.transform(matrix4f);
-                    bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(),
-                            red, green, blue, alpha, vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn,
-                            normalX, normalY, normalZ);
-                }
-            }
-        }
-
-    }
-
-    //互換性の維持のため、旧renderメソッドを上書きしている。
-    //もちろんちゃんと動く
-    //GL11.glCallList(displayList);での呼び出し時にも代わりに呼び出す
-    public void render(float par1, boolean pIsRender) {
-        if (!pIsRender || !isRendering) {
-            return;
-        }
-        this.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-    }
-
-    public void render(float par1) {
-        this.render(par1, true);
     }
 
     //15~追加ココマデ
@@ -148,8 +224,8 @@ public class ModelRenderer {
     public float rotateAngleX;
     public float rotateAngleY;
     public float rotateAngleZ;
-    //protected boolean compiled;
-    //protected int displayList;
+    protected boolean compiled;
+    protected int displayList;
     public boolean mirror;
     public boolean showModel;
     public boolean isHidden;
@@ -161,7 +237,7 @@ public class ModelRenderer {
     public List<ModelBoxBase> cubeList;
     public List<ModelRenderer> childModels;
     public final String boxName;
-    //protected ModelBase baseModel;
+    protected ModelBase baseModel;
     public ModelRenderer pearent;
     public float offsetX;
     public float offsetY;
@@ -170,10 +246,10 @@ public class ModelRenderer {
     public float scaleY;
     public float scaleZ;
 
+
     public static final float radFactor = 180F / (float) Math.PI;
     public static final float degFactor = (float) Math.PI / 180F;
 
-    // SmartMovingに合わせるために名称の変更があるかもしれません。
     public int rotatePriority;
     public static final int RotXYZ = 0;
     public static final int RotXZY = 1;
@@ -182,29 +258,30 @@ public class ModelRenderer {
     public static final int RotZXY = 4;
     public static final int RotZYX = 5;
 
-    //protected ItemStack itemstack;
+    protected ItemStack itemstack;
 
     public boolean adjust;
     public FloatBuffer matrix;
     public boolean isInvertX;
 
+
     public ModelRenderer(ModelBase pModelBase, String pName) {
         textureWidth = 64.0F;
         textureHeight = 32.0F;
-        //compiled = false;
-        //displayList = 0;
+        compiled = false;
+        displayList = 0;
         mirror = false;
         showModel = true;
         isHidden = false;
         isRendering = true;
         cubeList = new ArrayList<>();
-        //baseModel = pModelBase;
+        baseModel = pModelBase;
         pModelBase.boxList.add(this);
         boxName = pName;
         setTextureSize(pModelBase.textureWidth, pModelBase.textureHeight);
 
         rotatePriority = RotXYZ;
-        //itemstack = ItemStack.EMPTY;
+        itemstack = null;
         adjust = true;
         matrix = BufferUtils.createFloatBuffer(16);
         isInvertX = false;
@@ -214,7 +291,6 @@ public class ModelRenderer {
         scaleZ = 1.0F;
 
         pearent = null;
-
     }
 
     public ModelRenderer(ModelBase pModelBase, int px, int py) {
@@ -256,8 +332,6 @@ public class ModelRenderer {
         return this;
     }
 
-    //動作保証なし
-    @Deprecated
     public ModelRenderer addBox(String pName, float pX, float pY, float pZ,
                                 int pWidth, int pHeight, int pDepth) {
         addParts(ModelBox.class, pName, pX, pY, pZ, pWidth, pHeight, pDepth, 0.0F);
@@ -283,64 +357,86 @@ public class ModelRenderer {
         return this;
     }
 
-    //動作保証無し
-    @Deprecated
+    public void render(float par1, boolean pIsRender) {
+        modelRenderer = this;
+
+        if (isHidden) return;
+        if (!showModel) return;
+
+        if (!compiled) {
+            compileDisplayList(par1);
+        }
+
+        ModelRenderer.glPushMatrix();
+        ModelRenderer.glTranslatef(offsetX, offsetY, offsetZ);
+
+        if (rotationPointX != 0.0F || rotationPointY != 0.0F || rotationPointZ != 0.0F) {
+            ModelRenderer.glTranslatef(rotationPointX * par1, rotationPointY * par1, rotationPointZ * par1);
+        }
+        if (rotateAngleX != 0.0F || rotateAngleY != 0.0F || rotateAngleZ != 0.0F) {
+            setRotation();
+        }
+        renderObject(par1, pIsRender);
+        ModelRenderer.glPopMatrix();
+    }
+
+    public void render(float par1) {
+        render(par1, true);
+    }
+
     public void renderWithRotation(float par1) {
         if (isHidden) return;
         if (!showModel) return;
 
-        //if (!compiled) {
-        //    compileDisplayList(par1);
-        //}
+        if (!compiled) {
+            compileDisplayList(par1);
+        }
 
-        matrixStack.push();
-        matrixStack.translate(rotationPointX * par1, rotationPointY * par1, rotationPointZ * par1);
+        ModelRenderer.glPushMatrix();
+        ModelRenderer.glTranslatef(rotationPointX * par1, rotationPointY * par1, rotationPointZ * par1);
 
         setRotation();
 
-        //GL11.glCallList(displayList);
-        render(par1);
-        matrixStack.pop();
+        ModelRenderer.glCallList(displayList);
+        ModelRenderer.glPopMatrix();
     }
 
-    //動作保証無し
-    @Deprecated
     public void postRender(float par1) {
         if (isHidden) return;
         if (!showModel) return;
 
-        //if (!compiled) {
-        //    compileDisplayList(par1);
-        //}
+        if (!compiled) {
+            compileDisplayList(par1);
+        }
 
         if (pearent != null) {
             pearent.postRender(par1);
         }
 
-        matrixStack.translate(offsetX, offsetY, offsetZ);
+        ModelRenderer.glTranslatef(offsetX, offsetY, offsetZ);
 
         if (rotationPointX != 0.0F || rotationPointY != 0.0F || rotationPointZ != 0.0F) {
-            matrixStack.translate(rotationPointX * par1, rotationPointY * par1, rotationPointZ * par1);
+            ModelRenderer.glTranslatef(rotationPointX * par1, rotationPointY * par1, rotationPointZ * par1);
         }
         if (rotateAngleX != 0.0F || rotateAngleY != 0.0F || rotateAngleZ != 0.0F) {
             setRotation();
         }
     }
 
-    /*
     protected void compileDisplayList(float par1) {
-        displayList = GLAllocation.generateDisplayLists(1);
+        /*displayList = GLAllocation.generateDisplayLists(1);
         GL11.glNewList(displayList, GL11.GL_COMPILE);
-        Tessellator tessellator = Tessellator.getInstance();
+        Tessellator tessellator = Tessellator.instance;
 
-        for (ModelBoxBase modelBoxBase : cubeList) {
-            modelBoxBase.render(tessellator, par1);
+        for (int i = 0; i < cubeList.size(); i++) {
+            cubeList.get(i).render(tessellator, par1);
         }
 
-        GL11.glEndList();
+        GL11.glEndList();*/
         compiled = true;
+
+        scale = par1;
     }
-     */
 
     public ModelRenderer setTextureSize(int pWidth, int pHeight) {
         textureWidth = pWidth;
@@ -378,8 +474,6 @@ public class ModelRenderer {
         return lobject;
     }
 
-    //動作保証無し
-    @Deprecated
     public ModelRenderer addParts(Class<? extends ModelBoxBase> pModelBoxBase, String pName, Object... pArg) {
         pName = boxName + "." + pName;
         //TextureOffset ltextureoffset = baseModel.getTextureOffset(pName);
@@ -425,8 +519,6 @@ public class ModelRenderer {
         return this;
     }
 
-    //動作保証なし
-    @Deprecated
     public ModelRenderer addPlate(String pName, float pX, float pY, float pZ,
                                   int pWidth, int pHeight, int pFacePlane) {
         addParts(ModelPlate.class, pName, pX, pY, pZ, pWidth, pHeight, pFacePlane, 0.0F);
@@ -438,123 +530,20 @@ public class ModelRenderer {
      */
     public void clearCubeList() {
         cubeList.clear();
-        //compiled = false;
+        compiled = false;
         if (childModels != null) {
             childModels.clear();
         }
     }
 
-    //ここら辺のメソッドは、アイテム保持のレイヤー化により元から削除予定だったらしい
-    //動作保証無し
-    @Deprecated
-    public boolean renderItems(ModelMultiBase pModelMulti, IModelCaps pEntityCaps, boolean pRealBlock, int pIndex) {
-        //ItemStack[] litemstacks = (ItemStack[]) ModelCapsHelper.getCapsValue(pEntityCaps, caps_Items);
-        //if (litemstacks == null) return false;
-        //UseAction[] lactions = (UseAction[]) ModelCapsHelper.getCapsValue(pEntityCaps, caps_Actions);
-        //LivingEntity lentity = (LivingEntity) pEntityCaps.getCapsValue(caps_Entity);
+    //虚無
 
-        //renderItems(lentity, pModelMulti.render, pRealBlock, lactions[pIndex], litemstacks[pIndex]);
+    public boolean renderItems(ModelMultiBase pModelMulti, IModelCaps pEntityCaps, boolean pRealBlock, int pIndex) {
         return true;
     }
 
-    //動作保証無し
-    @Deprecated
     public void renderItemsHead(ModelMultiBase pModelMulti, IModelCaps pEntityCaps) {
-        //ItemStack lis = (ItemStack) pEntityCaps.getCapsValue(caps_HeadMount);
-        //LivingEntity lentity = (LivingEntity) pEntityCaps.getCapsValue(caps_Entity);
-
-        //renderItems(lentity, pModelMulti.render, true, null, lis);
     }
-
-    /*
-    protected void renderItems(LivingEntity pEntityLiving, EntityRenderer<?> pRender,
-                               boolean pRealBlock, UseAction pAction, ItemStack pItemStack) {
-        itemstack = pItemStack;
-        renderItems(pEntityLiving, pRender, pRealBlock, pAction);
-    }
-
-    protected void renderItems(LivingEntity pEntityLiving, EntityRenderer<?> pRender, boolean pRealBlock, UseAction pAction) {
-        if (itemstack.isEmpty()) return;
-
-        // アイテムのレンダリング
-        GL11.glPushMatrix();
-        Item litem = itemstack.getItem();
-
-        // アイテムの種類による表示位置の補正
-        if (adjust) {
-            // GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
-
-            if (pRealBlock && (litem instanceof BlockItem) && !(litem instanceof SkullItem)) {
-                float f2 = 0.625F;
-                GL11.glScalef(f2, -f2, -f2);
-                GL11.glRotatef(270F, 0F, 1F, 0);
-            } else if (pRealBlock && (litem instanceof SkullItem)) {
-                float f2 = 1.0625F;
-                GL11.glScalef(f2, -f2, -f2);
-            } else {
-                float var6;
-				if (litem instanceof BowItem) {
-                    var6 = 0.625F;
-                    GL11.glTranslatef(-0.05F, 0.125F, 0.3125F);
-                    GL11.glRotatef(-20.0F, 0.0F, 1.0F, 0.0F);
-                    GL11.glScalef(var6, -var6, var6);
-                    GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
-                    GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-                } else if (litem.isFull3D()) {
-                    var6 = 0.625F;
-
-                    if (pAction == UseAction.BLOCK) {
-                        GL11.glTranslatef(0.05F, 0.0F, -0.1F);
-                        GL11.glRotatef(-50.0F, 0.0F, 1.0F, 0.0F);
-                        GL11.glRotatef(-10.0F, 1.0F, 0.0F, 0.0F);
-                        GL11.glRotatef(-60.0F, 0.0F, 0.0F, 1.0F);
-                    }
-
-                    GL11.glTranslatef(0.0F, 0.1875F, 0.1F);
-                    GL11.glScalef(var6, -var6, var6);
-                    GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
-                    GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-                } else {
-                    var6 = 0.375F;
-                    GL11.glTranslatef(0.15F, 0.15F, -0.05F);
-                    // GL11.glTranslatef(0.25F, 0.1875F, -0.1875F);
-                    GL11.glScalef(var6, var6, var6);
-                    GL11.glRotatef(60.0F, 0.0F, 0.0F, 1.0F);
-                    GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
-                    GL11.glRotatef(20.0F, 0.0F, 0.0F, 1.0F);
-                }
-            }
-        }
-
-        // 描画
-        if (pRealBlock && litem instanceof SkullItem) {
-            String lsowner = "";
-            if (itemstack.hasTag() && itemstack.getTag().contains("SkullOwner")) {
-                lsowner = itemstack.getTag().getString("SkullOwner");
-            }
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            //RendererHelper.renderSkeletonHead(TileEntitySkullRenderer.instance, -0.5F, 0.0F, -0.5F, 1, 180.0F, itemstack.getItemDamage(), lsowner);
-        } else if (pRealBlock && litem instanceof BlockItem) {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-            int var4 = (int) pEntityLiving.getBrightness();
-            int var5 = var4 % 65536;
-            int var6 = var4 / 65536;
-            //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, var5 / 1.0F, var6 / 1.0F);
-            GL11.glEnable(GL11.GL_CULL_FACE);
-            renderBlock(itemstack);
-
-            GL11.glDisable(GL11.GL_CULL_FACE);
-        }
-
-        GL11.glPopMatrix();
-    }
-
-    @Deprecated
-    private void renderBlock(ItemStack par2ItemStack)
-    {
-    }
-    */
 
     /**
      * 回転変換を行う順序を指定。
@@ -640,18 +629,17 @@ public class ModelRenderer {
         }
     }
 
-    /*
     /**
      * 内部実行用、レンダリング部分。
+     */
     protected void renderObject(float par1, boolean pRendering) {
         // レンダリング、あと子供も
-        GL11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, matrix);
+        ModelRenderer.glGetFloat(GL11.GL_MODELVIEW_MATRIX, matrix);
         if (pRendering && isRendering) {
-            GL11.glPushMatrix();
-            GL11.glScalef(scaleX, scaleY, scaleZ);
-            //GL11.glCallList(displayList);
-            render(par1, pRendering);
-            GL11.glPopMatrix();
+            ModelRenderer.glPushMatrix();
+            ModelRenderer.glScalef(scaleX, scaleY, scaleZ);
+            ModelRenderer.glCallList(displayList);
+            ModelRenderer.glPopMatrix();
         }
 
         if (childModels != null) {
@@ -660,21 +648,18 @@ public class ModelRenderer {
             }
         }
     }
-    */
 
     /**
      * パーツ描画時点のマトリクスを設定する。 これ以前に設定されたマトリクスは破棄される。
      */
-    //よくわかってない故matrixStackへの置き換えすらしていない
-    //動作保証なし
-    @Deprecated
     public ModelRenderer loadMatrix() {
-        GL11.glLoadMatrixf(matrix);
+        ModelRenderer.glLoadMatrix(matrix);
         if (isInvertX) {
-            GL11.glScalef(-1F, 1F, 1F);
+            ModelRenderer.glScalef(-1F, 1F, 1F);
         }
         return this;
     }
+
 
     // ゲッター、セッター
 

@@ -21,14 +21,14 @@ public class ModelBox extends ModelBoxBase {
         posX1 = pX;
         posY1 = pY;
         posZ1 = pZ;
-        posX2 = pX + pW;
-        posY2 = pY + pH;
-        posZ2 = pZ + pD;
+        posX2 = pX + (float) pW;
+        posY2 = pY + (float) pH;
+        posZ2 = pZ + (float) pD;
         vertexPositions = new PositionTextureVertex[8];
         quadList = new TexturedQuad[6];
-        float lx = pX + pW;
-        float ly = pY + pH;
-        float lz = pZ + pD;
+        float lx = pX + (float) pW;
+        float ly = pY + (float) pH;
+        float lz = pZ + (float) pD;
         pX -= pSize;
         pY -= pSize;
         pZ -= pSize;
@@ -65,13 +65,11 @@ public class ModelBox extends ModelBoxBase {
         quadList[4] = new TexturedQuad(new PositionTextureVertex[]{lwyz, lxyz, lxhz, lwhz}, pTexX + pD, pTexY + pD, pTexX + pD + pW, pTexY + pD + pH, pMRenderer.textureWidth, pMRenderer.textureHeight);
         quadList[5] = new TexturedQuad(new PositionTextureVertex[]{lxyd, lwyd, lwhd, lxhd}, pTexX + pD + pW + pD, pTexY + pD, pTexX + pD + pW + pD + pW, pTexY + pD + pH, pMRenderer.textureWidth, pMRenderer.textureHeight);
 
-
         if (pMRenderer.mirror) {
             for (TexturedQuad texturedQuad : this.quadList) {
                 texturedQuad.flipFace();
             }
         }
-
     }
 
 }

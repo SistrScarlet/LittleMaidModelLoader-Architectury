@@ -18,3 +18,4 @@ classes/
 .settings
 *.launch
 /run_server/
+/.architectury-transformer/
