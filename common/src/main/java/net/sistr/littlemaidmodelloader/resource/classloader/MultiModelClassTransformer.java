@@ -154,14 +154,17 @@ public class MultiModelClassTransformer {
 
             AbstractInsnNode aNode = mNode.instructions.getFirst();
             while (aNode != null) {
-                if (aNode instanceof FieldInsnNode fANode) {//4
+                if (aNode instanceof FieldInsnNode) {//4
+                    FieldInsnNode fANode = (FieldInsnNode) aNode;
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                     tryReplace(changed, fANode.name, name -> fANode.name = name);
                     tryReplace(changed, fANode.owner, owner -> fANode.owner = owner);
-                } else if (aNode instanceof InvokeDynamicInsnNode fANode) {//6
+                } else if (aNode instanceof InvokeDynamicInsnNode) {//6
+                    InvokeDynamicInsnNode fANode = (InvokeDynamicInsnNode) aNode;
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                     tryReplace(changed, fANode.name, name -> fANode.name = name);
-                } else if (aNode instanceof MethodInsnNode fANode) {//5
+                } else if (aNode instanceof MethodInsnNode) {//5
+                    MethodInsnNode fANode = (MethodInsnNode) aNode;
                     if (shouldRemove(fANode.owner)) {
                         changed.set(true);
                         aNode = aNode.getNext();
@@ -191,9 +194,11 @@ public class MultiModelClassTransformer {
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                     tryReplace(changed, fANode.name, name -> fANode.name = name);
                     tryReplace(changed, fANode.owner, owner -> fANode.owner = owner);
-                } else if (aNode instanceof MultiANewArrayInsnNode fANode) {//13
+                } else if (aNode instanceof MultiANewArrayInsnNode) {//13
+                    MultiANewArrayInsnNode fANode = (MultiANewArrayInsnNode) aNode;
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
-                } else if (aNode instanceof TypeInsnNode fANode) {//3
+                } else if (aNode instanceof TypeInsnNode) {//3
+                    TypeInsnNode fANode = (TypeInsnNode) aNode;
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                 }
                 aNode = aNode.getNext();
