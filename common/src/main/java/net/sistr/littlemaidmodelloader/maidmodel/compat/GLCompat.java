@@ -1,10 +1,9 @@
 package net.sistr.littlemaidmodelloader.maidmodel.compat;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec2f;
-import net.sistr.littlemaidmodelloader.client.util.Matrix4fAccessor;
+import net.minecraft.util.math.Vec3f;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelBoxBase;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelRenderer;
 import org.lwjgl.opengl.GL11;
@@ -28,7 +27,7 @@ public final class GLCompat {
     private static ModelBoxBase.PositionTextureVertex vertexCurrent;
     private static ModelBoxBase.PositionTextureVertex vertexPrev1;
     private static ModelBoxBase.PositionTextureVertex vertexPrev2;
-    private static Vector3f pos;
+    private static Vec3f pos;
     private static Vec2f tex;
 
     public static void glPushMatrix() {
@@ -66,20 +65,20 @@ public final class GLCompat {
     public static void glRotatef(float deg, float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
             if (x == 1F) {
-                ModelRenderer.matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(deg));
+                ModelRenderer.matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(deg));
             } else if (y == 1F) {
-                ModelRenderer.matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(deg));
+                ModelRenderer.matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(deg));
             } else if (z == 1F) {
-                ModelRenderer.matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(deg));
+                ModelRenderer.matrixStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(deg));
             }
 
         } else if (mode == GL11.GL_TEXTURE) {
             if (x == 1F) {
-                textureStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(deg));
+                textureStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(deg));
             } else if (y == 1F) {
-                textureStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(deg));
+                textureStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(deg));
             } else if (z == 1F) {
-                textureStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(deg));
+                textureStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(deg));
             }
         }
     }
@@ -97,16 +96,16 @@ public final class GLCompat {
     //現在のマトリックスを書き込む
     public static void glGetFloat(int mode, FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW_MATRIX) {
-            ModelRenderer.matrixStack.peek().getModel().writeToBuffer(buf);
+            ModelRenderer.matrixStack.peek().getModel().writeColumnMajor(buf);
         }
     }
 
     //バッファを読み込む
     public static void glLoadMatrix(FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW) {
-            ((Matrix4fAccessor) (Object) ModelRenderer.matrixStack.peek().getModel()).readColumnMajor(buf);
+            ModelRenderer.matrixStack.peek().getModel().readColumnMajor(buf);
         } else if (mode == GL11.GL_TEXTURE) {
-            ((Matrix4fAccessor) (Object) textureStack.peek().getModel()).readColumnMajor(buf);
+            textureStack.peek().getModel().readColumnMajor(buf);
         }
     }
 
@@ -116,12 +115,12 @@ public final class GLCompat {
             //float num = buf.get(7);
             //buf.put(7, num * 0);
             Matrix4f matrix4f = new Matrix4f();
-            ((Matrix4fAccessor) (Object) matrix4f).readColumnMajor(buf);
+            matrix4f.readColumnMajor(buf);
             ModelRenderer.matrixStack.peek().getModel().multiply(matrix4f);
             //buf.put(7, num);
         } else if (mode == GL11.GL_TEXTURE) {
             Matrix4f matrix4f = new Matrix4f();
-            ((Matrix4fAccessor) (Object) matrix4f).readColumnMajor(buf);
+            matrix4f.readColumnMajor(buf);
             textureStack.peek().getModel().multiply(matrix4f);
         }
     }
@@ -159,7 +158,7 @@ public final class GLCompat {
 
     public static void glVertex3f(float x, float y, float z) {
         if (renderMode == GL11.GL_TRIANGLE_STRIP) {
-            pos = new Vector3f(x, y, z);
+            pos = new Vec3f(x, y, z);
             combine();
         }
 
