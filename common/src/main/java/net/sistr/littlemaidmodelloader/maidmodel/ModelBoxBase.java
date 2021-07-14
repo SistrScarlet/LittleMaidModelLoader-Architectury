@@ -31,8 +31,8 @@ public abstract class ModelBoxBase {
     }
 
     public final void render(MatrixStack matrices, VertexConsumer buffer,
-                       int light, int overlay, float red, float green, float blue, float alpha,
-                       float scale) {
+                             int light, int overlay, float red, float green, float blue, float alpha,
+                             float scale) {
         for (TexturedQuad texturedQuad : quadList) {
             texturedQuad.draw(matrices, buffer, light, overlay, red, green, blue, alpha, scale);
         }
@@ -107,7 +107,7 @@ public abstract class ModelBoxBase {
         }
 
         public final void draw(MatrixStack matrices, VertexConsumer buffer,
-                         int light, int overlay, float red, float green, float blue, float alpha, float scale) {
+                               int light, int overlay, float red, float green, float blue, float alpha, float scale) {
             MatrixStack.Entry entry = matrices.peek();
             Matrix4f matrix4f = entry.getModel();
             Matrix3f matrix3f = entry.getNormal();
@@ -132,9 +132,14 @@ public abstract class ModelBoxBase {
                 Vector4f pos = new Vector4f(x, y, z, 1.0F);
                 pos.transform(matrix4f);
 
+                Vector4f uv = new Vector4f(vertex.texturePositionX, vertex.texturePositionY, 0, 1.0F);
+                if (!ModelRenderer.textureStack.isEmpty()) {
+                    uv.transform(ModelRenderer.textureStack.peek().getModel());
+                }
+
                 buffer.vertex(pos.getX(), pos.getY(), pos.getZ(),
                         red, green, blue, alpha,
-                        vertex.texturePositionX, vertex.texturePositionY,
+                        uv.getX(), uv.getY(),
                         overlay, light, normalX, normalY, normalZ);
             }
 
