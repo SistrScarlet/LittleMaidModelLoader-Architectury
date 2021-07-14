@@ -22,29 +22,38 @@ public class ModelRenderer {
 
     public static ModelRenderer modelRenderer;
     public static int mode = GL11.GL_MODELVIEW;
+    public static MatrixStack textureStack = new MatrixStack();
     public float scale = 0.0625F;
 
     public static void glPushMatrix() {
         if (mode == GL11.GL_MODELVIEW) {
             matrixStack.push();
+        } else if (mode == GL11.GL_TEXTURE) {
+            textureStack.push();
         }
     }
 
     public static void glPopMatrix() {
         if (mode == GL11.GL_MODELVIEW) {
             matrixStack.pop();
+        } else if (mode == GL11.GL_TEXTURE) {
+            textureStack.pop();
         }
     }
 
     public static void glTranslatef(float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
             matrixStack.translate(x, y, z);
+        } else if (mode == GL11.GL_TEXTURE) {
+            textureStack.translate(x, y, z);
         }
     }
 
     public static void glScalef(float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
             matrixStack.scale(x, y, z);
+        } else if (mode == GL11.GL_TEXTURE) {
+            textureStack.scale(x, y, z);
         }
     }
 
@@ -58,6 +67,14 @@ public class ModelRenderer {
                 matrixStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(deg));
             }
 
+        } else if (mode == GL11.GL_TEXTURE) {
+            if (x == 1F) {
+                textureStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(deg));
+            } else if (y == 1F) {
+                textureStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(deg));
+            } else if (z == 1F) {
+                textureStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(deg));
+            }
         }
     }
 
@@ -82,6 +99,8 @@ public class ModelRenderer {
     public static void glLoadMatrix(FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW) {
             matrixStack.peek().getModel().readColumnMajor(buf);
+        } else if (mode == GL11.GL_TEXTURE) {
+            textureStack.peek().getModel().readColumnMajor(buf);
         }
     }
 
@@ -94,6 +113,10 @@ public class ModelRenderer {
             matrix4f.readColumnMajor(buf);
             matrixStack.method_34425(matrix4f);
             //buf.put(7, num);
+        } else if (mode == GL11.GL_TEXTURE) {
+            Matrix4f matrix4f = new Matrix4f();
+            matrix4f.readColumnMajor(buf);
+            textureStack.peek().getModel().multiply(matrix4f);
         }
     }
 
@@ -170,6 +193,7 @@ public class ModelRenderer {
     }
 
     public static void glPushAttrib(int i) {
+        //WGL_NUMBER_OVERLAYS_ARB?
     }
 
     public static void glPopAttrib() {
@@ -180,7 +204,8 @@ public class ModelRenderer {
     }
 
     public static void glEnable(int i) {
-        //32826 GL_ALPHA?
+        //GL_CULL_FACE
+        //GL_RESCALE_NORMAL = 0x803A
         //GL11.glEnable(i);
     }
 
