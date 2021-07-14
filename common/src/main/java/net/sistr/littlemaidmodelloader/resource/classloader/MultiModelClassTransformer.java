@@ -168,21 +168,21 @@ public class MultiModelClassTransformer {
                         //置き換え対象があるならそちらへ
                         if (GL_REPLACE_MODEL_RENDERER_SET.contains(fANode.name + fANode.desc)) {
                             mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
-                                    "net/sistr/littlemaidmodelloader/maidmodel/ModelRenderer",
+                                    "net/sistr/littlemaidmodelloader/maidmodel/compat/GLCompat",
                                     fANode.name,
                                     fANode.desc));
                         } else if (GL_REPLACE_DUMMY_SET.contains(fANode.desc)) {
                             System.out.println(cNode.name + " : " + fANode.name + fANode.desc);
                             //置き換え対象が無いならダミーに置き換え
                             mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
-                                    "net/sistr/littlemaidmodelloader/resource/classloader/GLDummy",
+                                    "net/sistr/littlemaidmodelloader/maidmodel/compat/GLCompat",
                                     "dummy",
                                     fANode.desc));
                         } else {
                             System.out.println(cNode.name + " : " + fANode.name + fANode.desc);
                             //型の合わないメソッドは引数無しメソッドに書き換えるが、多分失敗する
                             mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
-                                    "net/sistr/littlemaidmodelloader/resource/classloader/GLDummy",
+                                    "net/sistr/littlemaidmodelloader/maidmodel/compat/GLCompat",
                                     "dummy",
                                     "()V"));
                         }

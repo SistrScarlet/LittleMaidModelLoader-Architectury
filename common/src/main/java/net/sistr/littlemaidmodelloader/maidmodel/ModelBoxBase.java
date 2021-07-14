@@ -8,6 +8,7 @@ import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vector4f;
+import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
 
 public abstract class ModelBoxBase {
     protected PositionTextureVertex[] vertexPositions;
@@ -133,8 +134,8 @@ public abstract class ModelBoxBase {
                 pos.transform(matrix4f);
 
                 Vector4f uv = new Vector4f(vertex.texturePositionX, vertex.texturePositionY, 0, 1.0F);
-                if (!ModelRenderer.textureStack.isEmpty()) {
-                    uv.transform(ModelRenderer.textureStack.peek().getModel());
+                if (!GLCompat.textureStack.isEmpty()) {
+                    uv.transform(GLCompat.textureStack.peek().getModel());
                 }
 
                 buffer.vertex(pos.getX(), pos.getY(), pos.getZ(),

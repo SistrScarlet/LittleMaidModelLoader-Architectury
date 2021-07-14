@@ -1,5 +1,7 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
+
 public class ModelMulti_Steve extends ModelMultiBase {
 
     public ModelRenderer bipedHead;
@@ -249,7 +251,7 @@ public class ModelMulti_Steve extends ModelMultiBase {
     public void renderItems(IModelCaps pEntityCaps) {
         // 手持ちの表示
         //GL11.glPushMatrix();
-        ModelRenderer.glPushMatrix();
+        GLCompat.glPushMatrix();
 
         // R
         Arms[0].loadMatrix();
@@ -269,14 +271,14 @@ public class ModelMulti_Steve extends ModelMultiBase {
             }
         }
         //GL11.glPopMatrix();
-        ModelRenderer.glPopMatrix();
+        GLCompat.glPopMatrix();
     }
 
     @Override
     public void renderFirstPersonHand(IModelCaps pEntityCaps) {
         // お手手の描画
         float var2 = 1.0F;
-        ModelRenderer.glColor3f(var2, var2, var2);
+        GLCompat.glColor3f(var2, var2, var2);
         onGrounds[0] = onGrounds[1] = 0.0F;
         setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, pEntityCaps);
         bipedRightArm.render(0.0625F);
