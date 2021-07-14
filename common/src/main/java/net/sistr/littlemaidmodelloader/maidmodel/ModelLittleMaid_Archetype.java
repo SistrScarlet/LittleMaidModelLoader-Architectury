@@ -1,5 +1,7 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
+
 /**
  * 旧型モデル互換のベースモデル。
  * 関節リンクしていない
@@ -135,22 +137,22 @@ public class ModelLittleMaid_Archetype extends ModelLittleMaidBase {
 
     public void equippedBlockPosition() {
         // 手持ちブロックの表示位置
-        ModelRenderer.glTranslatef(0.0F, 0.1275F, -0.3125F);
+        GLCompat.glTranslatef(0.0F, 0.1275F, -0.3125F);
     }
 
     public void equippedItemPosition3D() {
         // 手持ち３Dアイテムの表示位置
-        ModelRenderer.glTranslatef(0.02F, 0.1300F, 0.0F);
+        GLCompat.glTranslatef(0.02F, 0.1300F, 0.0F);
     }
 
     public void equippedItemPosition() {
         // 手持ちアイテムの表示位置
-        ModelRenderer.glTranslatef(0.20F, 0.0800F, -0.0875F);
+        GLCompat.glTranslatef(0.20F, 0.0800F, -0.0875F);
     }
 
     public void equippedHeadItemPosition() {
         // 頭部着装アイテムの表示位置
-        ModelRenderer.glTranslatef(0.0F, 1.0F, 0.0F);
+        GLCompat.glTranslatef(0.0F, 1.0F, 0.0F);
     }
 
     public void equippedItemBow() {
@@ -158,7 +160,7 @@ public class ModelLittleMaid_Archetype extends ModelLittleMaidBase {
         // ModelRenderer.glTranslatef(-0.07F, 0.005F, 0.3F);
         equippedItemPosition3D();
         // ModelRenderer.glTranslatef(-0.09F, -0.125F, 0.3F);
-        ModelRenderer.glTranslatef(-0.05F, -0.075F, 0.1F);
+        GLCompat.glTranslatef(-0.05F, -0.075F, 0.1F);
     }
 
     public boolean isItemHolder() {
@@ -315,7 +317,7 @@ public class ModelLittleMaid_Archetype extends ModelLittleMaidBase {
     @Override
     public void renderItems(IModelCaps pEntityCaps) {
         // 手持ちの表示
-        ModelRenderer.glPushMatrix();
+        GLCompat.glPushMatrix();
         if (pEntityCaps != null) {
             int ldominant = ModelCapsHelper.getCapsValueInt(pEntityCaps, caps_dominantArm);
             Arms[0].loadMatrix().renderItems(this, pEntityCaps, false, ldominant);
@@ -330,7 +332,7 @@ public class ModelLittleMaid_Archetype extends ModelLittleMaidBase {
                 }
             }
         }
-        ModelRenderer.glPopMatrix();
+        GLCompat.glPopMatrix();
     }
 
 }

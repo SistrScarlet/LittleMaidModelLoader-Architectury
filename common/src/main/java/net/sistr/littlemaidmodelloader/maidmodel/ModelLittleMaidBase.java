@@ -1,5 +1,7 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
+
 /**
  * LMM用に最適化
  */
@@ -340,14 +342,14 @@ public abstract class ModelLittleMaidBase extends ModelMultiMMMBase {
     @Override
     public void renderItems(IModelCaps pEntityCaps) {
         // 手持ちの表示
-        ModelRenderer.glPushMatrix();
+        GLCompat.glPushMatrix();
         // R
         Arms[0].loadMatrix();
-        ModelRenderer.glTranslatef(0F, 0.05F, -0.05F);
+        GLCompat.glTranslatef(0F, 0.05F, -0.05F);
         Arms[0].renderItems(this, pEntityCaps, false, 0);
         // L
         Arms[1].loadMatrix();
-        ModelRenderer.glTranslatef(0F, 0.05F, -0.05F);
+        GLCompat.glTranslatef(0F, 0.05F, -0.05F);
         Arms[1].renderItems(this, pEntityCaps, false, 1);
         // 頭部装飾品
         boolean lplanter = ModelCapsHelper.getCapsValueBoolean(pEntityCaps, caps_isPlanter);
@@ -359,13 +361,13 @@ public abstract class ModelLittleMaidBase extends ModelMultiMMMBase {
                 HeadMount.loadMatrix().renderItemsHead(this, pEntityCaps);
             }
         }
-        ModelRenderer.glPopMatrix();
+        GLCompat.glPopMatrix();
     }
 
     @Override
     public void renderFirstPersonHand(IModelCaps pEntityCaps) {
         float var2 = 1.0F;
-        ModelRenderer.glColor3f(var2, var2, var2);
+        GLCompat.glColor3f(var2, var2, var2);
         onGrounds[0] = onGrounds[1] = 0.0F;
         setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, pEntityCaps);
         bipedRightArm.render(0.0625F);
