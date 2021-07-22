@@ -31,8 +31,8 @@
     "depends": {
         "fabricloader": ">=0.7.4",
         "fabric": "*",
-        "minecraft": ">=1.16.5",
-        "architectury": ">=1.1.55"
+        "minecraft": ">=1.17",
+        "architectury": ">=2.1.20"
     },
     "suggests": {
         "flamingo": "*"
