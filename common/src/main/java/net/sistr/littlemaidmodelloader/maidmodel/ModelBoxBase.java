@@ -132,6 +132,9 @@ public abstract class ModelBoxBase {
                 float z = vertex.vector3D.getZ() * scale;
                 Vector4f pos = new Vector4f(x, y, z, 1.0F);
                 pos.transform(matrix4f);
+                if (pos.getW() != 1.0F) {
+                    pos.normalizeProjectiveCoordinates();
+                }
 
                 Vector4f uv = new Vector4f(vertex.texturePositionX, vertex.texturePositionY, 0, 1.0F);
                 if (!GLCompat.textureStack.isEmpty()) {
