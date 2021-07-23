@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
 import java.util.Map;
@@ -172,14 +173,12 @@ public class MultiModelClassTransformer {
                                     fANode.name,
                                     fANode.desc));
                         } else if (GL_REPLACE_DUMMY_SET.contains(fANode.desc)) {
-                            System.out.println(cNode.name + " : " + fANode.name + fANode.desc);
                             //置き換え対象が無いならダミーに置き換え
                             mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
                                     "net/sistr/littlemaidmodelloader/maidmodel/compat/GLCompat",
                                     "dummy",
                                     fANode.desc));
                         } else {
-                            System.out.println(cNode.name + " : " + fANode.name + fANode.desc);
                             //型の合わないメソッドは引数無しメソッドに書き換えるが、多分失敗する
                             mNode.instructions.set(fANode, new MethodInsnNode(fANode.getOpcode(),
                                     "net/sistr/littlemaidmodelloader/maidmodel/compat/GLCompat",
@@ -195,6 +194,8 @@ public class MultiModelClassTransformer {
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                 } else if (aNode instanceof TypeInsnNode fANode) {//3
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
+                } else if (aNode instanceof LdcInsnNode fANode && fANode.cst instanceof Type) {
+                    tryReplace(changed, ((Type) fANode.cst).getInternalName(), desc -> fANode.cst = Type.getObjectType(desc));
                 }
                 aNode = aNode.getNext();
             }
