@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.util;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import me.shedaniel.architectury.annotations.ExpectPlatform;
 
 public class DebugChecker {
 
