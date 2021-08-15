@@ -60,6 +60,21 @@ public interface IModelCaps {
      * 乗っかているEntityの名前を返す; return String;
      **/
     int caps_getRidingName = 0x003b;
+    /**
+     * 乗っかっているEntityのTypeを文字列で返却する
+     * リトルメイド（メイドMod側で実装）:littlemaid
+     * プレイヤー:player
+     * 動物系:animal
+     * モブ系:mob
+     * それ以外:entity
+     * 騎乗なし:null
+     */
+    int caps_getRidingType = 0x003c;
+
+    /**
+     * Entityの名前
+     */
+    int caps_entityName = 0x003d;
 
     int caps_posX = 0x0060;
     int caps_posY = 0x0061;
@@ -75,6 +90,11 @@ public interface IModelCaps {
     int caps_prevRotationYaw = 0x006b;
     int caps_prevRotationPitch = 0x006c;
     int caps_renderYawOffset = 0x006d;
+    /**
+     * 騎乗時の高さ調整用offset
+     * Entity.getYOffset() の数値により調整する必要あり
+     */
+    int caps_renderRidingYOffset = 0x006e;
 
     /** Entityの位置にオフセットした座標のBlockを取得する [0]:offsetX, [1]:offsetY, [2]:offsetZ **/
 //	int caps_PosBlock				= 0x0080;
@@ -172,6 +192,11 @@ public interface IModelCaps {
     int caps_Ground = 0x0139;
     int caps_interestedAngle = 0x0150;
 
+    /**
+     * メイドさんの職業を返します(小文字)
+     */
+    int caps_job = 0x0151;
+
     // PlayerFormLittleMaid
     int caps_ScaleFactor = 0x0200;
     int caps_PartsVisible = 0x0201;
@@ -183,25 +208,25 @@ public interface IModelCaps {
     /**
      * モデルが変更された時に実行される関数へリンクします
      **/
-	int caps_changeModel = 0x0300;
+    int caps_changeModel = 0x0300;
     int caps_renderFace = 0x0310;
     int caps_renderBody = 0x0311;
     int caps_setFaceTexture = 0x0312;
     /**
      * TextureDataのインスタンスを返します。
      **/
-	int caps_textureData = 0x0313;
+    int caps_textureData = 0x0313;
     /**
      * 発光テクスチャの色補正
      */
-	int caps_textureLightColor = 0x0314;
+    int caps_textureLightColor = 0x0314;
 
 
     //カスタム追加分
     //お座りモーション
-	int caps_motionSitting = 0x0401;
+    int caps_motionSitting = 0x0401;
 
-	//1.16~
+    //1.16~
     int caps_isSwimming = 0x0600;
     int caps_roll = 0x0601;
     int caps_leaningPitch = 0x0602;
@@ -219,17 +244,17 @@ public interface IModelCaps {
     /**
      * モデルが実装している機能をリストに入れて返す。
      */
-	Map<String, Integer> getModelCaps();
+    Map<String, Integer> getModelCaps();
 
     /**
      * 現在の設定値を読み取る。
      */
-	Object getCapsValue(int pIndex, Object... pArg);
+    Object getCapsValue(int pIndex, Object... pArg);
 
     /**
      * 機能番号に値を設定する。
      */
     @Deprecated
-	boolean setCapsValue(int pIndex, Object... pArg);
+    boolean setCapsValue(int pIndex, Object... pArg);
 
 }

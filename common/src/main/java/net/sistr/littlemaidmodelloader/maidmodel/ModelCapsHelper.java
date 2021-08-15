@@ -34,11 +34,18 @@ public class ModelCapsHelper {
 	public static boolean getCapsValueBoolean(IModelCaps pOwner, int pIndex, Object ...pArg) {
 		if (pOwner == null) return false;
 		Boolean lb = (Boolean)pOwner.getCapsValue(pIndex, pArg);
-		return lb == null ? false : lb;
+		if (lb == null) return false;
+		return lb;
 	}
 
 	public static boolean setCapsValue(IModelCaps pOwner, String pCapsName, Object... pArg) {
 		return pOwner != null && pOwner.setCapsValue(pOwner.getModelCaps().get(pCapsName), pArg);
+	}
+
+	public static String getCapsValueString(IModelCaps pOwner, int pIndex, Object ...pArg) {
+		if (pOwner == null) return "";
+		String ls = (String)pOwner.getCapsValue(pIndex, pArg);
+		return ls == null ? "" : ls;
 	}
 
 }

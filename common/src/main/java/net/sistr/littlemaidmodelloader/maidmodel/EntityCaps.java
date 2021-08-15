@@ -3,9 +3,12 @@ package net.sistr.littlemaidmodelloader.maidmodel;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
@@ -62,7 +65,7 @@ public class EntityCaps implements IModelCaps {
                         : entity.getOffHandStack());
         register("isWet", caps_isWet, (entity, arg) -> entity.isWet());
         register("isDead", caps_isDead, (entity, arg) -> !entity.isAlive());
-        register("isSwingInProgress", caps_isSwingInProgress, (entity, arg) -> entity.handSwingProgress);
+        register("isSwingInProgress", caps_isSwingInProgress, (entity, arg) -> 0 < entity.handSwingProgress);
         register("isBurning", caps_isBurning, (entity, arg) -> entity.isOnFire());
         register("isInWater", caps_isInWater, (entity, arg) -> entity.isTouchingWater());
         register("isInvisible", caps_isInvisible, (entity, arg) -> entity.isInvisible());
@@ -70,6 +73,15 @@ public class EntityCaps implements IModelCaps {
         register("getRidingName", caps_getRidingName, (entity, arg) -> entity.getVehicle() == null
                 ? ""
                 : EntityType.getId(entity.getVehicle().getType()).toString());
+        register("getRidingType", caps_getRidingType, (entity, arg) -> {
+            Entity vehicle = entity.getVehicle();
+            if (vehicle == null) return "null";
+            else if (vehicle instanceof PlayerEntity) return "player";
+            else if (vehicle instanceof AnimalEntity) return "animal";
+            else if (vehicle instanceof MobEntity) return "mob";
+            else return "entity";
+        });
+        register("entityName", caps_entityName, (entity, arg) -> entity.getName().asString());
         register("posX", caps_posX, (entity, arg) -> entity.getX());
         register("posY", caps_posY, (entity, arg) -> entity.getY());
         register("posZ", caps_posZ, (entity, arg) -> entity.getZ());
@@ -114,6 +126,7 @@ public class EntityCaps implements IModelCaps {
         register("prevRotationYaw", caps_prevRotationYaw, (entity, arg) -> entity.prevYaw);
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
+        register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> entity.getMountedHeightOffset());
         register("isRidingPlayer", caps_isRidingPlayer, (entity, arg) -> entity.getVehicle() instanceof PlayerEntity);
         register("WorldTotalTime", caps_WorldTotalTime, (entity, arg) -> entity.getEntityWorld().getTime());
         register("WorldTime", caps_WorldTime, (entity, arg) -> entity.getEntityWorld().getTimeOfDay());
