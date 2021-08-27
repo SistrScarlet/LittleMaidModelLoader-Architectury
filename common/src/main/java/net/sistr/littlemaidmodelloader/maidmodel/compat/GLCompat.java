@@ -21,6 +21,7 @@ public final class GLCompat {
     //行列関連
     public static int mode = GL11.GL_MODELVIEW;
     public static ModelRenderer modelRenderer;
+    //todo Modelしか使わんので無駄が多い
     public static MatrixStack textureStack = new MatrixStack();
 
     //頂点描画関連
@@ -57,9 +58,11 @@ public final class GLCompat {
 
     public static void glScalef(float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
-            ModelRenderer.matrixStack.scale(x, y, z);
+            MatrixStack.Entry entry = ModelRenderer.matrixStack.peek();
+            entry.getModel().multiply(Matrix4f.scale(x, y, z));
         } else if (mode == GL11.GL_TEXTURE) {
-            textureStack.scale(x, y, z);
+            MatrixStack.Entry entry = textureStack.peek();
+            entry.getModel().multiply(Matrix4f.scale(x, y, z));
         }
     }
 
