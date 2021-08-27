@@ -68,22 +68,11 @@ public final class GLCompat {
 
     public static void glRotatef(float deg, float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
-            if (x == 1F) {
-                ModelRenderer.matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(deg));
-            } else if (y == 1F) {
-                ModelRenderer.matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(deg));
-            } else if (z == 1F) {
-                ModelRenderer.matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(deg));
-            }
-
+            ModelRenderer.matrixStack.multiply(new Vector3f(x, y, z).getDegreesQuaternion(deg));
         } else if (mode == GL11.GL_TEXTURE) {
-            if (x == 1F) {
-                textureStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(deg));
-            } else if (y == 1F) {
-                textureStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(deg));
-            } else if (z == 1F) {
-                textureStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(deg));
-            }
+            //textureStackはModelしか使わん
+            Matrix4f model = textureStack.peek().getModel();
+            model.multiply(new Vector3f(x, y, z).getDegreesQuaternion(deg));
         }
     }
 
