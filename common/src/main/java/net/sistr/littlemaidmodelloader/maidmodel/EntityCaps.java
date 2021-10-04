@@ -121,8 +121,8 @@ public class EntityCaps implements IModelCaps {
             }
             return null;
         });
-        register("rotationYaw", caps_rotationYaw, (entity, arg) -> entity.yaw);
-        register("rotationPitch", caps_rotationPitch, (entity, arg) -> entity.pitch);
+        register("rotationYaw", caps_rotationYaw, (entity, arg) -> entity.headYaw);
+        register("rotationPitch", caps_rotationPitch, (entity, arg) -> entity.headYaw);
         register("prevRotationYaw", caps_prevRotationYaw, (entity, arg) -> entity.prevYaw);
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
