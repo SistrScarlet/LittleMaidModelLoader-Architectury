@@ -60,7 +60,7 @@ public class LMSoundInstance implements SoundInstance {
     }
 
     @Override
-    public boolean isLooping() {
+    public boolean isRelative() {
         return false;
     }
 

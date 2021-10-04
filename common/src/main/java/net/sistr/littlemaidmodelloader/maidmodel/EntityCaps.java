@@ -1,7 +1,7 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
 import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
@@ -24,10 +24,10 @@ import java.util.Map;
  * Entityのデータ読み取り用のクラス
  */
 public class EntityCaps implements IModelCaps {
-    private static final Setter EMPTY_SETTER = (entity, arg) -> false;
+    protected static final Setter EMPTY_SETTER = (entity, arg) -> false;
     private static final Map<String, Integer> caps = new HashMap<>();
-    private static final Int2ObjectArrayMap<Getter> capGetter = new Int2ObjectArrayMap<>();
-    private static final Int2ObjectArrayMap<Setter> capSetter = new Int2ObjectArrayMap<>();
+    private static final Int2ObjectOpenHashMap<Getter> capGetter = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<Setter> capSetter = new Int2ObjectOpenHashMap<>();
     protected LivingEntity owner;
 
     static {
