@@ -25,44 +25,62 @@ public class MultiModelClassTransformer {
 
     private static final Map<String, String> CODE_REPLACE_MAP = new Object2ObjectOpenHashMap<>() {
         {
-            //継承関係で整理
-            //また、未使用っぽいのはコメントアウト
+            //未使用っぽいのはコメントアウト
 
-            //継承多数
+            //Caps系
+            String caps = "firis/lmmm/api/caps/";
             addTransformTarget("IModelCaps");
+            addTransformTarget("IModelCaps", caps);
+            //今のところCapsが一つしかないため移動先もまたひとつ
+            put("mmmlibx/lib/MMM_EntityCaps", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
+            put("littleMaidMobX/EntityCaps", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
+            put("net/blacklab/lmr/util/EntityCaps", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
+            put("net/blacklab/lmr/util/EntityCapsLiving", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
 
-            //継承無し
-            addTransformTarget("ModelRenderer");
             addTransformTarget("ModelCapsHelper");
+            addTransformTarget("ModelCapsHelper", caps);
+
+            //レンダラ
+            String renderer = "firis/lmmm/api/renderer/";
+            addTransformTarget("ModelRenderer");
+            addTransformTarget("ModelRenderer", renderer);
             //addTransformTarget("EquippedStabilizer");
 
             //ボックス
+            String modelParts = "firis/lmmm/api/model/parts/";
             addTransformTarget("ModelBoxBase");
+            addTransformTarget("ModelBoxBase", modelParts);
             addTransformTarget("ModelBox");
+            addTransformTarget("ModelBox", modelParts);
             addTransformTarget("ModelPlate");
+            addTransformTarget("ModelPlate", modelParts);
 
             //モデル
+            String builtinModel = "firis/lmmm/builtin/model/";
             addTransformTarget("ModelLittleMaid_Aug");
+            addTransformTarget("ModelLittleMaid_Aug", builtinModel);
             addTransformTarget("ModelLittleMaid_SR2");
+            addTransformTarget("ModelLittleMaid_SR2", builtinModel);
             addTransformTarget("ModelLittleMaid_Orign");
+            addTransformTarget("ModelLittleMaid_Orign", builtinModel);
             //addTransformTarget("ModelLittleMaid_RX0");//元コードだとRX2になってたけどこれ正しいのか？
             addTransformTarget("ModelLittleMaid_Archetype");
+            addTransformTarget("ModelLittleMaid_Archetype", builtinModel);
+
+            String model = "firis/lmmm/api/model/";
             addTransformTarget("ModelLittleMaidBase");
+            addTransformTarget("ModelLittleMaidBase", model);
             //addTransformTarget("ModelLittleMaid_AC");
             addTransformTarget("ModelMultiMMMBase");
+            addTransformTarget("ModelMultiMMMBase", model);
             addTransformTarget("ModelMultiBase");
+            addTransformTarget("ModelMultiBase", model);
             //addTransformTarget("ModelStabilizer_WitchHat");
             //addTransformTarget("ModelStabilizerBase");
             addTransformTarget("ModelBase");
+            addTransformTarget("ModelBase", model);
 
-            //Caps系
-            //今のところCapsが一つしかないため移動先もまたひとつ
-            put("mmmlibx/lib/MMM_EntityCaps", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
-            put("net/blacklab/lmr/util/EntityCapsLiving", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
-            put("littleMaidMobX/EntityCaps", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
-            put("net/blacklab/lmr/util/EntityCaps", "net/sistr/littlemaidmodelloader/maidmodel/EntityCaps");
-
-            //Beverly7
+            //Beverly7 同梱するようにしたので不要ではあるが、他のモデルで使用している可能性があるため残す
             put("net/blacklab/lmr/entity/EntityLittleMaid", "net/sistr/littlemaidmodelloader/entity/EntityLittleMaid");
             put("net/minecraft/entity/EntityLivingBase", "net/minecraft/entity/LivingEntity");
             put("net/minecraft/entity/passive/EntityAnimal", "net/minecraft/entity/passive/AnimalEntity");
@@ -80,6 +98,10 @@ public class MultiModelClassTransformer {
             put("MMM_" + className, PACKAGE_STRING + className);
             put("mmmlibx/lib/multiModel/model/mc162/" + className, PACKAGE_STRING + className);
             put("net/blacklab/lmr/entity/maidmodel/" + className, PACKAGE_STRING + className);
+        }
+
+        private void addTransformTarget(String className, String oldPackage) {
+            put(oldPackage + className, PACKAGE_STRING + className);
         }
     };
 
