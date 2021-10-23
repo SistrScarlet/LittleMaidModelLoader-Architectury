@@ -747,6 +747,16 @@ public class MultiModel_Alicia implements IMultiModel {
         return -1;
     }
 
+    @Override
+    public void renderItems(IModelCaps pEntityCaps) {
+
+    }
+
+    @Override
+    public void renderFirstPersonHand(IModelCaps pEntityCaps) {
+
+    }
+
     private static void addDeg(ModelPart bone, Angle angle) {
         addDeg(bone, angle.getPitch(), angle.getYaw(), angle.getRoll());
     }
