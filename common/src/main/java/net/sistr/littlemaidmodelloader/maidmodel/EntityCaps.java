@@ -153,9 +153,7 @@ public class EntityCaps implements IModelCaps {
                     MathHelper.floor(entity.getY() + (Double) arg[1]),
                     MathHelper.floor(entity.getZ() + (Double) arg[2]));
             BlockState state = entity.getEntityWorld().getBlockState(pos);
-            //移動可能ブロックかつ通常ブロックではない
-            //Block.causesSuffocationから変更
-            return !(state.getMaterial().blocksMovement() && !state.isFullCube(entity.world, pos));
+            return state.getCollisionShape(entity.world, pos).isEmpty();
         });
         register("PosBlockLight", caps_PosBlockLight, (entity, arg) ->
                 entity.getEntityWorld().getLightLevel(new BlockPos(
