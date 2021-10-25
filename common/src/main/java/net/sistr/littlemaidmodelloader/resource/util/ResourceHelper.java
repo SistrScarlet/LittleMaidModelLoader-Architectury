@@ -44,7 +44,38 @@ public class ResourceHelper {
     }
 
     /**
-     * assets/minecraft/textures/entity/littlemaid/[texture]_[model]/xxxx_[index].png
+     * assets/minecraft/textures/entity/littlemaid/xxxx/yyyy/[texture]_[model]/zzzz_[index].png
+     * のうち、xxxx/yyyy/[texture]_[model]を抜き取り、また/を.に変換
+     */
+    public static Optional<String> getTexturePackName(String path, boolean isArchive) {
+        String name = path;
+        if (!isArchive) {
+            name = name.replace("\\", "/");
+        }
+        if (path.contains("/littlemaid/") || path.contains("littleMaid")) {
+            ///littlemaid/まで削る
+            int lmFolderIndex = path.lastIndexOf("/littlemaid/");
+            if (lmFolderIndex == -1) {
+                lmFolderIndex = path.lastIndexOf("/littleMaid/");
+            }
+            if (lmFolderIndex == -1) {
+                return getParentFolderName(path, isArchive);
+            }
+            name = name.substring(lmFolderIndex + "/littlemaid/".length());
+
+            //[texture]_[model]の後を削る
+            int lastSplitter = name.lastIndexOf("/");
+            if (lastSplitter == -1) {
+                return getParentFolderName(path, isArchive);
+            }
+            return Optional.of(name.substring(0, lastSplitter).replace("/", "."));
+        }
+        //littlemaidフォルダが含まれない場合は、親フォルダをパック名とする
+        return getParentFolderName(path, isArchive);
+    }
+
+    /**
+     * xxxx/yyyy/[texture]_[model]
      * のうち、[model]を抜き取る
      */
     public static String getModelName(String textureName) {

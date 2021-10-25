@@ -42,7 +42,7 @@ public class LMTextureLoader implements LMLoader {
     public void load(String path, Path homePath, InputStream inputStream, boolean isArchive) {
         Identifier texturePath = getResourceLocation(path, isArchive)
                 .orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
-        String textureName = ResourceHelper.getParentFolderName(path, isArchive)
+        String textureName = ResourceHelper.getTexturePackName(path, isArchive)
                 .orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
         String modelName = ResourceHelper.getModelName(textureName);
         textureManager.addTexture(ResourceHelper.getFileName(path, isArchive), textureName, modelName,

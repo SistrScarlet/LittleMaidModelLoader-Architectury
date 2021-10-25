@@ -30,7 +30,7 @@ public class MixinMinecraftClient {
         //テクスチャを読み込む
         resourceLocations.forEach(resourcePath -> {
             String path = resourcePath.getPath();
-            ResourceHelper.getParentFolderName(path, false).ifPresent(textureName -> {
+            ResourceHelper.getTexturePackName(path, false).ifPresent(textureName -> {
                 String modelName = ResourceHelper.getModelName(textureName);
                 int index = ResourceHelper.getIndex(path);
                 if (index != -1) {
