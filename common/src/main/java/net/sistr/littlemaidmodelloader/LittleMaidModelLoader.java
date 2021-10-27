@@ -1,5 +1,7 @@
 package net.sistr.littlemaidmodelloader;
 
+import me.shedaniel.architectury.platform.Platform;
+import me.shedaniel.architectury.registry.entity.EntityAttributes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
@@ -8,8 +10,6 @@ import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.*;
-import net.sistr.littlemaidmodelloader.multimodel.MultiModel_Alicia;
-import net.sistr.littlemaidmodelloader.register.AttributeRegister;
 import net.sistr.littlemaidmodelloader.resource.classloader.MultiModelClassLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMConfigLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMFileLoader;
@@ -18,8 +18,6 @@ import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.setup.Registration;
-import net.sistr.littlemaidmodelloader.util.FolderPaths;
-import net.sistr.littlemaidmodelloader.util.SideChecker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +32,7 @@ public class LittleMaidModelLoader {
     public static void init() {
         initFileLoader();
         initModelLoader();
-        if (SideChecker.isClient()) {
+        if (Platform.getEnv() == EnvType.CLIENT) {
             initTextureLoader();
             initSoundLoader();
         }
@@ -44,7 +42,7 @@ public class LittleMaidModelLoader {
 
     public static void initFileLoader() {
         LMFileLoader fileLoader = LMFileLoader.INSTANCE;
-        fileLoader.addLoadFolderPath(Paths.get(FolderPaths.getGameDir().toString(), "LMMLResources"));
+        fileLoader.addLoadFolderPath(Paths.get(Platform.getGameFolder().toString(), "LMMLResources"));
         fileLoader.addLoader(new LMMultiModelLoader(LMModelManager.INSTANCE, new MultiModelClassLoader(fileLoader.getFolderPaths())));
         fileLoader.addLoader(new LMConfigLoader(LMConfigManager.INSTANCE));
     }
@@ -81,8 +79,8 @@ public class LittleMaidModelLoader {
     }
 
     public static void registerAttribute() {
-        AttributeRegister.register(Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
-        AttributeRegister.register(Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
+        EntityAttributes.register(() -> Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
+        EntityAttributes.register(() -> Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
     }
 
 }

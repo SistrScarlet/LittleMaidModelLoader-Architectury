@@ -1,9 +1,9 @@
 package net.sistr.littlemaidmodelloader.maidmodel.compat;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3f;
 import net.sistr.littlemaidmodelloader.client.util.Matrix4fAccessor;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelBoxBase;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelRenderer;
@@ -29,7 +29,7 @@ public final class GLCompat {
     private static ModelBoxBase.PositionTextureVertex vertexCurrent;
     private static ModelBoxBase.PositionTextureVertex vertexPrev1;
     private static ModelBoxBase.PositionTextureVertex vertexPrev2;
-    private static Vector3f pos;
+    private static Vec3f pos;
     private static Vec2f tex;
 
     public static void glPushMatrix() {
@@ -68,11 +68,11 @@ public final class GLCompat {
 
     public static void glRotatef(float deg, float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
-            ModelRenderer.matrixStack.multiply(new Vector3f(x, y, z).getDegreesQuaternion(deg));
+            ModelRenderer.matrixStack.multiply(new Vec3f(x, y, z).getDegreesQuaternion(deg));
         } else if (mode == GL11.GL_TEXTURE) {
             //textureStackはModelしか使わん
             Matrix4f model = textureStack.peek().getModel();
-            model.multiply(new Vector3f(x, y, z).getDegreesQuaternion(deg));
+            model.multiply(new Vec3f(x, y, z).getDegreesQuaternion(deg));
         }
     }
 
@@ -89,7 +89,7 @@ public final class GLCompat {
     //現在のマトリックスを書き込む
     public static void glGetFloat(int mode, FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW_MATRIX) {
-            ModelRenderer.matrixStack.peek().getModel().writeToBuffer(buf);
+            ModelRenderer.matrixStack.peek().getModel().writeRowFirst(buf);
         }
     }
 
@@ -151,7 +151,7 @@ public final class GLCompat {
 
     public static void glVertex3f(float x, float y, float z) {
         if (renderMode == GL11.GL_TRIANGLE_STRIP) {
-            pos = new Vector3f(x, y, z);
+            pos = new Vec3f(x, y, z);
             combine();
         }
 

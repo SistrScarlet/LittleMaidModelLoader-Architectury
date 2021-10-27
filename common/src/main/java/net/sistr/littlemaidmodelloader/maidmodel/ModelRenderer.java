@@ -2,7 +2,7 @@ package net.sistr.littlemaidmodelloader.maidmodel;
 
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.item.ItemStack;
 import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
@@ -396,68 +396,68 @@ public class ModelRenderer {
         switch (rotatePriority) {
             case RotXYZ:
                 if (rotateAngleZ != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
+                    matrixStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
                 }
                 if (rotateAngleY != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
+                    matrixStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
                 }
                 if (rotateAngleX != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
+                    matrixStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
                 }
                 break;
             case RotXZY:
                 if (rotateAngleY != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
+                    matrixStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
                 }
                 if (rotateAngleZ != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
+                    matrixStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
                 }
                 if (rotateAngleX != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
+                    matrixStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
                 }
                 break;
             case RotYXZ:
                 if (rotateAngleZ != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
+                    matrixStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
                 }
                 if (rotateAngleX != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
+                    matrixStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
                 }
                 if (rotateAngleY != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
+                    matrixStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
                 }
                 break;
             case RotYZX:
                 if (rotateAngleX != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
+                    matrixStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
                 }
                 if (rotateAngleZ != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
+                    matrixStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
                 }
                 if (rotateAngleY != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
+                    matrixStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
                 }
                 break;
             case RotZXY:
                 if (rotateAngleY != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
+                    matrixStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
                 }
                 if (rotateAngleX != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
+                    matrixStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
                 }
                 if (rotateAngleZ != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
+                    matrixStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
                 }
                 break;
             case RotZYX:
                 if (rotateAngleX != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
+                    matrixStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(rotateAngleX));
                 }
                 if (rotateAngleY != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
+                    matrixStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rotateAngleY));
                 }
                 if (rotateAngleZ != 0.0F) {
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
+                    matrixStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(rotateAngleZ));
                 }
                 break;
         }

@@ -3,11 +3,7 @@ package net.sistr.littlemaidmodelloader.multimodel.model;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.*;
 import net.sistr.littlemaidmodelloader.client.util.CuboidAccessor;
 import net.sistr.littlemaidmodelloader.client.util.ModelPartAccessor;
 
@@ -66,9 +62,9 @@ public class SmoothModelPart extends net.minecraft.client.model.ModelPart {
         float y = child.pivotY / 16.0F;
         float z = child.pivotZ / 16.0F;
         matrix.translate(x, y, z);
-        if (child.roll != 0.0F) matrix.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(child.roll));
-        if (child.yaw != 0.0F) matrix.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(child.yaw));
-        if (child.pitch != 0.0F) matrix.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(child.pitch));
+        if (child.roll != 0.0F) matrix.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(child.roll));
+        if (child.yaw != 0.0F) matrix.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(child.yaw));
+        if (child.pitch != 0.0F) matrix.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(child.pitch));
         matrix.translate(-x, -y, -z);
     }
 
@@ -87,10 +83,10 @@ public class SmoothModelPart extends net.minecraft.client.model.ModelPart {
             for (Quad quad : quads) {
                 Direction quadDirection = getQuadDirection(indexQ++);
 
-                Vector3f defaultNormalVec = quad.direction.copy();
+                Vec3f defaultNormalVec = quad.direction.copy();
                 defaultNormalVec.transform(defaultNormal);
 
-                Vector3f smoothNormalVec = quad.direction.copy();
+                Vec3f smoothNormalVec = quad.direction.copy();
                 smoothNormalVec.transform(childNormal);
 
                 int indexV = 0;

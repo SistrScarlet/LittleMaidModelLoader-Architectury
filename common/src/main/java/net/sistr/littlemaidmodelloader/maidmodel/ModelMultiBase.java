@@ -1,5 +1,7 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import me.shedaniel.architectury.platform.Platform;
+import net.fabricmc.api.EnvType;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Direction;
@@ -9,7 +11,6 @@ import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
-import net.sistr.littlemaidmodelloader.util.SideChecker;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +78,7 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
         textureWidth = pTextureWidth;
         textureHeight = pTextureHeight;
 
-        if (SideChecker.isClient()) {
+        if (Platform.getEnv() == EnvType.CLIENT) {
 //			LittleMaidReengaged.Debug("ModelMulti.InitClient");
             // ハードポイント
             Arms = new ModelRenderer[2];

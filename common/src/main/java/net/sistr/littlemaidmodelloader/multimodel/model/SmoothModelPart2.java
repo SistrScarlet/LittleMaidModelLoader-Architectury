@@ -3,11 +3,7 @@ package net.sistr.littlemaidmodelloader.multimodel.model;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.*;
 import net.sistr.littlemaidmodelloader.client.util.CuboidAccessor;
 import net.sistr.littlemaidmodelloader.client.util.ModelPartAccessor;
 
@@ -86,10 +82,10 @@ public class SmoothModelPart2 extends net.minecraft.client.model.ModelPart {
             for (Quad quad : quads) {
                 Direction quadDirection = getQuadDirection(indexQ++);
 
-                Vector3f defaultNormalVec = quad.direction.copy();
+                Vec3f defaultNormalVec = quad.direction.copy();
                 defaultNormalVec.transform(defaultNormal);
 
-                Vector3f smoothNormalVec = quad.direction.copy();
+                Vec3f smoothNormalVec = quad.direction.copy();
                 smoothNormalVec.transform(parentNormal);
 
                 int indexV = 0;

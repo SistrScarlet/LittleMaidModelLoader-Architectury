@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.util;
+package net.sistr.littlemaidmodelloader.util.forge;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;

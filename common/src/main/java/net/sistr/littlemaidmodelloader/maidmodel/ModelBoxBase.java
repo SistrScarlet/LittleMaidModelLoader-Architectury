@@ -4,10 +4,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.Vector4f;
 import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
 
 public abstract class ModelBoxBase {
@@ -46,12 +46,12 @@ public abstract class ModelBoxBase {
 
     @Environment(EnvType.CLIENT)
     public static class PositionTextureVertex {
-        public Vector3f vector3D;
+        public Vec3f vector3D;
         public float texturePositionX;
         public float texturePositionY;
 
         public PositionTextureVertex(float x, float y, float z, float u, float v) {
-            this(new Vector3f(x, y, z), u, v);
+            this(new Vec3f(x, y, z), u, v);
         }
 
         public PositionTextureVertex setTexturePosition(float u, float v) {
@@ -64,7 +64,7 @@ public abstract class ModelBoxBase {
             this.texturePositionY = texturePositionYIn;
         }
 
-        public PositionTextureVertex(Vector3f vec, float u, float v) {
+        public PositionTextureVertex(Vec3f vec, float u, float v) {
             this.vector3D = vec;
             this.texturePositionX = u;
             this.texturePositionY = v;
@@ -76,7 +76,7 @@ public abstract class ModelBoxBase {
         public PositionTextureVertex[] vertexPositions;
         public int nVertices;
         //private boolean invertNormal;
-        private Vector3f normalCache;
+        private Vec3f normalCache;
 
         public TexturedQuad(PositionTextureVertex[] vertices) {
             this.vertexPositions = vertices;
@@ -112,7 +112,7 @@ public abstract class ModelBoxBase {
             MatrixStack.Entry entry = matrices.peek();
             Matrix4f matrix4f = entry.getModel();
             Matrix3f matrix3f = entry.getNormal();
-            Vector3f normal = normalCache.copy();
+            Vec3f normal = normalCache.copy();
 
             normal.transform(matrix3f);
             float normalX = normal.getX();
@@ -149,9 +149,9 @@ public abstract class ModelBoxBase {
 
         }
 
-        private Vector3f calcNormal() {
-            Vector3f n1 = this.vertexPositions[0].vector3D.copy();
-            Vector3f n2 = this.vertexPositions[2].vector3D.copy();
+        private Vec3f calcNormal() {
+            Vec3f n1 = this.vertexPositions[0].vector3D.copy();
+            Vec3f n2 = this.vertexPositions[2].vector3D.copy();
             n1.subtract(this.vertexPositions[1].vector3D);
             n2.subtract(this.vertexPositions[1].vector3D);
             n2.cross(n1);

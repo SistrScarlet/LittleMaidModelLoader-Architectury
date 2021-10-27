@@ -8,10 +8,10 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
+import net.minecraft.util.math.Vec3f;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import org.apache.logging.log4j.LogManager;
@@ -57,8 +57,8 @@ public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> ex
                 matrixStack.translate(0.0F, 0.2F, 0.0F);
             }
 
-            matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
-            matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+            matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
+            matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
             /* 初期モデル構成で
              * x: 手の甲に垂直な方向(-で向かって右に移動)
              * y: 体の面に垂直な方向(-で向かって背面方向に移動)

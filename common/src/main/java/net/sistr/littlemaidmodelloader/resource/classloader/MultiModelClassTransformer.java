@@ -2,8 +2,7 @@ package net.sistr.littlemaidmodelloader.resource.classloader;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.sistr.littlemaidmodelloader.util.DebugChecker;
-import net.sistr.littlemaidmodelloader.util.LoaderChecker;
+import me.shedaniel.architectury.platform.Platform;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -89,7 +88,7 @@ public class MultiModelClassTransformer {
 
             //NM
             put("net/blacklab/lmr/entity/littlemaid/EntityLittleMaid", "net/sistr/littlemaidmodelloader/entity/EntityLittleMaid");
-            if (LoaderChecker.getLoader() == LoaderChecker.Loader.Fabric && !DebugChecker.isDebug()) {
+            if (Platform.isFabric() && !Platform.isDevelopmentEnvironment()) {
                 put("net/minecraft/entity/Entity", "net/minecraft/class_1297");
             }
         }
