@@ -241,6 +241,8 @@ public interface IModelCaps {
     int caps_isPoseCrouching = 0x0706;
     int caps_isPoseDying = 0x0707;
 
+    int caps_sleepingDirection = 0x0800;
+
     /**
      * モデルが実装している機能をリストに入れて返す。
      */

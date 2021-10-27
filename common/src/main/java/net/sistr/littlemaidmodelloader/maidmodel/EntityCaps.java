@@ -15,6 +15,7 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
 
 import java.util.HashMap;
 import java.util.List;
@@ -169,7 +170,7 @@ public class EntityCaps implements IModelCaps {
         register("roll", caps_roll, (entity, arg) -> entity.getRoll());
         register("leaningPitch", caps_leaningPitch, (entity, arg) -> entity.getLeaningPitch(1F));
         register("lastLeaningPitch", caps_lastLeaningPitch, (entity, arg) -> entity.getLeaningPitch(0F));
-        register("pose", caps_pose, (entity, arg) -> entity.getPose());
+        register("pose", caps_pose, (entity, arg) -> MMPose.convertPose(entity.getPose()));
         register("isPoseStanding", caps_isPoseStanding, (entity, arg) -> entity.getPose() == EntityPose.STANDING);
         register("isPoseFallFlying", caps_isPoseFallFlying, (entity, arg) -> entity.isFallFlying());
         register("isPoseSleeping", caps_isPoseSleeping, (entity, arg) -> entity.isSleeping());
@@ -177,6 +178,7 @@ public class EntityCaps implements IModelCaps {
         register("isPoseSpinAttack", caps_isPoseSpinAttack, (entity, arg) -> entity.getPose() == EntityPose.SPIN_ATTACK);
         register("isPoseCrouching", caps_isPoseCrouching, (entity, arg) -> entity.isInSneakingPose());
         register("isPoseDying", caps_isPoseDying, (entity, arg) -> entity.isDead());
+        register("isPoseDying", caps_isPoseDying, (entity, arg) -> entity.getSleepingDirection());
     }
 
     private static void register(String name, int index, Getter getter) {

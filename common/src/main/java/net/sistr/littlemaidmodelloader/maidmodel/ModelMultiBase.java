@@ -1,6 +1,10 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
@@ -89,7 +93,7 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
 
     @Override
     public void setupTransform(IModelCaps caps, MMMatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta) {
-        /*setupTransformsLiv(caps, matrices, animationProgress, bodyYaw, tickDelta);
+        setupTransformsLiv(caps, matrices, animationProgress, bodyYaw, tickDelta);
         float leaningPitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_leaningPitch);
         float roll;
         float deg;
@@ -99,13 +103,16 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
             if (!ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isPoseSpinAttack)) {
                 matrices.rotateXDeg(deg * (-90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch)));
             }
-            Vec3d vec3d = abstractClientPlayerEntity.getRotationVec(tickDelta);
-            Vec3d vec3d2 = abstractClientPlayerEntity.getVelocity();
-            double d = Entity.squaredHorizontalLength(vec3d2);
-            double e = Entity.squaredHorizontalLength(vec3d);
+            Vec3d lookFor = getRotationVec(caps, tickDelta);
+            Vec3d velocity =
+                    new Vec3d(ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_motionX),
+                            ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_motionY),
+                            ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_motionZ));
+            double d = Entity.squaredHorizontalLength(velocity);
+            double e = Entity.squaredHorizontalLength(lookFor);
             if (d > 0.0D && e > 0.0D) {
-                double l = (vec3d2.x * vec3d.x + vec3d2.z * vec3d.z) / Math.sqrt(d * e);
-                double m = vec3d2.x * vec3d.z - vec3d2.z * vec3d.x;
+                double l = (velocity.x * lookFor.x + velocity.z * lookFor.z) / Math.sqrt(d * e);
+                double m = velocity.x * lookFor.z - velocity.z * lookFor.x;
                 matrices.rotateYRad((float) (Math.signum(m) * Math.acos(l)));
             }
         } else if (leaningPitch > 0.0F) {
@@ -117,44 +124,82 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
             if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isPoseSwimming)) {
                 matrices.translate(0.0D, -1.0D, 0.30000001192092896D);
             }
-        }*/
+        }
+    }
+
+    public Vec3d getRotationVec(IModelCaps caps, float tickDelta) {
+        float yaw = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationYaw);
+        float pitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch);
+        float prevYaw = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_prevRotationYaw);
+        float prevPitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_prevRotationPitch);
+        return getRotationVec(MathHelper.lerp(tickDelta, prevYaw, yaw), MathHelper.lerp(tickDelta, prevPitch, pitch));
+    }
+
+    protected final Vec3d getRotationVec(float pitch, float yaw) {
+        float f = pitch * 0.017453292F;
+        float g = -yaw * 0.017453292F;
+        float h = MathHelper.cos(g);
+        float i = MathHelper.sin(g);
+        float j = MathHelper.cos(f);
+        float k = MathHelper.sin(f);
+        return new Vec3d(i * j, -k, h * j);
     }
 
     protected void setupTransformsLiv(IModelCaps caps, MMMatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta) {
         /*if (this.isShaking(entity)) {
-            bodyYaw += (float)(Math.cos((double)entity.age * 3.25D) * 3.141592653589793D * 0.4000000059604645D);
+            bodyYaw += (float) (Math.cos((double) entity.age * 3.25D) * 3.141592653589793D * 0.4000000059604645D);
+        }*/
+
+        MMPose pose = (MMPose) caps.getCapsValue(IModelCaps.caps_pose);
+        if (pose != MMPose.SLEEPING) {
+            matrices.rotateYDeg(180.0F - bodyYaw);
         }
 
-        EntityPose entityPose = entity.getPose();
-        if (entityPose != EntityPose.SLEEPING) {
-            matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F - bodyYaw));
-        }
-
-        if (entity.deathTime > 0) {
-            float f = ((float)entity.deathTime + tickDelta - 1.0F) / 20.0F * 1.6F;
+        /*if (entity.deathTime > 0) {
+            float f = ((float) entity.deathTime + tickDelta - 1.0F) / 20.0F * 1.6F;
             f = MathHelper.sqrt(f);
             if (f > 1.0F) {
                 f = 1.0F;
             }
 
             matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(f * this.getLyingAngle(entity)));
-        } else if (entity.isUsingRiptide()) {
-            matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F - entity.pitch));
-            matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(((float)entity.age + tickDelta) * -75.0F));
-        } else if (entityPose == EntityPose.SLEEPING) {
-            Direction direction = entity.getSleepingDirection();
+        } else*/
+        if (/*entity.isUsingRiptide()*/pose == MMPose.SPIN_ATTACK) {
+            matrices.rotateXDeg(-90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch));
+            matrices.rotateYDeg((ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_ticksExisted) + tickDelta) * -75.0F);
+        } else if (pose == MMPose.SLEEPING) {
+            Direction direction = (Direction) caps.getCapsValue(IModelCaps.caps_sleepingDirection);
             float g = direction != null ? getYaw(direction) : bodyYaw;
-            matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(g));
-            matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(this.getLyingAngle(entity)));
-            matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(270.0F));
-        } else if (entity.hasCustomName() || entity instanceof PlayerEntity) {
-            String string = Formatting.strip(entity.getName().getString());
-            if (("Dinnerbone".equals(string) || "Grumm".equals(string)) && (!(entity instanceof PlayerEntity) || ((PlayerEntity)entity).isPartVisible(PlayerModelPart.CAPE))) {
-                matrices.translate(0.0D, (double)(entity.getHeight() + 0.1F), 0.0D);
-                matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+            matrices.rotateYDeg(g);
+            matrices.rotateZDeg(this.getLyingAngle(caps));
+            matrices.rotateYDeg(270.0F);
+        } else {
+            String string = Formatting.strip(ModelCapsHelper.getCapsValueString(caps, IModelCaps.caps_entityName));
+            if (("Dinnerbone".equals(string) || "Grumm".equals(string))) {
+                matrices.translate(0.0D, ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_height) + 0.1F, 0.0D);
+                matrices.rotateZDeg(180.0F);
             }
-        }*/
+        }
 
+    }
+
+    protected float getLyingAngle(IModelCaps caps) {
+        return 90F;
+    }
+
+    public static float getYaw(Direction direction) {
+        switch (direction) {
+            case SOUTH:
+                return 90.0F;
+            case WEST:
+                return 0.0F;
+            case NORTH:
+                return 270.0F;
+            case EAST:
+                return 180.0F;
+            default:
+                return 0.0F;
+        }
     }
 
     @Override
