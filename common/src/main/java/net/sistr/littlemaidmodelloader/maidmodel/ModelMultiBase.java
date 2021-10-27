@@ -235,7 +235,14 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
      */
     @Override
     public float getHeight(IModelCaps pEntityCaps, MMPose pose) {
-        return getHeight();
+        if (pose == MMPose.FALL_FLYING || pose == MMPose.SWIMMING || pose == MMPose.SPIN_ATTACK) {
+            return Math.min(getHeight(pEntityCaps), getWidth(pEntityCaps, pose));
+        } else if (pose == MMPose.SLEEPING || pose == MMPose.DYING) {
+            return 0.2f;
+        } else if (pose == MMPose.CROUCHING) {
+            return Math.max(0.2f, getHeight(pEntityCaps) - 0.3f);
+        }
+        return getHeight(pEntityCaps);
     }
 
     /**
@@ -255,6 +262,9 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
      * 横幅
      */
     public float getWidth(IModelCaps pEntityCaps, MMPose pose) {
+        if (pose == MMPose.SLEEPING || pose == MMPose.DYING) {
+            return 0.2f;
+        }
         return getWidth();
     }
 
