@@ -1,5 +1,7 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.minecraft.util.math.MathHelper;
+
 import java.util.Random;
 
 /**
@@ -294,6 +296,13 @@ public class ModelLittleMaid_Elsa5 extends ModelLittleMaidBase {
 			BunchR.rotateAngleZ -= fwBuf5;
 			BunchL.rotateAngleZ += fwBuf5;
 		}
+		//x.1.0での追加
+		float roll = ModelCapsHelper.getCapsValueInt(pEntityCaps, IModelCaps.caps_roll) + pRenderPartialTicks;
+		this.roll = MathHelper.clamp(roll * roll / 100.0F, 0.0F, 1.0F);
+		this.leaningPitch = lerp(pRenderPartialTicks,
+				ModelCapsHelper.getCapsValueFloat(pEntityCaps, caps_lastLeaningPitch),
+				ModelCapsHelper.getCapsValueFloat(pEntityCaps, caps_leaningPitch));
+		//x.1.0での追加ここまで
 	}
 
 	/**
@@ -302,6 +311,15 @@ public class ModelLittleMaid_Elsa5 extends ModelLittleMaidBase {
 	@Override
 	public void setRotationAngles(float f, float f1, float ticksExisted, float pheadYaw, float pheadPitch, float f5, IModelCaps pEntityCaps)
 	{
+		//x.1.0での追加
+		if (ModelCapsHelper.getCapsValueBoolean(pEntityCaps, caps_isFallFlying)) {
+			f1 *= (1 - roll);
+			pheadPitch = -15f * roll + pheadPitch * (1 - roll);
+		} else if (0 < leaningPitch) {
+			pheadPitch = -15f * leaningPitch + pheadPitch * (1 - leaningPitch);
+		}
+		//x.1.0での追加ここまで
+
 		//�����
 		bipedHead.rotateAngleY += pheadYaw / 57.29578F;
 		bipedHead.rotateAngleX += pheadPitch / 57.29578F;

@@ -95,7 +95,7 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
         float roll;
         float k;
         if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isFallFlying)) {
-            roll = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_roll) + tickDelta;
+            roll = ModelCapsHelper.getCapsValueInt(caps, IModelCaps.caps_roll) + tickDelta;
             k = MathHelper.clamp(roll * roll / 100.0F, 0.0F, 1.0F);
             if (!ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isUsingRiptide)) {
                 matrices.rotateXDeg(k * (-90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch)));
