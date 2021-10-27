@@ -3,8 +3,6 @@ package net.sistr.littlemaidmodelloader.maidmodel;
 import me.shedaniel.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
@@ -91,23 +89,23 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
 
     //追加
 
-
     @Override
     public void setupTransform(IModelCaps caps, MMMatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta) {
         float leaningPitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_leaningPitch);
         float roll;
-        float deg;
-        if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isPoseFallFlying)) {
+        float k;
+        if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isFallFlying)) {
             roll = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_roll) + tickDelta;
-            deg = MathHelper.clamp(roll * roll / 100.0F, 0.0F, 1.0F);
-            if (!ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isPoseSpinAttack)) {
-                matrices.rotateXDeg(deg * (-90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch)));
+            k = MathHelper.clamp(roll * roll / 100.0F, 0.0F, 1.0F);
+            if (!ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isUsingRiptide)) {
+                matrices.rotateXDeg(k * (-90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch)));
             }
+
             Vec3d lookFor = getRotationVec(caps, tickDelta);
             Vec3d velocity =
-                    new Vec3d(ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_motionX),
-                            ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_motionY),
-                            ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_motionZ));
+                    new Vec3d(ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionX),
+                            ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionY),
+                            ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionZ));
             double d = Entity.squaredHorizontalLength(velocity);
             double e = Entity.squaredHorizontalLength(lookFor);
             if (d > 0.0D && e > 0.0D) {
@@ -119,23 +117,23 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
             roll = ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isInWater)
                     ? -90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch)
                     : -90.0F;
-            deg = MathHelper.lerp(leaningPitch, 0.0F, roll);
-            matrices.rotateXDeg(deg);
-            if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isPoseSwimming)) {
+            k = MathHelper.lerp(leaningPitch, 0.0F, roll);
+            matrices.rotateXDeg(k);
+            if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isSwimming)) {
                 matrices.translate(0.0D, -1.0D, 0.3D);
             }
         }
     }
 
-    public Vec3d getRotationVec(IModelCaps caps, float tickDelta) {
+    private Vec3d getRotationVec(IModelCaps caps, float tickDelta) {
         float yaw = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationYaw);
-        float pitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch);
         float prevYaw = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_prevRotationYaw);
+        float pitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch);
         float prevPitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_prevRotationPitch);
-        return getRotationVec(MathHelper.lerp(tickDelta, prevYaw, yaw), MathHelper.lerp(tickDelta, prevPitch, pitch));
+        return getRotationVector(MathHelper.lerp(tickDelta, prevPitch, pitch), MathHelper.lerp(tickDelta, prevYaw, yaw));
     }
 
-    protected final Vec3d getRotationVec(float pitch, float yaw) {
+    private Vec3d getRotationVector(float pitch, float yaw) {
         float f = pitch * 0.017453292F;
         float g = -yaw * 0.017453292F;
         float h = MathHelper.cos(g);

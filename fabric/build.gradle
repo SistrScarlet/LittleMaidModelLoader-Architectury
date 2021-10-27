@@ -35,6 +35,8 @@ dependencies {
 
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive false }
 
+    modImplementationMapped fileTree(dir: './mods', include: '*.jar')
+
     common(project(path: ":common", configuration: "dev")) {
         transitive = false
     }

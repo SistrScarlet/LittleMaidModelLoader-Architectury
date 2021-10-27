@@ -122,8 +122,8 @@ public class EntityCaps implements IModelCaps {
             }
             return null;
         });
-        register("rotationYaw", caps_rotationYaw, (entity, arg) -> entity.headYaw);
-        register("rotationPitch", caps_rotationPitch, (entity, arg) -> entity.headYaw);
+        register("rotationYaw", caps_rotationYaw, (entity, arg) -> entity.yaw);
+        register("rotationPitch", caps_rotationPitch, (entity, arg) -> entity.pitch);
         register("prevRotationYaw", caps_prevRotationYaw, (entity, arg) -> entity.prevYaw);
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
@@ -170,13 +170,15 @@ public class EntityCaps implements IModelCaps {
         register("roll", caps_roll, (entity, arg) -> entity.getRoll());
         register("leaningPitch", caps_leaningPitch, (entity, arg) -> entity.getLeaningPitch(1F));
         register("lastLeaningPitch", caps_lastLeaningPitch, (entity, arg) -> entity.getLeaningPitch(0F));
+        register("isUsingRiptide", caps_isUsingRiptide, (entity, arg) -> entity.isUsingRiptide());
+        register("isFallFlying", caps_isFallFlying, (entity, arg) -> entity.isFallFlying());
         register("pose", caps_pose, (entity, arg) -> MMPose.convertPose(entity.getPose()));
         register("isPoseStanding", caps_isPoseStanding, (entity, arg) -> entity.getPose() == EntityPose.STANDING);
-        register("isPoseFallFlying", caps_isPoseFallFlying, (entity, arg) -> entity.isFallFlying());
-        register("isPoseSleeping", caps_isPoseSleeping, (entity, arg) -> entity.isSleeping());
-        register("isPoseSwimming", caps_isPoseSwimming, (entity, arg) -> entity.isInSwimmingPose());
+        register("isPoseFallFlying", caps_isPoseFallFlying, (entity, arg) -> entity.getPose() == EntityPose.FALL_FLYING);
+        register("isPoseSleeping", caps_isPoseSleeping, (entity, arg) -> entity.getPose() == EntityPose.SLEEPING);
+        register("isPoseSwimming", caps_isPoseSwimming, (entity, arg) -> entity.getPose() == EntityPose.SWIMMING);
         register("isPoseSpinAttack", caps_isPoseSpinAttack, (entity, arg) -> entity.getPose() == EntityPose.SPIN_ATTACK);
-        register("isPoseCrouching", caps_isPoseCrouching, (entity, arg) -> entity.isInSneakingPose());
+        register("isPoseCrouching", caps_isPoseCrouching, (entity, arg) -> entity.getPose() == EntityPose.CROUCHING);
         register("isPoseDying", caps_isPoseDying, (entity, arg) -> entity.isDead());
         register("isPoseDying", caps_isPoseDying, (entity, arg) -> entity.getSleepingDirection());
     }
