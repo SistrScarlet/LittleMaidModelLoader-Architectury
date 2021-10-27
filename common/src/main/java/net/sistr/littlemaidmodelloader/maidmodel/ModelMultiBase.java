@@ -93,7 +93,6 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
 
     @Override
     public void setupTransform(IModelCaps caps, MMMatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta) {
-        setupTransformsLiv(caps, matrices, animationProgress, bodyYaw, tickDelta);
         float leaningPitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_leaningPitch);
         float roll;
         float deg;
@@ -122,7 +121,7 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
             deg = MathHelper.lerp(leaningPitch, 0.0F, roll);
             matrices.rotateXDeg(deg);
             if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isPoseSwimming)) {
-                matrices.translate(0.0D, -1.0D, 0.30000001192092896D);
+                matrices.translate(0.0D, -1.0D, 0.3D);
             }
         }
     }
@@ -143,63 +142,6 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
         float j = MathHelper.cos(f);
         float k = MathHelper.sin(f);
         return new Vec3d(i * j, -k, h * j);
-    }
-
-    protected void setupTransformsLiv(IModelCaps caps, MMMatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta) {
-        /*if (this.isShaking(entity)) {
-            bodyYaw += (float) (Math.cos((double) entity.age * 3.25D) * 3.141592653589793D * 0.4000000059604645D);
-        }*/
-
-        MMPose pose = (MMPose) caps.getCapsValue(IModelCaps.caps_pose);
-        if (pose != MMPose.SLEEPING) {
-            matrices.rotateYDeg(180.0F - bodyYaw);
-        }
-
-        /*if (entity.deathTime > 0) {
-            float f = ((float) entity.deathTime + tickDelta - 1.0F) / 20.0F * 1.6F;
-            f = MathHelper.sqrt(f);
-            if (f > 1.0F) {
-                f = 1.0F;
-            }
-
-            matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(f * this.getLyingAngle(entity)));
-        } else*/
-        if (/*entity.isUsingRiptide()*/pose == MMPose.SPIN_ATTACK) {
-            matrices.rotateXDeg(-90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch));
-            matrices.rotateYDeg((ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_ticksExisted) + tickDelta) * -75.0F);
-        } else if (pose == MMPose.SLEEPING) {
-            Direction direction = (Direction) caps.getCapsValue(IModelCaps.caps_sleepingDirection);
-            float g = direction != null ? getYaw(direction) : bodyYaw;
-            matrices.rotateYDeg(g);
-            matrices.rotateZDeg(this.getLyingAngle(caps));
-            matrices.rotateYDeg(270.0F);
-        } else {
-            String string = Formatting.strip(ModelCapsHelper.getCapsValueString(caps, IModelCaps.caps_entityName));
-            if (("Dinnerbone".equals(string) || "Grumm".equals(string))) {
-                matrices.translate(0.0D, ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_height) + 0.1F, 0.0D);
-                matrices.rotateZDeg(180.0F);
-            }
-        }
-
-    }
-
-    protected float getLyingAngle(IModelCaps caps) {
-        return 90F;
-    }
-
-    public static float getYaw(Direction direction) {
-        switch (direction) {
-            case SOUTH:
-                return 90.0F;
-            case WEST:
-                return 0.0F;
-            case NORTH:
-                return 270.0F;
-            case EAST:
-                return 180.0F;
-            default:
-                return 0.0F;
-        }
     }
 
     @Override
