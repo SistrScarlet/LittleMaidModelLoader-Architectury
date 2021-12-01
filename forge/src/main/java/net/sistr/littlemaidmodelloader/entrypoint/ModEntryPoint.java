@@ -24,7 +24,7 @@ public class ModEntryPoint {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
         LittleMaidModelLoader.init();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ModEntryPoint::rendererInit);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
     }
 
     public void modInit(FMLCommonSetupEvent event) {
@@ -35,7 +35,7 @@ public class ModEntryPoint {
         ClientSetup.init();
     }
 
-    public static void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
+    public void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
         event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
     }
