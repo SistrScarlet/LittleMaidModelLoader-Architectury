@@ -110,8 +110,8 @@ public abstract class ModelBoxBase {
         public final void draw(MatrixStack matrices, VertexConsumer buffer,
                                int light, int overlay, float red, float green, float blue, float alpha, float scale) {
             MatrixStack.Entry entry = matrices.peek();
-            Matrix4f matrix4f = entry.getModel();
-            Matrix3f matrix3f = entry.getNormal();
+            Matrix4f matrix4f = entry.getPositionMatrix();
+            Matrix3f matrix3f = entry.getNormalMatrix();
             Vec3f normal = normalCache.copy();
 
             normal.transform(matrix3f);
@@ -138,7 +138,7 @@ public abstract class ModelBoxBase {
 
                 Vector4f uv = new Vector4f(vertex.texturePositionX, vertex.texturePositionY, 0, 1.0F);
                 if (!GLCompat.textureStack.isEmpty()) {
-                    uv.transform(GLCompat.textureStack.peek().getModel());
+                    uv.transform(GLCompat.textureStack.peek().getPositionMatrix());
                 }
 
                 buffer.vertex(pos.getX(), pos.getY(), pos.getZ(),

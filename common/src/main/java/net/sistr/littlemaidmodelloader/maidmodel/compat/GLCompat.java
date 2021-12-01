@@ -14,7 +14,7 @@ import java.nio.FloatBuffer;
  * GL互換クラス
  * 完全ではないが、メイドモデル読み込みに限っては概ね問題無い
  * 問題が出るモデルが出るたびに更新すること
- * */
+ */
 public final class GLCompat {
 
     //行列関連
@@ -58,10 +58,10 @@ public final class GLCompat {
     public static void glScalef(float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
             MatrixStack.Entry entry = ModelRenderer.matrixStack.peek();
-            entry.getModel().multiply(Matrix4f.scale(x, y, z));
+            entry.getPositionMatrix().multiply(Matrix4f.scale(x, y, z));
         } else if (mode == GL11.GL_TEXTURE) {
             MatrixStack.Entry entry = textureStack.peek();
-            entry.getModel().multiply(Matrix4f.scale(x, y, z));
+            entry.getPositionMatrix().multiply(Matrix4f.scale(x, y, z));
         }
     }
 
@@ -70,7 +70,7 @@ public final class GLCompat {
             ModelRenderer.matrixStack.multiply(new Vec3f(x, y, z).getDegreesQuaternion(deg));
         } else if (mode == GL11.GL_TEXTURE) {
             //textureStackはModelしか使わん
-            Matrix4f model = textureStack.peek().getModel();
+            Matrix4f model = textureStack.peek().getPositionMatrix();
             model.multiply(new Vec3f(x, y, z).getDegreesQuaternion(deg));
         }
     }
@@ -88,16 +88,16 @@ public final class GLCompat {
     //現在のマトリックスを書き込む
     public static void glGetFloat(int mode, FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW_MATRIX) {
-            ModelRenderer.matrixStack.peek().getModel().writeColumnMajor(buf);
+            ModelRenderer.matrixStack.peek().getPositionMatrix().writeColumnMajor(buf);
         }
     }
 
     //バッファを読み込む
     public static void glLoadMatrix(FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW) {
-            ModelRenderer.matrixStack.peek().getModel().readColumnMajor(buf);
+            ModelRenderer.matrixStack.peek().getPositionMatrix().readColumnMajor(buf);
         } else if (mode == GL11.GL_TEXTURE) {
-            textureStack.peek().getModel().readColumnMajor(buf);
+            textureStack.peek().getPositionMatrix().readColumnMajor(buf);
         }
     }
 
@@ -108,12 +108,12 @@ public final class GLCompat {
             //buf.put(7, num * 0);
             Matrix4f matrix4f = new Matrix4f();
             matrix4f.readColumnMajor(buf);
-            ModelRenderer.matrixStack.peek().getModel().multiply(matrix4f);
+            ModelRenderer.matrixStack.peek().getPositionMatrix().multiply(matrix4f);
             //buf.put(7, num);
         } else if (mode == GL11.GL_TEXTURE) {
             Matrix4f matrix4f = new Matrix4f();
             matrix4f.readColumnMajor(buf);
-            textureStack.peek().getModel().multiply(matrix4f);
+            textureStack.peek().getPositionMatrix().multiply(matrix4f);
         }
     }
 
@@ -128,7 +128,7 @@ public final class GLCompat {
     }
 
     public static void glLoadIdentity() {
-        ModelRenderer.matrixStack.peek().getModel().loadIdentity();
+        ModelRenderer.matrixStack.peek().getPositionMatrix().loadIdentity();
     }
 
     public static void glBegin(int i) {
@@ -201,10 +201,21 @@ public final class GLCompat {
 
     //ダミークラス
     //現状ほぼ変換されることはない
-    public static void dummy() { }
-    public static void dummy(int i) { }
-    public static void dummy(float a, float b) { }
-    public static void dummy(float a, float b, float c) { }
-    public static void dummy(FloatBuffer f) { }
-    public static void dummy(int i, FloatBuffer f) { }
+    public static void dummy() {
+    }
+
+    public static void dummy(int i) {
+    }
+
+    public static void dummy(float a, float b) {
+    }
+
+    public static void dummy(float a, float b, float c) {
+    }
+
+    public static void dummy(FloatBuffer f) {
+    }
+
+    public static void dummy(int i, FloatBuffer f) {
+    }
 }
