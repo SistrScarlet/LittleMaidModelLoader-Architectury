@@ -6,10 +6,6 @@ loom {
     accessWidenerPath = file("src/main/resources/littlemaidmodelloader.accessWidener")
 }
 
-configurations {
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-}
-
 architectury {
     platformSetupLoomIde()
     fabric()
@@ -23,26 +19,14 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
-repositories {
-    maven { url "https://maven.terraformersmc.com/releases/" }
-}
-
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     // Remove the next line if you don't want to depend on the API
-    modApi "me.shedaniel:architectury-fabric:${rootProject.architectury_version}"
+    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive false }
-
-    modImplementationMapped fileTree(dir: './mods', include: '*.jar')
-
-    common(project(path: ":common", configuration: "dev")) {
-        transitive = false
-    }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
-        transitive = false
-    }
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
 processResources {

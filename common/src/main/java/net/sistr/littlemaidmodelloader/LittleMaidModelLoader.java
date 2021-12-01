@@ -1,7 +1,7 @@
 package net.sistr.littlemaidmodelloader;
 
-import me.shedaniel.architectury.platform.Platform;
-import me.shedaniel.architectury.registry.entity.EntityAttributes;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
@@ -79,8 +79,8 @@ public class LittleMaidModelLoader {
     }
 
     public static void registerAttribute() {
-        EntityAttributes.register(() -> Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
-        EntityAttributes.register(() -> Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(() -> Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(() -> Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
     }
 
 }

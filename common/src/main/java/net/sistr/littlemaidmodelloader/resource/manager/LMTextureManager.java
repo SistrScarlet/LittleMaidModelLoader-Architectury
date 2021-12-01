@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.resource.manager;
 
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;

@@ -3,8 +3,8 @@
     "minVersion": "0.8",
     "package": "net.sistr.littlemaidmodelloader.mixin",
     "compatibilityLevel": "JAVA_16",
-    "mixins": [ "MixinMatrix4f" ],
-    "client": [ "MixinCuboid", "MixinMinecraftClient", "MixinModelPart", "MixinResourcePackManager" ],
+    "mixins": [  ],
+    "client": [ "MixinMinecraftClient", "MixinResourcePackManager" ],
     "injectors": {
         "defaultRequire": 1
     }

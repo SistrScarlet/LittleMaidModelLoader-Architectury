@@ -1,7 +1,7 @@
 package net.sistr.littlemaidmodelloader.network;
 
-import me.shedaniel.architectury.networking.NetworkManager;
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

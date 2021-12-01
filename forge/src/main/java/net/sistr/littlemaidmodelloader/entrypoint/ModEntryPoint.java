@@ -1,8 +1,6 @@
 package net.sistr.littlemaidmodelloader.entrypoint;
 
-import me.shedaniel.architectury.platform.forge.EventBuses;
-import me.shedaniel.architectury.registry.entity.EntityAttributes;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
