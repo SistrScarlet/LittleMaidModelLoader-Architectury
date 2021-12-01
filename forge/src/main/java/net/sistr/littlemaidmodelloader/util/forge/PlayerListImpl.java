@@ -6,8 +6,8 @@ import net.minecraft.server.world.EntityTrackingListener;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.world.chunk.ChunkManager;
-import net.sistr.littlemaidmodelloader.mixin.EntityTrackerAccessor;
-import net.sistr.littlemaidmodelloader.mixin.ThreadedAnvilChunkStorageAccessor;
+import net.sistr.littlemaidmodelloader.forge.mixin.EntityTrackerAccessor;
+import net.sistr.littlemaidmodelloader.forge.mixin.ThreadedAnvilChunkStorageAccessor;
 
 import java.util.Collection;
 import java.util.Collections;

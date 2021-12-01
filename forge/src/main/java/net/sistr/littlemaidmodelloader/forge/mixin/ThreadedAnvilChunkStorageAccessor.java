@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.mixin;
+package net.sistr.littlemaidmodelloader.forge.mixin;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;

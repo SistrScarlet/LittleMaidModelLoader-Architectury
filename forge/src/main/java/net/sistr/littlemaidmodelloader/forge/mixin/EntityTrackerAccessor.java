@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.mixin;
+package net.sistr.littlemaidmodelloader.forge.mixin;
 
 import net.minecraft.server.world.EntityTrackingListener;
 import org.spongepowered.asm.mixin.Mixin;
