@@ -1,7 +1,7 @@
 package net.sistr.littlemaidmodelloader.network;
 
-import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
+import me.shedaniel.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -31,7 +31,7 @@ public class SyncMultiModelPacket {
 
     public static PacketByteBuf createC2SPacket(Entity entity, IHasMultiModel hasMultiModel) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeInt(entity.getId());
+        passedData.writeInt(entity.getEntityId());
         passedData.writeString(hasMultiModel.getTextureHolder(Layer.SKIN, Part.HEAD)
                 .getTextureName());
         for (Part part : Part.values()) {
@@ -50,7 +50,7 @@ public class SyncMultiModelPacket {
 
     public static PacketByteBuf createS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeInt(entity.getId());
+        passedData.writeInt(entity.getEntityId());
         passedData.writeString(hasMultiModel.getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
         for (Part part : Part.values()) {
             passedData.writeString(hasMultiModel.getTextureHolder(Layer.INNER, part).getTextureName());

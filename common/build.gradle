@@ -1,5 +1,5 @@
 loom {
-    accessWidener = file("src/main/resources/littlemaidmodelloader.accessWidener")
+    accessWidenerPath = file("src/main/resources/littlemaidmodelloader.accessWidener")
 }
 
 dependencies {
@@ -7,26 +7,26 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+    modApi "me.shedaniel:architectury:${rootProject.architectury_version}"
 }
 
 architectury {
-    common(false)
+    common()
 }
 
-java {
-    withSourcesJar()
+configurations {
+    dev
+}
+
+artifacts {
+    dev(jar)
 }
 
 publishing {
     publications {
         mavenCommon(MavenPublication) {
             artifactId = rootProject.archives_base_name
-            // add all the jars that should be included when publishing to maven
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
 

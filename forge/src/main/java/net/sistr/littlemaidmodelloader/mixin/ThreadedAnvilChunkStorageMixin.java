@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
-import net.sistr.littlemaidmodelloader.util.ThreadedAnvilChunkStorageTrackingExtensions;
+import net.sistr.littlemaidmodelloader.util.forge.ThreadedAnvilChunkStorageTrackingExtensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,9 +1,9 @@
 package net.sistr.littlemaidmodelloader.client.resource.loader;
 
+import me.shedaniel.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
-import net.sistr.littlemaidmodelloader.util.SideChecker;
 import net.sistr.littlemaidmodelloader.client.resource.ResourceWrapper;
 import net.sistr.littlemaidmodelloader.resource.loader.LMLoader;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
@@ -34,7 +34,7 @@ public class LMTextureLoader implements LMLoader {
 
     @Override
     public boolean canLoad(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        return SideChecker.isClient() && path.endsWith(".png") && ResourceHelper.getParentFolderName(path, isArchive).isPresent()
+        return Platform.getEnv() == EnvType.CLIENT && path.endsWith(".png") && ResourceHelper.getParentFolderName(path, isArchive).isPresent()
                 && ResourceHelper.getIndex(path) != -1;
     }
 

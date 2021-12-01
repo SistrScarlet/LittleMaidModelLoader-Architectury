@@ -1,10 +1,10 @@
 package net.sistr.littlemaidmodelloader.multimodel;
 
 import net.minecraft.util.math.MathHelper;
+import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
-import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 
 /**
  * マルチモデル用識別インターフェース
@@ -111,6 +111,16 @@ public interface IMultiModel {
      * @return 戻り値は基本 -1
      */
     int showArmorParts(int parts, int index);
+
+    /**
+     * ハードポイントに接続されたアイテムを表示する
+     */
+    void renderItems(IModelCaps pEntityCaps);
+
+    /**
+     * 主観視点の手を描画する
+     */
+    void renderFirstPersonHand(IModelCaps pEntityCaps);
 
     //計算関数
 

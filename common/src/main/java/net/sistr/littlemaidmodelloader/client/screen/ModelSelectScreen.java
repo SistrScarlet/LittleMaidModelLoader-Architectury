@@ -2,14 +2,12 @@ package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
@@ -95,16 +93,13 @@ public class ModelSelectScreen extends Screen {
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         assert this.client != null;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
-
+        this.client.getTextureManager().bindTexture(MODEL_SELECT_GUI_TEXTURE);
         int relX = (this.width - WIDTH) / 2;
         int relY = (this.height - HEIGHT) / 2;
         this.drawTexture(matrixStack, relX, relY, 0, 0, WIDTH, HEIGHT);
 
         MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(ARMOR, relX, relY + HEIGHT + 8);
-        RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
+        this.client.getTextureManager().bindTexture(MODEL_SELECT_GUI_TEXTURE);
         this.drawTexture(matrixStack, relX, relY + HEIGHT + 8, 0, 240, 16, 16);
 
         if (guiSwitch)

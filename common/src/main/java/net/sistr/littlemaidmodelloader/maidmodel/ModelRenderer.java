@@ -2,8 +2,8 @@ package net.sistr.littlemaidmodelloader.maidmodel;
 
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3f;
+import net.minecraft.item.ItemStack;
 import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMVertexConsumer;

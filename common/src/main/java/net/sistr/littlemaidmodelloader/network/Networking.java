@@ -1,15 +1,15 @@
 package net.sistr.littlemaidmodelloader.network;
 
-import dev.architectury.networking.NetworkManager;
+import me.shedaniel.architectury.networking.NetworkManager;
+import me.shedaniel.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.sistr.littlemaidmodelloader.util.SideChecker;
 
 public class Networking {
     public static final Networking INSTANCE = new Networking();
 
     public void init() {
-        if (SideChecker.isClient()) clientInit();
+        if (Platform.getEnv() == EnvType.CLIENT) clientInit();
         serverInit();
     }
 

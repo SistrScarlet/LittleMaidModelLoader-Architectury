@@ -231,6 +231,8 @@ public interface IModelCaps {
     int caps_roll = 0x0601;
     int caps_leaningPitch = 0x0602;
     int caps_lastLeaningPitch = 0x0603;
+    int caps_isUsingRiptide = 0x0604;
+    int caps_isFallFlying = 0x0605;
 
     int caps_pose = 0x0700;
     int caps_isPoseStanding = 0x0701;
@@ -240,6 +242,8 @@ public interface IModelCaps {
     int caps_isPoseSpinAttack = 0x0705;
     int caps_isPoseCrouching = 0x0706;
     int caps_isPoseDying = 0x0707;
+
+    int caps_sleepingDirection = 0x0800;
 
     /**
      * モデルが実装している機能をリストに入れて返す。

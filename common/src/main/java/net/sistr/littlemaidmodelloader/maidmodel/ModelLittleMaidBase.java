@@ -1,5 +1,6 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.minecraft.util.math.MathHelper;
 import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
 
 /**
@@ -18,6 +19,11 @@ public abstract class ModelLittleMaidBase extends ModelMultiMMMBase {
     public ModelRenderer bipedRightLeg;
     public ModelRenderer bipedLeftLeg;
     public ModelRenderer Skirt;
+
+    //x.1.0での追加
+    public float roll;
+    public float leaningPitch;
+    //x.1.0での追加ここまで
 
 
     /**
@@ -142,6 +148,18 @@ public abstract class ModelLittleMaidBase extends ModelMultiMMMBase {
     public void setLivingAnimations(IModelCaps pEntityCaps, float par2, float par3, float pRenderPartialTicks) {
         float angle = ModelCapsHelper.getCapsValueFloat(pEntityCaps, caps_interestedAngle, (Float)pRenderPartialTicks);
         bipedHead.setRotateAngleZ(angle);
+
+        //x.1.0での追加
+        float roll = ModelCapsHelper.getCapsValueInt(pEntityCaps, IModelCaps.caps_roll) + pRenderPartialTicks;
+        this.roll = MathHelper.clamp(roll * roll / 100.0F, 0.0F, 1.0F);
+        this.leaningPitch = lerp(pRenderPartialTicks,
+                ModelCapsHelper.getCapsValueFloat(pEntityCaps, caps_lastLeaningPitch),
+                ModelCapsHelper.getCapsValueFloat(pEntityCaps, caps_leaningPitch));
+        //x.1.0での追加ここまで
+    }
+
+    public float lerp(float delta, float a, float b) {
+        return delta * (b - a) + a;
     }
 
     /**
@@ -151,6 +169,15 @@ public abstract class ModelLittleMaidBase extends ModelMultiMMMBase {
     @Override
     public void setRotationAngles(float par1, float par2, float pTicksExisted,
                                   float pHeadYaw, float pHeadPitch, float par6, IModelCaps pEntityCaps) {
+        //x.1.0での追加
+        if (ModelCapsHelper.getCapsValueBoolean(pEntityCaps, caps_isFallFlying)) {
+            par2 *= (1 - roll);
+            pHeadPitch = -15f * roll + pHeadPitch * (1 - roll);
+        } else if (0 < leaningPitch) {
+            pHeadPitch = -15f * leaningPitch + pHeadPitch * (1 - leaningPitch);
+        }
+        //x.1.0での追加ここまで
+
         setDefaultPause(par1, par2, pTicksExisted, pHeadYaw, pHeadPitch, par6, pEntityCaps);
 
         if (isRiding) {

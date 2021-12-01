@@ -83,7 +83,7 @@ public abstract class ModelBase extends AbstractModelBase {
     }
 
     public static float mh_sqrt(double d) {
-        return MathHelper.sqrt((float) d);
+        return MathHelper.sqrt(d);
     }
 
     public static int mh_floor(float f) {

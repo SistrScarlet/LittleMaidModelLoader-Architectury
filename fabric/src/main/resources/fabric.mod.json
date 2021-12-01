@@ -9,11 +9,11 @@
     ],
     "contact": {
         "homepage": "https://forum.civa.jp/viewtopic.php?f=3&t=119",
-        "sources": "https://github.com/SistrScarlet/LittleMaidModelLoader-Fabric",
+        "sources": "https://github.com/SistrScarlet/LittleMaidModelLoader",
         "issues": "https://github.com/SistrScarlet/LittleMaidModelLoader-Fabric/issues"
     },
     "license": "https://github.com/SistrScarlet/LittleMaidModelLoader-Fabric/blob/1.16_Architectury/LICENCE.md",
-    "icon": "icon.png",
+    "icon": "assets/littlemaidmodelloader/icon.png",
     "environment": "*",
     "entrypoints": {
         "main": [

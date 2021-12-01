@@ -1,7 +1,10 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import me.shedaniel.architectury.platform.Platform;
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.sistr.littlemaidmodelloader.util.SideChecker;
+import net.minecraft.util.math.Vec3d;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
@@ -73,7 +76,7 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
         textureWidth = pTextureWidth;
         textureHeight = pTextureHeight;
 
-        if (SideChecker.isClient()) {
+        if (Platform.getEnv() == EnvType.CLIENT) {
 //			LittleMaidReengaged.Debug("ModelMulti.InitClient");
             // ハードポイント
             Arms = new ModelRenderer[2];
@@ -86,10 +89,58 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
 
     //追加
 
-
     @Override
     public void setupTransform(IModelCaps caps, MMMatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta) {
+        float leaningPitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_leaningPitch);
+        float roll;
+        float k;
+        if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isFallFlying)) {
+            roll = ModelCapsHelper.getCapsValueInt(caps, IModelCaps.caps_roll) + tickDelta;
+            k = MathHelper.clamp(roll * roll / 100.0F, 0.0F, 1.0F);
+            if (!ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isUsingRiptide)) {
+                matrices.rotateXDeg(k * (-90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch)));
+            }
 
+            Vec3d lookFor = getRotationVec(caps, tickDelta);
+            Vec3d velocity =
+                    new Vec3d(ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionX),
+                            ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionY),
+                            ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionZ));
+            double d = Entity.squaredHorizontalLength(velocity);
+            double e = Entity.squaredHorizontalLength(lookFor);
+            if (d > 0.0D && e > 0.0D) {
+                double l = (velocity.x * lookFor.x + velocity.z * lookFor.z) / Math.sqrt(d * e);
+                double m = velocity.x * lookFor.z - velocity.z * lookFor.x;
+                matrices.rotateYRad((float) (Math.signum(m) * Math.acos(l)));
+            }
+        } else if (leaningPitch > 0.0F) {
+            roll = ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isInWater)
+                    ? -90.0F - ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch)
+                    : -90.0F;
+            k = MathHelper.lerp(leaningPitch, 0.0F, roll);
+            matrices.rotateXDeg(k);
+            if (ModelCapsHelper.getCapsValueBoolean(caps, IModelCaps.caps_isSwimming)) {
+                matrices.translate(0.0D, -1.0D, 0.3D);
+            }
+        }
+    }
+
+    private Vec3d getRotationVec(IModelCaps caps, float tickDelta) {
+        float yaw = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationYaw);
+        float prevYaw = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_prevRotationYaw);
+        float pitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_rotationPitch);
+        float prevPitch = ModelCapsHelper.getCapsValueFloat(caps, IModelCaps.caps_prevRotationPitch);
+        return getRotationVector(MathHelper.lerp(tickDelta, prevPitch, pitch), MathHelper.lerp(tickDelta, prevYaw, yaw));
+    }
+
+    private Vec3d getRotationVector(float pitch, float yaw) {
+        float f = pitch * 0.017453292F;
+        float g = -yaw * 0.017453292F;
+        float h = MathHelper.cos(g);
+        float i = MathHelper.sin(g);
+        float j = MathHelper.cos(f);
+        float k = MathHelper.sin(f);
+        return new Vec3d(i * j, -k, h * j);
     }
 
     @Override
@@ -184,7 +235,14 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
      */
     @Override
     public float getHeight(IModelCaps pEntityCaps, MMPose pose) {
-        return getHeight();
+        if (pose == MMPose.FALL_FLYING || pose == MMPose.SWIMMING || pose == MMPose.SPIN_ATTACK) {
+            return Math.min(getHeight(pEntityCaps), getWidth(pEntityCaps, pose));
+        } else if (pose == MMPose.SLEEPING || pose == MMPose.DYING) {
+            return 0.2f;
+        } else if (pose == MMPose.CROUCHING) {
+            return Math.max(0.2f, getHeight(pEntityCaps) - 0.3f);
+        }
+        return getHeight(pEntityCaps);
     }
 
     /**
@@ -204,6 +262,9 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
      * 横幅
      */
     public float getWidth(IModelCaps pEntityCaps, MMPose pose) {
+        if (pose == MMPose.SLEEPING || pose == MMPose.DYING) {
+            return 0.2f;
+        }
         return getWidth();
     }
 
@@ -398,7 +459,7 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
     }
 
     public static float mh_sqrt_double(double d) {
-        return MathHelper.sqrt((float) d);
+        return MathHelper.sqrt(d);
     }
 
     public static int mh_floor_float(float f) {

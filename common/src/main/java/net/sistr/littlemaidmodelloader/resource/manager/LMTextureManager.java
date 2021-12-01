@@ -1,7 +1,8 @@
 package net.sistr.littlemaidmodelloader.resource.manager;
 
+import me.shedaniel.architectury.platform.Platform;
+import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
-import net.sistr.littlemaidmodelloader.util.SideChecker;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
@@ -41,7 +42,7 @@ public class LMTextureManager {
     public Optional<TextureHolder> getTexture(String textureName) {
         TextureHolder textureHolder = textures.get(textureName.toLowerCase());
         //サーバー側で読み込んでないテクスチャでもテクスチャ名だけは保持する
-        if (SideChecker.isServer() && textureHolder == null) {
+        if (Platform.getEnv() == EnvType.SERVER && textureHolder == null) {
             TextureHolder serverHolder = new TextureHolder(textureName, ResourceHelper.getModelName(textureName));
             textures.put(textureName.toLowerCase(), serverHolder);
             return Optional.of(serverHolder);

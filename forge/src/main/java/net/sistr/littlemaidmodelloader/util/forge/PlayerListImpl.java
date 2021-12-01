@@ -5,7 +5,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.world.chunk.ChunkManager;
-import net.sistr.littlemaidmodelloader.util.ThreadedAnvilChunkStorageTrackingExtensions;
 
 import java.util.Collection;
 import java.util.Collections;
