@@ -11,7 +11,7 @@ dependencies {
 }
 
 architectury {
-    common(false)
+    common(true)
 }
 
 publishing {
