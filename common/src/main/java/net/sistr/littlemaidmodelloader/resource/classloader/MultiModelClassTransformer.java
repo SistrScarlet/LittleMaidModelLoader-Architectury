@@ -88,12 +88,8 @@ public class MultiModelClassTransformer {
 
             //NM
             put("net/blacklab/lmr/entity/littlemaid/EntityLittleMaid", "net/sistr/littlemaidmodelloader/entity/EntityLittleMaid");
-            if (!Platform.isDevelopmentEnvironment()) {
-                if (Platform.isFabric()) {
-                    put("net/minecraft/entity/Entity", "net/minecraft/class_1297");
-                } else {
-                    put("net/minecraft/entity/Entity", "net/minecraft/world/entity/Entity");
-                }
+            if (Platform.isFabric() && !Platform.isDevelopmentEnvironment()) {
+                put("net/minecraft/entity/Entity", "net/minecraft/class_1297");
             }
         }
 
