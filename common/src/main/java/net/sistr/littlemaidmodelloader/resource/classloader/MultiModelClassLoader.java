@@ -1,5 +1,6 @@
 package net.sistr.littlemaidmodelloader.resource.classloader;
 
+import dev.architectury.platform.Platform;
 import org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -72,4 +73,25 @@ public class MultiModelClassLoader extends URLClassLoader {
             throw new ClassNotFoundException(className + ":defineClass_Error:[" + e + "]");
         }
     }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        if (Platform.isForge()) {
+            try {
+                return super.loadClass(name, resolve);
+            } catch (IndexOutOfBoundsException e) {//ForgeのModuleClassLoaderがsubstringで落ちた場合
+                if (name.lastIndexOf('.') == -1) {
+                    Class<?> c = findClass(name);
+                    if (resolve) {
+                        resolveClass(c);
+                    }
+                    return c;
+                }
+            }
+            throw new ClassNotFoundException(name);
+        } else {
+            return super.loadClass(name, resolve);
+        }
+    }
+
 }
