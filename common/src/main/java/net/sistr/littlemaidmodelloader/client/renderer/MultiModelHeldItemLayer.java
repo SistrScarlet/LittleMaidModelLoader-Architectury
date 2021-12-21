@@ -29,9 +29,9 @@ public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> ex
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity,
                        float limbAngle, float limbDistance, float tickDelta, float animationProgress,
                        float headYaw, float headPitch) {
-        boolean flag = entity.getMainArm() == Arm.RIGHT;
-        ItemStack leftStack = flag ? entity.getOffHandStack() : entity.getMainHandStack();
-        ItemStack rightStack = flag ? entity.getMainHandStack() : entity.getOffHandStack();
+        boolean isMainRight = entity.getMainArm() == Arm.RIGHT;
+        ItemStack rightStack = isMainRight ? entity.getMainHandStack() : entity.getOffHandStack();
+        ItemStack leftStack = isMainRight ? entity.getOffHandStack() : entity.getMainHandStack();
         if (!leftStack.isEmpty() || !rightStack.isEmpty()) {
             matrices.push();
             if (this.getContextModel().child) {
@@ -49,13 +49,9 @@ public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> ex
     private void handRender(T entity, ItemStack stack, ModelTransformation.Mode mode, Arm hand, MatrixStack matrixStack, VertexConsumerProvider buffer, int light) {
         if (!stack.isEmpty()) {
             matrixStack.push();
-            //((IHasArm)this.getEntityModel()).translateHand(hand, matrixStack);
             boolean isLeft = hand == Arm.LEFT;
             entity.getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.BODY)
                     .ifPresent(model -> model.adjustHandItem(new MMMatrixStack(matrixStack), isLeft));
-            if (entity.isSneaking()) {
-                matrixStack.translate(0.0F, 0.2F, 0.0F);
-            }
 
             matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
             matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
@@ -64,7 +60,7 @@ public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> ex
              * y: 体の面に垂直な方向(-で向かって背面方向に移動)
              * z: 腕に平行な方向(-で向かって手の先方向に移動)
              */
-            matrixStack.translate((float)(isLeft ? -1 : 1) / 16.0F, 0.05D, -0.15D);
+            matrixStack.translate(isLeft ? -0.0125F : 0.0125F, 0.05f, -0.15f);
             MinecraftClient.getInstance().getHeldItemRenderer().renderItem(entity, stack, mode, isLeft, matrixStack, buffer, light);
             matrixStack.pop();
         }
