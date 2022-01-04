@@ -5,6 +5,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.sistr.littlemaidmodelloader.maidmodel.EntityCaps;
@@ -12,6 +14,7 @@ import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
+import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.ArmorPart;
 import net.sistr.littlemaidmodelloader.resource.util.ArmorSets;
 import net.sistr.littlemaidmodelloader.resource.util.TextureColors;
@@ -209,6 +212,67 @@ public class MultiModelCompound implements IHasMultiModel {
     @Override
     public boolean isContract() {
         return isContract;
+    }
+
+    public void writeToNbt(NbtCompound nbt) {
+        nbt.putByte("SkinColor", (byte) getColor().getIndex());
+        nbt.putBoolean("IsContract", isContract());
+        nbt.putString("SkinTexture", getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
+        for (Part part : Part.values()) {
+            nbt.putString("ArmorTextureInner" + part.getPartName(),
+                    getTextureHolder(Layer.INNER, part).getTextureName());
+            nbt.putString("ArmorTextureOuter" + part.getPartName(),
+                    getTextureHolder(Layer.OUTER, part).getTextureName());
+        }
+    }
+
+    public void readFromNbt(NbtCompound nbt) {
+        if (nbt.contains("SkinColor")) {
+            setColor(TextureColors.getColor(nbt.getByte("SkinColor")));
+        }
+        setContract(nbt.getBoolean("IsContract"));
+        LMTextureManager textureManager = LMTextureManager.INSTANCE;
+        if (nbt.contains("SkinTexture")) {
+            textureManager.getTexture(nbt.getString("SkinTexture"))
+                    .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));
+        }
+        for (Part part : Part.values()) {
+            String inner = "ArmorTextureInner" + part.getPartName();
+            String outer = "ArmorTextureOuter" + part.getPartName();
+            if (nbt.contains(inner)) {
+                textureManager.getTexture(nbt.getString(inner))
+                        .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.INNER, part));
+            }
+            if (nbt.contains(outer)) {
+                textureManager.getTexture(nbt.getString(outer))
+                        .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.OUTER, part));
+            }
+        }
+    }
+
+    public void writeToPacket(PacketByteBuf packet) {
+        packet.writeEnumConstant(getColor());
+        packet.writeBoolean(isContract());
+        packet.writeString(getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
+        for (Part part : Part.values()) {
+            packet.writeString(getTextureHolder(Layer.INNER, part).getTextureName());
+            packet.writeString(getTextureHolder(Layer.OUTER, part).getTextureName());
+        }
+    }
+
+    public void readFromPacket(PacketByteBuf packet) {
+        //readString()はクラ処理。このメソッドでは、クラ側なので問題なし
+        setColor(packet.readEnumConstant(TextureColors.class));
+        setContract(packet.readBoolean());
+        LMTextureManager textureManager = LMTextureManager.INSTANCE;
+        textureManager.getTexture(packet.readString())
+                .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));
+        for (Part part : Part.values()) {
+            textureManager.getTexture(packet.readString())
+                    .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.INNER, part));
+            textureManager.getTexture(packet.readString())
+                    .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.OUTER, part));
+        }
     }
 
 }

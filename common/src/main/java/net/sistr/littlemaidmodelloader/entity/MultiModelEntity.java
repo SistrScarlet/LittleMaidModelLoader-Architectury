@@ -79,70 +79,27 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
-        tag.putByte("SkinColor", (byte) getColor().getIndex());
-        tag.putBoolean("IsContract", isContract());
-        tag.putString("SkinTexture", getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
-        for (Part part : Part.values()) {
-            tag.putString("ArmorTextureInner" + part.getPartName(),
-                    getTextureHolder(Layer.INNER, part).getTextureName());
-            tag.putString("ArmorTextureOuter" + part.getPartName(),
-                    getTextureHolder(Layer.OUTER, part).getTextureName());
-        }
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+
+        multiModel.writeToNbt(nbt);
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
-        if (tag.contains("SkinColor")) {
-            setColor(TextureColors.getColor(tag.getByte("SkinColor")));
-        }
-        setContract(tag.getBoolean("IsContract"));
-        LMTextureManager textureManager = LMTextureManager.INSTANCE;
-        if (tag.contains("SkinTexture")) {
-            textureManager.getTexture(tag.getString("SkinTexture"))
-                    .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));
-        }
-        for (Part part : Part.values()) {
-            String inner = "ArmorTextureInner" + part.getPartName();
-            String outer = "ArmorTextureOuter" + part.getPartName();
-            if (tag.contains(inner)) {
-                textureManager.getTexture(tag.getString(inner))
-                        .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.INNER, part));
-            }
-            if (tag.contains(outer)) {
-                textureManager.getTexture(tag.getString(outer))
-                        .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.OUTER, part));
-            }
-        }
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+
+        multiModel.readFromNbt(nbt);
     }
 
     @Override
     public void writeCustomPacket(PacketByteBuf packet) {
-        packet.writeEnumConstant(getColor());
-        packet.writeBoolean(isContract());
-        packet.writeString(getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
-        for (Part part : Part.values()) {
-            packet.writeString(getTextureHolder(Layer.INNER, part).getTextureName());
-            packet.writeString(getTextureHolder(Layer.OUTER, part).getTextureName());
-        }
+        multiModel.writeToPacket(packet);
     }
 
     @Override
     public void readCustomPacket(PacketByteBuf packet) {
-        //readString()はクラ処理。このメソッドでは、クラ側なので問題なし
-        setColor(packet.readEnumConstant(TextureColors.class));
-        setContract(packet.readBoolean());
-        LMTextureManager textureManager = LMTextureManager.INSTANCE;
-        textureManager.getTexture(packet.readString())
-                .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));
-        for (Part part : Part.values()) {
-            textureManager.getTexture(packet.readString())
-                    .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.INNER, part));
-            textureManager.getTexture(packet.readString())
-                    .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.OUTER, part));
-        }
+        multiModel.readFromPacket(packet);
     }
 
     @Override
