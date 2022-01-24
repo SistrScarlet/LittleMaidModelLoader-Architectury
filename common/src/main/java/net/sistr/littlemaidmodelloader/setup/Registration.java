@@ -5,7 +5,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.registry.Registry;
-import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
+import net.sistr.littlemaidmodelloader.client.screen.MultiModelGUIUtil;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
 
 import static net.sistr.littlemaidmodelloader.LittleMaidModelLoader.MODID;
@@ -23,12 +23,12 @@ public class Registration {
                     .build("");
     public static final RegistrySupplier<EntityType<MultiModelEntity>> MULTI_MODEL_ENTITY =
             ENTITIES.register("multi_model_entity", () -> MULTI_MODEL_ENTITY_BEFORE);
-    public static final EntityType<ModelSelectScreen.DummyModelEntity> DUMMY_MODEL_ENTITY_BEFORE =
-            EntityType.Builder.<ModelSelectScreen.DummyModelEntity>create(ModelSelectScreen.DummyModelEntity::new, SpawnGroup.MISC)
+    public static final EntityType<MultiModelGUIUtil.DummyModelEntity> DUMMY_MODEL_ENTITY_BEFORE =
+            EntityType.Builder.<MultiModelGUIUtil.DummyModelEntity>create(MultiModelGUIUtil.DummyModelEntity::new, SpawnGroup.MISC)
                     .setDimensions(0.5F, 1.35F)
                     .disableSummon()
                     .build("");
-    public static final RegistrySupplier<EntityType<ModelSelectScreen.DummyModelEntity>> DUMMY_MODEL_ENTITY =
+    public static final RegistrySupplier<EntityType<MultiModelGUIUtil.DummyModelEntity>> DUMMY_MODEL_ENTITY =
             ENTITIES.register("dummy_model_entity", () -> DUMMY_MODEL_ENTITY_BEFORE);
 
 }

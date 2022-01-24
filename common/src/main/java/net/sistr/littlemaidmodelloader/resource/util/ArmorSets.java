@@ -4,6 +4,8 @@ import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -27,6 +29,22 @@ public class ArmorSets<T> {
             this.getArmor(part).ifPresent(type -> armorSets.setArmor(converter.apply(type), part));
         }
         return armorSets;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void foreach(BiConsumer<IHasMultiModel.Part, T> consumer) {
+        T[] parts = (T[]) this.parts;
+        if (parts[0] != null) consumer.accept(IHasMultiModel.Part.FEET, parts[0]);
+        if (parts[1] != null) consumer.accept(IHasMultiModel.Part.LEGS, parts[1]);
+        if (parts[2] != null) consumer.accept(IHasMultiModel.Part.BODY, parts[2]);
+        if (parts[3] != null) consumer.accept(IHasMultiModel.Part.HEAD, parts[3]);
+    }
+
+    public void clear() {
+        parts[0] = null;
+        parts[1] = null;
+        parts[2] = null;
+        parts[3] = null;
     }
 
     public boolean isEmpty() {
