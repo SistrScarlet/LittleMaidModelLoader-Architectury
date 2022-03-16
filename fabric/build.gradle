@@ -1,14 +1,14 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
-}
-
-loom {
-    accessWidenerPath = file("src/main/resources/littlemaidmodelloader.accessWidener")
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 architectury {
     platformSetupLoomIde()
     fabric()
+}
+
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
 }
 
 configurations {
@@ -38,11 +38,14 @@ processResources {
 }
 
 shadowJar {
+    exclude "architectury.common.json"
+
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }
 
 remapJar {
+    injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
@@ -56,8 +59,6 @@ sourcesJar {
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
-    //無いと何故かエラー吐く
-    duplicatesStrategy DuplicatesStrategy.INCLUDE
 }
 
 components.java {

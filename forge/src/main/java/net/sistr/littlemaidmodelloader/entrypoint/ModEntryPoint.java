@@ -1,11 +1,7 @@
 package net.sistr.littlemaidmodelloader.entrypoint;
 
 import dev.architectury.platform.forge.EventBuses;
-import dev.architectury.registry.level.entity.EntityRendererRegistry;
-import dev.architectury.registry.level.entity.forge.EntityRendererRegistryImpl;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
