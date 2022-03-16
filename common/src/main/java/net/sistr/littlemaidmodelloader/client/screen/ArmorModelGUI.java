@@ -19,15 +19,11 @@ import org.lwjgl.glfw.GLFW;
 public class ArmorModelGUI extends GUIElement implements ListGUIElement {
     private static final ArmorSets<ItemStack> ARMOR_ICONS = new ArmorSets<>();
     private final MarginedClickable selectBox = new MarginedClickable(4);
-    private final int width;
-    private final int height;
     private final int scale;
     private final MultiModelGUIUtil.DummyModelEntity dummy;
     private final TextureHolder texture;
     private final ImmutableList<String> armorNames;
     private final ArmorSets<ArmorModelGUI> armors;
-    private int x;
-    private int y;
     private boolean selected;
 
     static {
@@ -39,8 +35,7 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
 
     public ArmorModelGUI(TextureHolder texture, int scale, MultiModelGUIUtil.DummyModelEntity dummy,
                          ArmorSets<ArmorModelGUI> armors) {
-        this.width = scale * 16;
-        this.height = scale * 3;
+        super(scale * 16, scale * 3);
         this.scale = scale;
         this.dummy = dummy;
         this.texture = texture;
@@ -136,11 +131,4 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
     public boolean isSelected() {
         return this.selected;
     }
-
-    @Override
-    public void setPos(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
 }

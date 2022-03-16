@@ -12,8 +12,6 @@ import java.util.Optional;
 
 public class ListGUI<T extends GUIElement> extends GUIElement {
     protected final MarginedClickable selectBox = new MarginedClickable(4);
-    protected final int x;
-    protected final int y;
     protected final int widthStack;
     protected final int heightStack;
     protected final int elementW;
@@ -23,6 +21,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
     protected int selectElem = -1;
 
     public ListGUI(int x, int y, int widthStack, int heightStack, int elementW, int elementH, Collection<T> elements) {
+        super(widthStack * elementW, heightStack * elementH);
         this.x = x;
         this.y = y;
         this.widthStack = widthStack;
@@ -113,9 +112,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
             int index = scroll * this.widthStack + yIndex * this.widthStack + xIndex;
             if (checkElementsBounds(index)) {
                 T elem = elements.get(index);
-                if (elem instanceof ListGUIElement) {
-                    ((ListGUIElement) elem).setPos(x, y);
-                }
+                elem.setPos(x, y);
                 elem.render(matrices,
                         mouseX - x,
                         mouseY - y, delta
@@ -246,5 +243,4 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
         }
         return false;
     }
-
 }

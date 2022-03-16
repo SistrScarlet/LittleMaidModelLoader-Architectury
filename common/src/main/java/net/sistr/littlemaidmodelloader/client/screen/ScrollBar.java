@@ -2,17 +2,12 @@ package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
 public class ScrollBar extends GUIElement {
-    private final int x;
-    private final int y;
-    private final int width;
-    private final int height;
     private final int elemSize;
     private final TextureAddress sliderT;
     private final TextureAddress sliderM;
@@ -30,10 +25,9 @@ public class ScrollBar extends GUIElement {
             TextureAddress pointer,
             Identifier texture
     ) {
+        super(width, height);
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
         this.elemSize = elemSize;
         this.sliderT = sliderT;
         this.sliderM = sliderM;

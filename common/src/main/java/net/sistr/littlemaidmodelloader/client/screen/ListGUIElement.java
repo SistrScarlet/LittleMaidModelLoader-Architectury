@@ -6,6 +6,4 @@ public interface ListGUIElement {
 
     boolean isSelected();
 
-    void setPos(int x, int y);
-
 }

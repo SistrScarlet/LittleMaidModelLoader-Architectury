@@ -15,21 +15,16 @@ import java.util.Optional;
 
 public class MultiModelGUI extends GUIElement implements ListGUIElement {
     private final MarginedClickable selectBox = new MarginedClickable(4);
-    private final int width;
-    private final int height;
     private final int scale;
     private final MultiModelGUIUtil.DummyModelEntity dummy;
     private final TextureHolder texture;
     private final boolean isContract;
-    private int x;
-    private int y;
     private TextureColors selectColor = null;
     private boolean selected;
 
     public MultiModelGUI(TextureHolder texture, boolean isContract, int scale, MultiModelGUIUtil.DummyModelEntity dummy) {
+        super(scale * 16, scale * 3);
         this.isContract = isContract;
-        this.width = scale * 16;
-        this.height = scale * 3;
         this.scale = scale;
         this.dummy = dummy;
         this.texture = texture;
@@ -106,11 +101,5 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
     @Override
     public boolean isSelected() {
         return this.selected;
-    }
-
-    @Override
-    public void setPos(int x, int y) {
-        this.x = x;
-        this.y = y;
     }
 }
