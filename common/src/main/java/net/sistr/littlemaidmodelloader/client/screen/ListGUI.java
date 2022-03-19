@@ -107,18 +107,12 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
             int yIndex = i / widthStack;
             int x = this.x + elementW * xIndex;
             int y = this.y + elementH * yIndex;
-            matrices.push();
-            matrices.translate(x, y, 0);
             int index = scroll * this.widthStack + yIndex * this.widthStack + xIndex;
             if (checkElementsBounds(index)) {
                 T elem = elements.get(index);
                 elem.setPos(x, y);
-                elem.render(matrices,
-                        mouseX - x,
-                        mouseY - y, delta
-                );
+                elem.render(matrices, mouseX, mouseY, delta);
             }
-            matrices.pop();
         }
         /*if (checkElementsBounds(selectElem) && isRenderingElement(selectElem)) {
             fill(matrices,

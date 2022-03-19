@@ -43,8 +43,8 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
         if (selected && selectColor != null) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            fill(matrices, selectColor.getIndex() * scale, 0,
-                    selectColor.getIndex() * scale + scale, height,
+            fill(matrices, this.x + selectColor.getIndex() * scale, this.y,
+                    this.x + selectColor.getIndex() * scale + scale, this.y + height,
                     (0x80 << 24) | selectColor.getColorCode());
             RenderSystem.disableBlend();
         }
@@ -62,14 +62,14 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
                     MultiModelGUIUtil.renderModel(
                             this.x + (color.getIndex() + 1) * scale - scale / 2,
                             this.y + height,
-                            this.x + mouseX, this.y + mouseY, scale,
+                            mouseX, mouseY, scale,
                             model, texturePair, dummy
                     )
             );
         }
         TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
         fontRenderer.draw(matrixStack, holder.getTextureName(),
-                0, 0, 0xFFFFFFFF);
+                this.x, this.y, 0xFFFFFFFF);
     }
 
     @Override

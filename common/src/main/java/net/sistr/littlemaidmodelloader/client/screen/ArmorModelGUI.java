@@ -62,12 +62,12 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
             ArmorPart armorData = MultiModelGUIUtil.getArmorDate(modelManager, texture, armorName);
             MultiModelGUIUtil.renderArmor(
                     this.x + index * scale - scale / 2, this.y + height,
-                    this.x + mouseX, this.y + mouseY, scale,
+                    mouseX, mouseY, scale,
                     model, armorData, dummy);
         }
         TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
         fontRenderer.draw(matrixStack, texture.getTextureName(),
-                0, 0, 0xFFFFFFFF);
+                this.x, this.y, 0xFFFFFFFF);
 
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         ARMOR_ICONS.foreach((part, stack) ->
