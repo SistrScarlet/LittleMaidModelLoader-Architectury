@@ -23,7 +23,6 @@
       "net.sistr.littlemaidmodelloader.entrypoint.ClientEntryPoint"
     ]
   },
-  "accessWidener": "littlemaidmodelloader.accessWidener",
   "mixins": [
     "littlemaidmodelloader.mixins.json",
     "littlemaidmodelloader-common.mixins.json"
