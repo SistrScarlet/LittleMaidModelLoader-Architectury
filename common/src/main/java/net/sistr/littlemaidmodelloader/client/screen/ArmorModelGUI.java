@@ -78,10 +78,10 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
         armors.foreach((p, g) -> {
             if (g == this) {
                 ModelSelectScreen.renderColor(matrixStack,
-                        this.width - 16 * (p.getIndex() + 1),
-                        fontRenderer.fontHeight,
-                        this.width - 16 * (p.getIndex() + 1) + 16,
-                        fontRenderer.fontHeight + 16,
+                        this.x + this.width - 16 * (p.getIndex() + 1),
+                        this.y + fontRenderer.fontHeight,
+                        this.x + this.width - 16 * (p.getIndex() + 1) + 16,
+                        this.y + fontRenderer.fontHeight + 16,
                         0x80FFFFFF
                 );
             }
