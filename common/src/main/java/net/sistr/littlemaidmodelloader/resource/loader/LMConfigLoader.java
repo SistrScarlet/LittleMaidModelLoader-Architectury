@@ -36,8 +36,8 @@ public class LMConfigLoader implements LMLoader {
             e.printStackTrace();
             return;
         }
-        String packName = ResourceHelper.getFirstParentName(path, homePath, isArchive).orElse("packName");
-        String parentName = ResourceHelper.getParentFolderName(path, isArchive).orElse("parentFolder");
+        String packName = ResourceHelper.getFirstParentName(path, homePath, isArchive).orElse("");
+        String parentName = ResourceHelper.getParentFolderName(path, isArchive).orElse("");
         String fileName = ResourceHelper.getFileName(path, isArchive);
         fileName = ResourceHelper.removeExtension(fileName);
         configManager.addConfig(packName, parentName, fileName, settings);

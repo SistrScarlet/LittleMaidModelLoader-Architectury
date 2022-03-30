@@ -23,6 +23,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
+import net.sistr.littlemaidmodelloader.client.screen.SoundPackSelectScreen;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.entity.compound.MultiModelCompound;
 import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
@@ -111,16 +112,17 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
             return ActionResult.success(player.world.isClient);
         }
         if (world.isClient) {
-            openGUI();
+            openGUI(player.isSneaking());
             play(LMSounds.LIVING_DAYTIME);
         }
         return super.interactMob(player, hand);
     }
 
     @Environment(EnvType.CLIENT)
-    public void openGUI() {
+    public void openGUI(boolean shift) {
         MinecraftClient.getInstance().setScreen(
-                new ModelSelectScreen(new LiteralText(""), this.world, this));
+                shift ? new SoundPackSelectScreen<>(new LiteralText(""), this) :
+                        new ModelSelectScreen<>(new LiteralText(""), this.world, this));
     }
 
     //このままだとEntityDimensionsが作っては捨てられてを繰り返すのでパフォーマンスはよろしくない

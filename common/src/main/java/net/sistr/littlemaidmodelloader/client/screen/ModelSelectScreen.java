@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 //GUIが小さくならない画面の最低サイズ640x480を想定して組む
 //ただし、描画は320x240でやって倍にされるっぽい
 @Environment(EnvType.CLIENT)
-public class ModelSelectScreen extends Screen {
+public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen {
     public static final Identifier EMPTY_TEXTURE =
             new Identifier(LittleMaidModelLoader.MODID, "textures/empty.png");
     public static final TexturePair EMPTY_TEXTURE_PAIR = new TexturePair(EMPTY_TEXTURE, null);
@@ -48,7 +48,7 @@ public class ModelSelectScreen extends Screen {
     private static final ItemStack ARMOR = Items.DIAMOND_CHESTPLATE.getDefaultStack();
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 196;
-    private final IHasMultiModel owner;
+    private final T entity;
     private final MultiModelGUIUtil.DummyModelEntity dummy;
     private final ArmorSets<ArmorModelGUI> armors = new ArmorSets<>();
     private ScrollBar modelScrollBar;
@@ -57,9 +57,9 @@ public class ModelSelectScreen extends Screen {
     private ListGUI<ArmorModelGUI> armorListGUI;
     private boolean guiSwitch = true;
 
-    public ModelSelectScreen(Text titleIn, World world, IHasMultiModel owner) {
+    public ModelSelectScreen(Text titleIn, World world, T entity) {
         super(titleIn);
-        this.owner = owner;
+        this.entity = entity;
         this.dummy = new MultiModelGUIUtil.DummyModelEntity(world);
     }
 
@@ -99,7 +99,7 @@ public class ModelSelectScreen extends Screen {
                 new TextureAddress(0, 216, 8, 8, 256, 256),
                 new TextureAddress(0, 224, 10, 6, 256, 256),
                 MODEL_SELECT_GUI_TEXTURE);
-        TextureHolder ownerSkinTex = owner.getTextureHolder(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
+        TextureHolder ownerSkinTex = entity.getTextureHolder(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
         int index = 0;
         for (MultiModelGUI g : this.modelListGUI.getAllElements()) {
             if (g.getTexture() == ownerSkinTex) {
@@ -132,7 +132,7 @@ public class ModelSelectScreen extends Screen {
                 new TextureAddress(0, 216, 8, 8, 256, 256),
                 new TextureAddress(0, 224, 10, 6, 256, 256),
                 MODEL_SELECT_GUI_TEXTURE);
-        TextureHolder ownerArmorTex = owner.getTextureHolder(IHasMultiModel.Layer.INNER, IHasMultiModel.Part.HEAD);
+        TextureHolder ownerArmorTex = entity.getTextureHolder(IHasMultiModel.Layer.INNER, IHasMultiModel.Part.HEAD);
         index = 0;
         for (ArmorModelGUI g : this.armorListGUI.getAllElements()) {
             if (g.getTexture() == ownerArmorTex) {
@@ -285,27 +285,25 @@ public class ModelSelectScreen extends Screen {
                 g.getSelectColor().ifPresent(color -> {
                     TextureHolder texture = g.getTexture();
                     //カラーと契約を更新
-                    owner.setColor(color);
-                    owner.setContract(true);
+                    entity.setColor(color);
+                    entity.setContract(true);
                     //スキンを更新
-                    owner.setTextureHolder(texture, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
+                    entity.setTextureHolder(texture, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
                     //防具をスキンと同様に更新
                     for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
-                        owner.setTextureHolder(texture, IHasMultiModel.Layer.INNER, part);
+                        entity.setTextureHolder(texture, IHasMultiModel.Layer.INNER, part);
                     }
                 })
         );
 
         this.armors.foreach((p, g) ->
-                owner.setTextureHolder(g.getTexture(), IHasMultiModel.Layer.INNER, p));
+                entity.setTextureHolder(g.getTexture(), IHasMultiModel.Layer.INNER, p));
 
-        if (owner instanceof Entity) {
-            ArmorSets<String> armorNames = new ArmorSets<>();
-            for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
-                armorNames.setArmor(owner.getTextureHolder(IHasMultiModel.Layer.INNER, part).getTextureName(), part);
-            }
-            SyncMultiModelPacket.sendC2SPacket((Entity) owner, owner);
+        ArmorSets<String> armorNames = new ArmorSets<>();
+        for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
+            armorNames.setArmor(entity.getTextureHolder(IHasMultiModel.Layer.INNER, part).getTextureName(), part);
         }
+        SyncMultiModelPacket.sendC2SPacket(entity, entity);
     }
 
     public static void playDownSound() {
