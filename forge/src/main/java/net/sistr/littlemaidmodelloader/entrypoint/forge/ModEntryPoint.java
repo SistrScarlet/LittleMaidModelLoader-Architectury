@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.entrypoint;
+package net.sistr.littlemaidmodelloader.entrypoint.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.client.event.EntityRenderersEvent;
