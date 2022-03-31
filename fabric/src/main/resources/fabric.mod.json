@@ -17,10 +17,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.sistr.littlemaidmodelloader.entrypoint.ModEntryPoint"
+      "net.sistr.littlemaidmodelloader.entrypoint.fabric.LittleMaidModelLoaderFabric"
     ],
     "client": [
-      "net.sistr.littlemaidmodelloader.entrypoint.ClientEntryPoint"
+      "net.sistr.littlemaidmodelloader.entrypoint.fabric.LittleMaidModelLoaderFabric"
     ]
   },
   "mixins": [

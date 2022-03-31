@@ -79,8 +79,8 @@ public class LittleMaidModelLoader {
     }
 
     public static void registerAttribute() {
-        EntityAttributeRegistry.register(() -> Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
-        EntityAttributeRegistry.register(() -> Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(Registration.MULTI_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(Registration.DUMMY_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
     }
 
 }

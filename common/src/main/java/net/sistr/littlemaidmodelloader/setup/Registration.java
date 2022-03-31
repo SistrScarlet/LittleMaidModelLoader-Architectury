@@ -17,18 +17,16 @@ public class Registration {
         ENTITIES.register();
     }
 
-    public static final EntityType<MultiModelEntity> MULTI_MODEL_ENTITY_BEFORE =
-            EntityType.Builder.<MultiModelEntity>create(MultiModelEntity::new, SpawnGroup.MISC)
-                    .setDimensions(0.5F, 1.35F)
-                    .build("multi_model_entity");
     public static final RegistrySupplier<EntityType<MultiModelEntity>> MULTI_MODEL_ENTITY =
-            ENTITIES.register("multi_model_entity", () -> MULTI_MODEL_ENTITY_BEFORE);
-    public static final EntityType<MultiModelGUIUtil.DummyModelEntity> DUMMY_MODEL_ENTITY_BEFORE =
-            EntityType.Builder.<MultiModelGUIUtil.DummyModelEntity>create(MultiModelGUIUtil.DummyModelEntity::new, SpawnGroup.MISC)
-                    .setDimensions(0.5F, 1.35F)
-                    .disableSummon()
-                    .build("dummy_model_entity");
+            ENTITIES.register("multi_model_entity", () ->
+                    EntityType.Builder.<MultiModelEntity>create(MultiModelEntity::new, SpawnGroup.MISC)
+                            .setDimensions(0.5F, 1.35F)
+                            .build("multi_model_entity"));
     public static final RegistrySupplier<EntityType<MultiModelGUIUtil.DummyModelEntity>> DUMMY_MODEL_ENTITY =
-            ENTITIES.register("dummy_model_entity", () -> DUMMY_MODEL_ENTITY_BEFORE);
+            ENTITIES.register("dummy_model_entity", () ->
+                    EntityType.Builder.<MultiModelGUIUtil.DummyModelEntity>create(MultiModelGUIUtil.DummyModelEntity::new, SpawnGroup.MISC)
+                            .setDimensions(0.5F, 1.35F)
+                            .disableSummon()
+                            .build("dummy_model_entity"));
 
 }

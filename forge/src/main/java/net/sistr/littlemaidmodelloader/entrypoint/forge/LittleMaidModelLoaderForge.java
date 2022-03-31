@@ -13,13 +13,13 @@ import net.sistr.littlemaidmodelloader.setup.ModSetup;
 import net.sistr.littlemaidmodelloader.setup.Registration;
 
 @Mod(LittleMaidModelLoader.MODID)
-public class ModEntryPoint {
+public class LittleMaidModelLoaderForge {
 
-    public ModEntryPoint() {
+    public LittleMaidModelLoaderForge() {
         EventBuses.registerModEventBus(LittleMaidModelLoader.MODID, FMLJavaModLoadingContext.get().getModEventBus());
+        LittleMaidModelLoader.init();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
-        LittleMaidModelLoader.init();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
     }
 
@@ -32,8 +32,8 @@ public class ModEntryPoint {
     }
 
     public void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
-        event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY_BEFORE, MultiModelRenderer::new);
+        event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
+        event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
     }
 
 }
