@@ -279,8 +279,8 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void onClose() {
+        super.onClose();
         modelListGUI.getSelectElement().ifPresent(g ->
                 g.getSelectColor().ifPresent(color -> {
                     TextureHolder texture = g.getTexture();
