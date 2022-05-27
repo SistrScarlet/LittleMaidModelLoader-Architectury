@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.network.util.CustomPacketEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class CustomMobSpawnPacket {
     public static final Identifier ID =
-            new Identifier(LittleMaidModelLoader.MODID, "custom_mob_spawn");
+            new Identifier(LMMLMod.MODID, "custom_mob_spawn");
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static Packet<?> createPacket(LivingEntity entity) {

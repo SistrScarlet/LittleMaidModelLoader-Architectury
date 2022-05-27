@@ -9,13 +9,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class LMSoundPacket {
     public static final Identifier ID =
-            new Identifier(LittleMaidModelLoader.MODID, "lm_sound");
+            new Identifier(LMMLMod.MODID, "lm_sound");
 
     public static void sendS2CPacket(Entity entity, String soundName) {
         PacketByteBuf passedData = createS2CPacket(entity, soundName);

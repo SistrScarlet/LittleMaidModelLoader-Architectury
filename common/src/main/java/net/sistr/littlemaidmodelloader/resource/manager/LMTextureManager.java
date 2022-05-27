@@ -3,8 +3,7 @@ package net.sistr.littlemaidmodelloader.resource.manager;
 import dev.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
-import net.sistr.littlemaidmodelloader.config.LMMLConfig;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
 import net.sistr.littlemaidmodelloader.resource.util.TextureIndexes;
@@ -29,7 +28,7 @@ public class LMTextureManager {
         } else {
             textureHolder.addTexture(index, texturePath);
         }
-        if (LittleMaidModelLoader.getConfig().isDebugMode()) LOGGER.debug("Loaded Texture : " + texturePath);
+        if (LMMLMod.getConfig().isDebugMode()) LOGGER.debug("Loaded Texture : " + texturePath);
     }
 
     public String getArmorName(String fileName) {

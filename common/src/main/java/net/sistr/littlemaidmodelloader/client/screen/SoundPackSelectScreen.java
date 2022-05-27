@@ -8,7 +8,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.network.SyncSoundPackPacket;
 import net.sistr.littlemaidmodelloader.resource.holder.ConfigHolder;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Screen {
     public static final Identifier MODEL_SELECT_GUI_TEXTURE =
-            new Identifier(LittleMaidModelLoader.MODID, "textures/gui/model_select.png");
+            new Identifier(LMMLMod.MODID, "textures/gui/model_select.png");
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 196;
     private final T entity;

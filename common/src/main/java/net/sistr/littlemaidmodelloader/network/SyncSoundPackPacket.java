@@ -10,7 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.resource.holder.ConfigHolder;
 import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
@@ -18,7 +18,7 @@ import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class SyncSoundPackPacket {
     public static final Identifier ID =
-            new Identifier(LittleMaidModelLoader.MODID, "sync_sound_pack");
+            new Identifier(LMMLMod.MODID, "sync_sound_pack");
 
     @Environment(EnvType.CLIENT)
     public static void sendC2SPacket(Entity entity, ConfigHolder configHolder) {

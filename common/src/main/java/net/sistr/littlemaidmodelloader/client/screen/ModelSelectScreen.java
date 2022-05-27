@@ -16,7 +16,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.network.SyncMultiModelPacket;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
@@ -38,13 +38,13 @@ import java.util.stream.Collectors;
 @Environment(EnvType.CLIENT)
 public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen {
     public static final Identifier EMPTY_TEXTURE =
-            new Identifier(LittleMaidModelLoader.MODID, "textures/empty.png");
+            new Identifier(LMMLMod.MODID, "textures/empty.png");
     public static final TexturePair EMPTY_TEXTURE_PAIR = new TexturePair(EMPTY_TEXTURE, null);
     public static final ArmorPart EMPTY_ARMOR_DATA =
             new ArmorPart(null, null, null, null,
                     null, null);
     public static final Identifier MODEL_SELECT_GUI_TEXTURE =
-            new Identifier(LittleMaidModelLoader.MODID, "textures/gui/model_select.png");
+            new Identifier(LMMLMod.MODID, "textures/gui/model_select.png");
     private static final ItemStack ARMOR = Items.DIAMOND_CHESTPLATE.getDefaultStack();
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 196;

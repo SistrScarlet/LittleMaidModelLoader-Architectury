@@ -1,7 +1,6 @@
 package net.sistr.littlemaidmodelloader.resource.loader;
 
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
-import net.sistr.littlemaidmodelloader.config.LMMLConfig;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelMultiBase;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 
@@ -31,8 +30,8 @@ public class LMMultiModelLoader implements LMLoader {
         try {
             tryAddModel(classpath, classForName(classpath));
         } catch (Exception e) {
-            LittleMaidModelLoader.LOGGER.error("読み込めませんでした。古いモデルの可能性があります : " + path);
-            if (LittleMaidModelLoader.getConfig().isDebugMode()) e.printStackTrace();
+            LMMLMod.LOGGER.error("読み込めませんでした。古いモデルの可能性があります : " + path);
+            if (LMMLMod.getConfig().isDebugMode()) e.printStackTrace();
         }
     }
 

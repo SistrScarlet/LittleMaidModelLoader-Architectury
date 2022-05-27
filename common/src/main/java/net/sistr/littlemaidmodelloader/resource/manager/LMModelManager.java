@@ -1,7 +1,6 @@
 package net.sistr.littlemaidmodelloader.resource.manager;
 
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
-import net.sistr.littlemaidmodelloader.config.LMMLConfig;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelMultiBase;
@@ -32,7 +31,7 @@ public class LMModelManager {
             e.printStackTrace();
             return;
         }
-        if (LittleMaidModelLoader.getConfig().isDebugMode()) LOGGER.debug("Loaded Model : " + modelClass);
+        if (LMMLMod.getConfig().isDebugMode()) LOGGER.debug("Loaded Model : " + modelClass);
     }
 
     public void addModel(String modelName, IMultiModel skin, IMultiModel inner, IMultiModel outer) {

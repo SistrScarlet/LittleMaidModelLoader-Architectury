@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -13,7 +12,7 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelMultiBase;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
@@ -24,7 +23,7 @@ import static net.sistr.littlemaidmodelloader.maidmodel.IModelCaps.*;
 //別な奴を継承しながら使いたいなら移譲でどうにかするか自作してね
 @Environment(EnvType.CLIENT)
 public class MultiModelRenderer<T extends LivingEntity & IHasMultiModel> extends LivingEntityRenderer<T, MultiModel<T>> {
-    private static final Identifier NULL_TEXTURE = new Identifier(LittleMaidModelLoader.MODID, "null");
+    private static final Identifier NULL_TEXTURE = new Identifier(LMMLMod.MODID, "null");
 
     public MultiModelRenderer(EntityRendererFactory.Context ctx) {
         super(ctx, new MultiModel<>(), 0.5F);

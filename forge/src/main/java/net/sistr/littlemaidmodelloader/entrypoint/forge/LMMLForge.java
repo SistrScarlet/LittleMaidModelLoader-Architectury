@@ -9,19 +9,19 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 import net.sistr.littlemaidmodelloader.setup.ClientSetup;
 import net.sistr.littlemaidmodelloader.setup.ModSetup;
 import net.sistr.littlemaidmodelloader.setup.Registration;
 
-@Mod(LittleMaidModelLoader.MODID)
-public class LittleMaidModelLoaderForge {
+@Mod(LMMLMod.MODID)
+public class LMMLForge {
 
-    public LittleMaidModelLoaderForge() {
-        EventBuses.registerModEventBus(LittleMaidModelLoader.MODID, FMLJavaModLoadingContext.get().getModEventBus());
-        LittleMaidModelLoader.init();
+    public LMMLForge() {
+        EventBuses.registerModEventBus(LMMLMod.MODID, FMLJavaModLoadingContext.get().getModEventBus());
+        LMMLMod.init();
 
         ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
                 () -> new ConfigGuiHandler.ConfigGuiFactory((client, parent) ->

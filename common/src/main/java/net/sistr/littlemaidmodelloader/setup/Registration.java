@@ -8,7 +8,7 @@ import net.minecraft.util.registry.Registry;
 import net.sistr.littlemaidmodelloader.client.screen.MultiModelGUIUtil;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
 
-import static net.sistr.littlemaidmodelloader.LittleMaidModelLoader.MODID;
+import static net.sistr.littlemaidmodelloader.LMMLMod.MODID;
 
 public class Registration {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(MODID, Registry.ENTITY_TYPE_KEY);

@@ -10,7 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel.Layer;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel.Part;
@@ -21,7 +21,7 @@ import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class SyncMultiModelPacket {
     public static final Identifier ID =
-            new Identifier(LittleMaidModelLoader.MODID, "sync_multi_model");
+            new Identifier(LMMLMod.MODID, "sync_multi_model");
 
     @Environment(EnvType.CLIENT)
     public static void sendC2SPacket(Entity entity, IHasMultiModel hasMultiModel) {

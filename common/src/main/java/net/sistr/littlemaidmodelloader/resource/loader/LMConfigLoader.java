@@ -1,7 +1,6 @@
 package net.sistr.littlemaidmodelloader.resource.loader;
 
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
-import net.sistr.littlemaidmodelloader.config.LMMLConfig;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +41,7 @@ public class LMConfigLoader implements LMLoader {
         String fileName = ResourceHelper.getFileName(path, isArchive);
         fileName = ResourceHelper.removeExtension(fileName);
         configManager.addConfig(packName, parentName, fileName, settings);
-        if (LittleMaidModelLoader.getConfig().isDebugMode())
+        if (LMMLMod.getConfig().isDebugMode())
             LOGGER.debug("Loaded Config : " + packName + "." + parentName + "." + fileName + " : Total " + settings.size());
     }
 

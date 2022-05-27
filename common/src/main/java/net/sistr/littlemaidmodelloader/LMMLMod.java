@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Paths;
 
-public class LittleMaidModelLoader {
+public class LMMLMod {
     public static final String MODID = "littlemaidmodelloader";
     public static final Logger LOGGER = LogManager.getLogger();
     private static ConfigHolder<LMMLConfig> CONFIG_HOLDER;
