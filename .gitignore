@@ -17,6 +17,6 @@ classes/
 .vscode
 .settings
 *.launch
+
 /logs/
-/run_server/
 /.architectury-transformer/

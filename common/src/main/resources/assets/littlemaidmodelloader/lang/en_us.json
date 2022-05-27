@@ -1,3 +1,8 @@
 {
-  "screen.littlemaidmodelloader.model_select_screen.change_screen": "Model / Armor"
+  "screen.littlemaidmodelloader.model_select_screen.change_screen": "Model / Armor",
+
+  "text.autoconfig.littlemaidmodelloader.title": "LittleMaid ModelLoader Config",
+
+  "text.autoconfig.littlemaidmodelloader.category.misc": "Misc",
+  "text.autoconfig.littlemaidmodelloader.option.debugMode": "Debug Mode"
 }

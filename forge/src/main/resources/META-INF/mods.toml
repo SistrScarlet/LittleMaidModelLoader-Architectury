@@ -18,7 +18,7 @@ mandatory = true
 versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
-# Here's another dependency
+
 [[dependencies.littlemaidmodelloader]]
 modId = "minecraft"
 mandatory = true
@@ -29,6 +29,13 @@ side = "BOTH"
 [[dependencies.littlemaidmodelloader]]
 modId = "architectury"
 mandatory = true
-versionRange = "[4.0.29,)"
+versionRange = "[4.4.59,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.littlemaidmodelloader]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "[6.2.62,)"
 ordering = "AFTER"
 side = "BOTH"

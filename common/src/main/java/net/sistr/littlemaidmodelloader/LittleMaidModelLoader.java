@@ -2,11 +2,15 @@ package net.sistr.littlemaidmodelloader;
 
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.level.entity.EntityAttributeRegistry;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigHolder;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
+import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.*;
@@ -24,12 +28,14 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Paths;
 
 public class LittleMaidModelLoader {
-
     public static final String MODID = "littlemaidmodelloader";
-
     public static final Logger LOGGER = LogManager.getLogger();
+    private static ConfigHolder<LMMLConfig> CONFIG_HOLDER;
 
     public static void init() {
+        AutoConfig.register(LMMLConfig.class, GsonConfigSerializer::new);
+        CONFIG_HOLDER = AutoConfig.getConfigHolder(LMMLConfig.class);
+
         initFileLoader();
         initModelLoader();
         if (Platform.getEnv() == EnvType.CLIENT) {
@@ -81,6 +87,10 @@ public class LittleMaidModelLoader {
     public static void registerAttribute() {
         EntityAttributeRegistry.register(Registration.MULTI_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
         EntityAttributeRegistry.register(Registration.DUMMY_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
+    }
+
+    public static LMMLConfig getConfig() {
+        return CONFIG_HOLDER.getConfig();
     }
 
 }

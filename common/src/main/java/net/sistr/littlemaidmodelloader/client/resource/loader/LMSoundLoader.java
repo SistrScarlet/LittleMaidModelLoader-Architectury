@@ -3,6 +3,7 @@ package net.sistr.littlemaidmodelloader.client.resource.loader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
+import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 import net.sistr.littlemaidmodelloader.client.resource.ResourceWrapper;
 import net.sistr.littlemaidmodelloader.resource.loader.LMLoader;
@@ -39,7 +40,7 @@ public class LMSoundLoader implements LMLoader {
         fileName = ResourceHelper.removeNameLastIndex(fileName);
         soundManager.addSound(packName, fileName, location);
         ResourceWrapper.addResourcePath(location, path, homePath, isArchive);
-        if (LMMLConfig.isDebugMode()) LOGGER.debug("Loaded Sound : " + packName + " : " + fileName);
+        if (LittleMaidModelLoader.getConfig().isDebugMode()) LOGGER.debug("Loaded Sound : " + packName + " : " + fileName);
     }
 
 }

@@ -32,7 +32,7 @@ public class LMMultiModelLoader implements LMLoader {
             tryAddModel(classpath, classForName(classpath));
         } catch (Exception e) {
             LittleMaidModelLoader.LOGGER.error("読み込めませんでした。古いモデルの可能性があります : " + path);
-            if (LMMLConfig.isDebugMode()) e.printStackTrace();
+            if (LittleMaidModelLoader.getConfig().isDebugMode()) e.printStackTrace();
         }
     }
 
