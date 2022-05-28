@@ -17,12 +17,12 @@ public class LMMultiModelLoader implements LMLoader {
     }
 
     @Override
-    public boolean canLoad(String path, Path homePath, InputStream inputStream, boolean isArchive) {
+    public boolean canLoad(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
         return path.endsWith(".class") && (path.contains("ModelMulti_") || path.contains("ModelLittleMaid_"));
     }
 
     @Override
-    public void load(String path, Path homePath, InputStream inputStream, boolean isArchive) {
+    public void load(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
         //ClassLoader用パスへ変換
         String classpath = path.replace("/", ".");
         classpath = classpath.substring(0, path.lastIndexOf(".class"));

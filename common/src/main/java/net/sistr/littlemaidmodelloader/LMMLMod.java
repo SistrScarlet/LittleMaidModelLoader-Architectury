@@ -1,5 +1,6 @@
 package net.sistr.littlemaidmodelloader;
 
+import com.google.common.collect.ImmutableMap;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -7,6 +8,8 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
@@ -21,6 +24,7 @@ import net.sistr.littlemaidmodelloader.resource.loader.LMMultiModelLoader;
 import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
+import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidmodelloader.setup.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +43,7 @@ public class LMMLMod {
         initFileLoader();
         initModelLoader();
         if (Platform.getEnv() == EnvType.CLIENT) {
+            addGhastMaidVoice();
             initTextureLoader();
             initSoundLoader();
         }
@@ -91,6 +96,33 @@ public class LMMLMod {
 
     public static LMMLConfig getConfig() {
         return CONFIG_HOLDER.getConfig();
+    }
+
+    public static void addGhastMaidVoice() {
+        String packName = "DefaultGhast";
+
+        var configMap = new ImmutableMap.Builder<String, String>();
+        addVoice(LMSounds.HURT, SoundEvents.ENTITY_GHAST_HURT, configMap);
+        addVoice(LMSounds.HURT_FIRE, SoundEvents.ENTITY_GHAST_HURT, configMap);
+        addVoice(LMSounds.HURT_FALL, SoundEvents.ENTITY_GHAST_HURT, configMap);
+        addVoice(LMSounds.DEATH, SoundEvents.ENTITY_GHAST_DEATH, configMap);
+        addVoice(LMSounds.ATTACK, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.ATTACK_BLOOD_SUCK, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.SHOOT, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.SHOOT_BURST, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.LIVING_DAYTIME, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_MORNING, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_NIGHT, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_WHINE, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_RAIN, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_SNOW, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_COLD, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_HOT, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        LMConfigManager.INSTANCE.addConfig(packName, "", "littlemaidmob", configMap.build());
+    }
+
+    private static void addVoice(String soundName, SoundEvent soundId, ImmutableMap.Builder<String, String> configMap) {
+        configMap.put(soundName, soundId.getId().toString());
     }
 
 }

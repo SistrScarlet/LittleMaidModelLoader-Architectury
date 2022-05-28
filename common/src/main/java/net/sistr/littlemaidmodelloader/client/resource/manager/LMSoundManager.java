@@ -3,11 +3,11 @@ package net.sistr.littlemaidmodelloader.client.resource.manager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.Sound;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.client.resource.LMSoundInstance;
-import net.sistr.littlemaidmodelloader.client.resource.holder.SoundHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,34 +17,35 @@ import java.util.Optional;
 @Environment(EnvType.CLIENT)
 public class LMSoundManager {
     public static final LMSoundManager INSTANCE = new LMSoundManager();
-    private final Map<String, SoundHolder> soundPaths = new HashMap<>();
+    private final Map<String, WeightedSoundSet> soundPaths = new HashMap<>();
 
-    public void addSound(String packName, String fileName, Identifier location) {
-        SoundHolder soundHolder = soundPaths.computeIfAbsent(packName.toLowerCase(), k -> new SoundHolder(packName));
-        soundHolder.addSound(fileName, location);
+    public void addSound(String packName, String parentName, String fileName, Identifier location) {
+        WeightedSoundSet soundSet = soundPaths.computeIfAbsent(
+                (packName + "." + parentName + "." + fileName).toLowerCase(),
+                k -> new WeightedSoundSet(location, packName + "." + fileName));
+
+        soundSet.add(new Sound(location.toString(), 1F, 1F, 1, Sound.RegistrationType.FILE,
+                false, false, 16) {
+            @Override
+            public Identifier getLocation() {
+                return getIdentifier();
+            }
+        });
     }
 
-    public Optional<WeightedSoundSet> getSound(String soundFileName) {
-        int lastSplitter = soundFileName.lastIndexOf(".");
-        if (lastSplitter == -1) {
-            return Optional.empty();
+    public Optional<WeightedSoundSet> getSound(String soundFileLocation) {
+        if (soundFileLocation.contains(":")) {
+            return Optional.ofNullable(MinecraftClient.getInstance().getSoundManager()
+                    .get(new Identifier(soundFileLocation.toLowerCase())));
         }
-        String fileName = soundFileName.substring(lastSplitter + 1);
-        String packName = soundFileName.substring(0, lastSplitter);
-        lastSplitter = packName.lastIndexOf(".");
-        if (lastSplitter != -1) {
-            packName = packName.substring(lastSplitter + 1);
-        }
-        SoundHolder soundHolder = soundPaths.get(packName);
-        if (soundHolder == null) {
-            return Optional.empty();
-        }
-        return soundHolder.getSoundSet(fileName);
+
+        WeightedSoundSet soundSet = soundPaths.get(soundFileLocation);
+        return Optional.ofNullable(soundSet);
     }
 
     public void play(String soundFileName, SoundCategory soundCategory,
                      float volume, float pitch, double x, double y, double z) {
         getSound(soundFileName).ifPresent(soundSet -> MinecraftClient.getInstance().getSoundManager()
-                        .play(new LMSoundInstance(soundSet, soundCategory, volume, pitch, x, y, z)));
+                .play(new LMSoundInstance(soundSet, soundCategory, volume, pitch, x, y, z)));
     }
 }

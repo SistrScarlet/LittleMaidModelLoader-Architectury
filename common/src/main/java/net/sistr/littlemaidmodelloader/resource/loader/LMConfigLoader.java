@@ -23,12 +23,12 @@ public class LMConfigLoader implements LMLoader {
     }
 
     @Override
-    public boolean canLoad(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        return path.endsWith(".cfg");
+    public boolean canLoad(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
+        return path.endsWith(".cfg") && ResourceHelper.getFirstParentName(path, folderPath, isArchive).isPresent();
     }
 
     @Override
-    public void load(String path, Path homePath, InputStream inputStream, boolean isArchive) {
+    public void load(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
         Map<String, String> settings = new HashMap<>();
         try {
             getTextStream(inputStream).forEach(s -> addSettings(settings, s));
@@ -36,7 +36,7 @@ public class LMConfigLoader implements LMLoader {
             e.printStackTrace();
             return;
         }
-        String packName = ResourceHelper.getFirstParentName(path, homePath, isArchive).orElse("");
+        String packName = ResourceHelper.getFirstParentName(path, folderPath, isArchive).orElse("");
         String parentName = ResourceHelper.getParentFolderName(path, isArchive).orElse("");
         String fileName = ResourceHelper.getFileName(path, isArchive);
         fileName = ResourceHelper.removeExtension(fileName);

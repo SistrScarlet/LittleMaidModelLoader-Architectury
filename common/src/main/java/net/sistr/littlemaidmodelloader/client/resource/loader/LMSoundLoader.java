@@ -5,8 +5,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.resource.ResourceWrapper;
-import net.sistr.littlemaidmodelloader.resource.loader.LMLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
+import net.sistr.littlemaidmodelloader.resource.loader.LMLoader;
 import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,20 +25,20 @@ public class LMSoundLoader implements LMLoader {
     }
 
     @Override
-    public boolean canLoad(String path, Path homePath, InputStream inputStream, boolean isArchive) {
+    public boolean canLoad(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
         return path.endsWith(".ogg") && ResourceHelper.getParentFolderName(path, isArchive).isPresent();
     }
 
     @Override
-    public void load(String path, Path homePath, InputStream inputStream, boolean isArchive) {
-        String packName = ResourceHelper.getParentFolderName(path, isArchive)
-                .orElseThrow(() -> new IllegalArgumentException("引数が不正です。"));
+    public void load(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
+        String packName = ResourceHelper.getFirstParentName(path, folderPath, isArchive).orElse("");
+        String parent = ResourceHelper.getParentFolderName(path, isArchive).orElse("");
         String fileName = ResourceHelper.getFileName(path, isArchive);
         Identifier location = ResourceHelper.getLocation(packName, fileName);
         fileName = ResourceHelper.removeExtension(fileName);
         fileName = ResourceHelper.removeNameLastIndex(fileName);
-        soundManager.addSound(packName, fileName, location);
-        ResourceWrapper.addResourcePath(location, path, homePath, isArchive);
+        soundManager.addSound(packName, parent, fileName, location);
+        ResourceWrapper.addResourcePath(location, path, folderPath, isArchive);
         if (LMMLMod.getConfig().isDebugMode()) LOGGER.debug("Loaded Sound : " + packName + " : " + fileName);
     }
 
