@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.entrypoint.fabric;
 
-import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import me.shedaniel.architectury.registry.entity.EntityRenderers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.sistr.littlemaidmodelloader.LMMLMod;
@@ -20,7 +20,7 @@ public class LMMLFabric implements ModInitializer, ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientSetup.init();
-        EntityRendererRegistry.register(Registration.MULTI_MODEL_ENTITY::get, MultiModelRenderer::new);
-        EntityRendererRegistry.register(Registration.DUMMY_MODEL_ENTITY::get, MultiModelRenderer::new);
+        EntityRenderers.register(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
+        EntityRenderers.register(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
     }
 }

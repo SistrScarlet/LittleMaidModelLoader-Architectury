@@ -1,9 +1,9 @@
 package net.sistr.littlemaidmodelloader.entrypoint.forge;
 
-import dev.architectury.platform.forge.EventBuses;
+import me.shedaniel.architectury.platform.forge.EventBuses;
+import me.shedaniel.architectury.registry.entity.EntityRenderers;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraftforge.client.ConfigGuiHandler;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -23,13 +23,12 @@ public class LMMLForge {
         EventBuses.registerModEventBus(LMMLMod.MODID, FMLJavaModLoadingContext.get().getModEventBus());
         LMMLMod.init();
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-                () -> new ConfigGuiHandler.ConfigGuiFactory((client, parent) ->
-                        AutoConfig.getConfigScreen(LMMLConfig.class, parent).get()));
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
+                () -> (client, parent) ->
+                        AutoConfig.getConfigScreen(LMMLConfig.class, parent).get());
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
     }
 
     public void modInit(FMLCommonSetupEvent event) {
@@ -38,11 +37,8 @@ public class LMMLForge {
 
     public void clientInit(FMLClientSetupEvent event) {
         ClientSetup.init();
-    }
-
-    public void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
-        event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
+        EntityRenderers.register(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
+        EntityRenderers.register(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
     }
 
 }

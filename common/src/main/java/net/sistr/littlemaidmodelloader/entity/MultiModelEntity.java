@@ -120,7 +120,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
 
     @Environment(EnvType.CLIENT)
     public void openGUI(boolean shift) {
-        MinecraftClient.getInstance().setScreen(
+        MinecraftClient.getInstance().openScreen(
                 shift ? new SoundPackSelectScreen<>(new LiteralText(""), this) :
                         new ModelSelectScreen<>(new LiteralText(""), this.world, this));
     }

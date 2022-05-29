@@ -1,7 +1,7 @@
 package net.sistr.littlemaidmodelloader.network;
 
-import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
+import me.shedaniel.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -31,14 +31,14 @@ public class CustomMobSpawnPacket {
             throw new IllegalStateException("CustomPacketEntityを実装していません。");
         }
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeVarInt(entity.getId());
+        buf.writeVarInt(entity.getEntityId());
         buf.writeUuid(entity.getUuid());
         buf.writeVarInt(Registry.ENTITY_TYPE.getRawId(entity.getType()));
         buf.writeDouble(entity.getX());
         buf.writeDouble(entity.getY());
         buf.writeDouble(entity.getZ());
-        buf.writeByte((int) (entity.getYaw() * 256.0F / 360.0F));
-        buf.writeByte((int) (entity.getPitch() * 256.0F / 360.0F));
+        buf.writeByte((int) (entity.yaw * 256.0F / 360.0F));
+        buf.writeByte((int) (entity.pitch * 256.0F / 360.0F));
         buf.writeByte((int) (entity.headYaw * 256.0F / 360.0F));
         Vec3d vec3d = entity.getVelocity();
         int velocityX = (int) (MathHelper.clamp(vec3d.x, -3.9D, 3.9D) * 8000D);
@@ -87,7 +87,7 @@ public class CustomMobSpawnPacket {
             livingEntity.bodyYaw = headYaw;
             livingEntity.headYaw = headYaw;
 
-            livingEntity.setId(id);
+            livingEntity.setEntityId(id);
             livingEntity.setUuid(uuid);
             livingEntity.updatePositionAndAngles(x, y, z, yaw, pitch);
             livingEntity.setVelocity(velocityX, velocityY, velocityZ);

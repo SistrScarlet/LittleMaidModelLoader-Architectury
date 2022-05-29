@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
-import dev.architectury.platform.Platform;
+import me.shedaniel.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -105,8 +105,8 @@ public abstract class ModelMultiBase extends ModelBase implements IModelCaps, IM
                     new Vec3d(ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionX),
                             ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionY),
                             ModelCapsHelper.getCapsValueDouble(caps, IModelCaps.caps_motionZ));
-            double d = velocity.horizontalLengthSquared();
-            double e = lookFor.horizontalLengthSquared();
+            double d = velocity.x * velocity.x + velocity.z * velocity.z;
+            double e = lookFor.x * lookFor.x + lookFor.z * lookFor.z;
             if (d > 0.0D && e > 0.0D) {
                 double l = (velocity.x * lookFor.x + velocity.z * lookFor.z) / Math.sqrt(d * e);
                 double m = velocity.x * lookFor.z - velocity.z * lookFor.x;

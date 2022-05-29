@@ -3,7 +3,7 @@ package net.sistr.littlemaidmodelloader.entrypoint.fabric;
 import me.shedaniel.architectury.registry.entity.EntityRenderers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.sistr.littlemaidmodelloader.LittleMaidModelLoader;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
 import net.sistr.littlemaidmodelloader.setup.ClientSetup;
 import net.sistr.littlemaidmodelloader.setup.ModSetup;
@@ -13,7 +13,7 @@ public class LittleMaidModelLoaderFabric implements ModInitializer, ClientModIni
 
     @Override
     public void onInitialize() {
-        LittleMaidModelLoader.init();
+        LMMLMod.init();
         ModSetup.init();
     }
 

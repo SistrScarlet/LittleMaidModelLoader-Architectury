@@ -7,7 +7,6 @@ import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.metadata.PackResourceMetadata;
-import net.minecraft.text.LiteralText;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -29,9 +28,9 @@ public class LMPackProvider implements ResourcePackProvider {
         ResourcePackSource decorator = ResourcePackSource.PACK_SOURCE_BUILTIN;
         ResourcePackProfile info = factory.create(
                 name,
-                new LiteralText(resourcePack.getName()),
                 isAlwaysEnabled,
                 supplier,
+                resourcePack,
                 resourcePackMeta,
                 priority,
                 decorator

@@ -1,6 +1,6 @@
 package net.sistr.littlemaidmodelloader.resource.classloader;
 
-import dev.architectury.platform.Platform;
+import me.shedaniel.architectury.platform.Platform;
 import org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;

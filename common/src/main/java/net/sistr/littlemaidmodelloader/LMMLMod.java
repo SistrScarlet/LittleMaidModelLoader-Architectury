@@ -1,8 +1,8 @@
 package net.sistr.littlemaidmodelloader;
 
 import com.google.common.collect.ImmutableMap;
-import dev.architectury.platform.Platform;
-import dev.architectury.registry.level.entity.EntityAttributeRegistry;
+import me.shedaniel.architectury.platform.Platform;
+import me.shedaniel.architectury.registry.entity.EntityAttributes;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -90,8 +90,8 @@ public class LMMLMod {
     }
 
     public static void registerAttribute() {
-        EntityAttributeRegistry.register(Registration.MULTI_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
-        EntityAttributeRegistry.register(Registration.DUMMY_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
+        EntityAttributes.register(Registration.MULTI_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
+        EntityAttributes.register(Registration.DUMMY_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
     }
 
     public static LMMLConfig getConfig() {
@@ -101,7 +101,7 @@ public class LMMLMod {
     public static void addGhastMaidVoice() {
         String packName = "DefaultGhast";
 
-        var configMap = new ImmutableMap.Builder<String, String>();
+        ImmutableMap.Builder<String, String> configMap = new ImmutableMap.Builder<String, String>();
         addVoice(LMSounds.HURT, SoundEvents.ENTITY_GHAST_HURT, configMap);
         addVoice(LMSounds.HURT_FIRE, SoundEvents.ENTITY_GHAST_HURT, configMap);
         addVoice(LMSounds.HURT_FALL, SoundEvents.ENTITY_GHAST_HURT, configMap);
