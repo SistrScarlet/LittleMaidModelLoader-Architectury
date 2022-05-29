@@ -2,13 +2,13 @@ package net.sistr.littlemaidmodelloader.entrypoint.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
