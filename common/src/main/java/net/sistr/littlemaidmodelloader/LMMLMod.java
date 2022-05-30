@@ -3,6 +3,9 @@ package net.sistr.littlemaidmodelloader;
 import com.google.common.collect.ImmutableMap;
 import me.shedaniel.architectury.platform.Platform;
 import me.shedaniel.architectury.registry.entity.EntityAttributes;
+import dev.architectury.event.events.client.ClientLifecycleEvent;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -10,6 +13,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
@@ -25,11 +29,13 @@ import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
+import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
 import net.sistr.littlemaidmodelloader.setup.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Paths;
+import java.util.Collection;
 
 public class LMMLMod {
     public static final String MODID = "littlemaidmodelloader";
@@ -46,6 +52,23 @@ public class LMMLMod {
             addGhastMaidVoice();
             initTextureLoader();
             initSoundLoader();
+            ClientLifecycleEvent.CLIENT_STARTED.register(cs -> {
+                //このパスにあるテクスチャすべてを受け取る(リソパ及びModリソースからも抜ける)
+                Collection<Identifier> resourceLocations = cs.getResourceManager()
+                        .findResources("textures/entity/littlemaid", s -> true);
+                //テクスチャを読み込む
+                resourceLocations.forEach(resourcePath -> {
+                    String path = resourcePath.getPath();
+                    ResourceHelper.getTexturePackName(path, false).ifPresent(textureName -> {
+                        String modelName = ResourceHelper.getModelName(textureName);
+                        int index = ResourceHelper.getIndex(path);
+                        if (index != -1) {
+                            LMTextureManager.INSTANCE
+                                    .addTexture(ResourceHelper.getFileName(path, false), textureName, modelName, index, resourcePath);
+                        }
+                    });
+                });
+            });
         }
         Registration.init();
         registerAttribute();
