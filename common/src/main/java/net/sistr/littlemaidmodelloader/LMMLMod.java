@@ -1,11 +1,9 @@
 package net.sistr.littlemaidmodelloader;
 
 import com.google.common.collect.ImmutableMap;
+import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent;
 import me.shedaniel.architectury.platform.Platform;
 import me.shedaniel.architectury.registry.entity.EntityAttributes;
-import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.platform.Platform;
-import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
