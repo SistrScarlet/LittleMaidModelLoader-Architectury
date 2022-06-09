@@ -1,6 +1,8 @@
 package net.sistr.littlemaidmodelloader.entity.compound;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.util.math.random.RandomSeed;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
 import net.sistr.littlemaidmodelloader.network.LMSoundPacket;
 import net.sistr.littlemaidmodelloader.resource.holder.ConfigHolder;
@@ -39,11 +41,12 @@ public class SoundPlayableCompound implements SoundPlayable {
 
     @Override
     public void play(String soundName) {
+        //todo 音声周りの仕様を1.19に合わせる
         if (entity.world.isClient) {
             configHolder.getSoundFileName(soundName.toLowerCase())
                     .ifPresent(soundFileName ->
                             LMSoundManager.INSTANCE.play(soundFileName, entity.getSoundCategory(),
-                                    1F, 1F, entity.getX(), entity.getEyeY(), entity.getZ()));
+                                    1F, 1F, Random.create(RandomSeed.getSeed()), entity.getX(), entity.getEyeY(), entity.getZ()));
         } else {
             LMSoundPacket.sendS2CPacket(entity, soundName);
         }

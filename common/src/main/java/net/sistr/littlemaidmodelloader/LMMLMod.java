@@ -53,7 +53,8 @@ public class LMMLMod {
             ClientLifecycleEvent.CLIENT_STARTED.register(cs -> {
                 //このパスにあるテクスチャすべてを受け取る(リソパ及びModリソースからも抜ける)
                 Collection<Identifier> resourceLocations = cs.getResourceManager()
-                        .findResources("textures/entity/littlemaid", s -> true);
+                        .findResources("textures/entity/littlemaid", s -> true)
+                        .keySet();
                 //テクスチャを読み込む
                 resourceLocations.forEach(resourcePath -> {
                     String path = resourcePath.getPath();
