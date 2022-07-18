@@ -2,7 +2,7 @@ package net.sistr.littlemaidmodelloader.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -23,9 +23,9 @@ public class LMMLForge {
         EventBuses.registerModEventBus(LMMLMod.MODID, FMLJavaModLoadingContext.get().getModEventBus());
         LMMLMod.init();
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-                () -> new ConfigGuiHandler.ConfigGuiFactory((client, parent) ->
-                        AutoConfig.getConfigScreen(LMMLConfig.class, parent).get()));
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new ConfigScreenHandler.ConfigScreenFactory(
+                        (client, parent) -> AutoConfig.getConfigScreen(LMMLConfig.class, parent).get()));
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
