@@ -10,7 +10,7 @@ displayName = "LittleMaid ModelLoader"
 credits = "Created by MMM, remixed by EMB4 & Verclene, patched by firis-games, remade by Sistr"
 authors = "Sistr"
 description = "メイドさんのモデルローダーです。"
-logoFile = "icon.png"
+logoFile = "assets/littlemaidmodelloader/icon.png"
 
 [[dependencies.littlemaidmodelloader]]
 modId = "forge"
@@ -29,7 +29,7 @@ side = "BOTH"
 [[dependencies.littlemaidmodelloader]]
 modId = "architectury"
 mandatory = true
-versionRange = "[4.4.59,)"
+versionRange = "[4.5.76,)"
 ordering = "AFTER"
 side = "BOTH"
 
@@ -37,5 +37,5 @@ side = "BOTH"
 modId = "cloth_config"
 mandatory = true
 versionRange = "[6.2.62,)"
-ordering = "AFTER"
+ordering = "NONE"
 side = "BOTH"
