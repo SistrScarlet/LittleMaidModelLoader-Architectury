@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.entrypoint.forge;
+package net.sistr.littlemaidmodelloader.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import me.shedaniel.autoconfig.AutoConfig;

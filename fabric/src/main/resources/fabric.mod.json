@@ -17,10 +17,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.sistr.littlemaidmodelloader.entrypoint.fabric.LMMLFabric"
+      "net.sistr.littlemaidmodelloader.fabric.LMMLFabric"
     ],
     "client": [
-      "net.sistr.littlemaidmodelloader.entrypoint.fabric.LMMLFabric"
+      "net.sistr.littlemaidmodelloader.fabric.LMMLFabric"
     ],
     "modmenu": [
       "net.sistr.littlemaidmodelloader.modmenu.fabric.LMMLModMenuIntegration"
