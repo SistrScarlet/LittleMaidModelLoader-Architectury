@@ -2,6 +2,7 @@ package net.sistr.littlemaidmodelloader;
 
 import com.google.common.collect.ImmutableMap;
 import dev.architectury.event.events.client.ClientLifecycleEvent;
+import dev.architectury.hooks.PackRepositoryHooks;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -9,9 +10,11 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.sistr.littlemaidmodelloader.client.resource.LMPackProvider;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
@@ -68,6 +71,7 @@ public class LMMLMod {
                     });
                 });
             });
+            PackRepositoryHooks.addSource(MinecraftClient.getInstance().getResourcePackManager(), new LMPackProvider());
         }
         Registration.init();
         registerAttribute();
