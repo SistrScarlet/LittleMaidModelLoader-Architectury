@@ -111,6 +111,11 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
             this.equipStack(armor.getSlotType(), stack);
             return ActionResult.success(player.world.isClient);
         }
+        ItemStack thisStack = this.getMainHandStack();
+        if (hand == Hand.MAIN_HAND && !world.isClient && !stack.isEmpty() == thisStack.isEmpty()) {
+            player.setStackInHand(Hand.MAIN_HAND, thisStack);
+            this.setStackInHand(Hand.MAIN_HAND, stack);
+        }
         if (world.isClient) {
             openGUI(player.isSneaking());
             play(LMSounds.LIVING_DAYTIME);
