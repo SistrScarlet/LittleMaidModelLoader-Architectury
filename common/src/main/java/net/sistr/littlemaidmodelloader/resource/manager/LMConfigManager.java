@@ -24,16 +24,19 @@ public class LMConfigManager {
     public Optional<ConfigHolder> getTextureSoundConfig(String texturePackName) {
         return configs.values().stream()
                 .filter(configHolder ->
-                        configHolder.getFileName().toLowerCase().equals(texturePackName.toLowerCase()))
+                        configHolder.getFileName().equalsIgnoreCase(texturePackName))
                 .findAny();
     }
 
     public ConfigHolder getAnyConfig() {
-        return configs.values().stream()
+        var configHolderList = configs.values().stream()
                 .filter(configHolder ->
                         configHolder.getFileName().equalsIgnoreCase("littlemaidmob"))
-                .min(Comparator.comparingInt(a -> ThreadLocalRandom.current().nextInt()))
-                .orElse(LMConfigManager.EMPTY_CONFIG);
+                .toList();
+        if (configHolderList.isEmpty()) {
+            return EMPTY_CONFIG;
+        }
+        return configHolderList.get(ThreadLocalRandom.current().nextInt(configHolderList.size()));
     }
 
     public List<ConfigHolder> getAllConfig() {
