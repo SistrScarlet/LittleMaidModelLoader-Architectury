@@ -1,6 +1,10 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 
 import java.util.Random;
 
@@ -449,10 +453,11 @@ public class ModelLittleMaid_Chloe2 extends ModelLittleMaidBase {
 
 		if (isRiding)
 		{
-			//コメントアウト sistr
-			/*// �w�����Ă���
-			EntityLivingBase ent = (EntityLivingBase)ModelCapsHelper.getCapsValue(pEntityCaps, caps_Entity);
-			if(ent.ridingEntity instanceof EntityPlayer || ent.ridingEntity instanceof LMM_EntityLittleMaid)
+			// �w�����Ă���
+			//現バージョン向けに改変 sistr
+			var ent = (LivingEntity)ModelCapsHelper.getCapsValue(pEntityCaps, caps_Entity);
+			var ridingEntity = ent.getVehicle();
+			if(ridingEntity instanceof PlayerEntity || ridingEntity instanceof IMultiModel)
 			{
 				bipedRightArm.rotateAngleX -= 1.3F;
 				bipedLeftArm.rotateAngleX -= 1.3F;
@@ -465,7 +470,7 @@ public class ModelLittleMaid_Chloe2 extends ModelLittleMaidBase {
 				mainFrame.rotationPointY += 8F;
 				mainFrame.rotationPointZ += 1F;
 			}
-			else if(ent.ridingEntity instanceof EntityAnimal)
+			else if(ridingEntity instanceof AnimalEntity)
 			{
 				bipedRightArm.rotateAngleX -= 1.3F;
 				bipedLeftArm.rotateAngleX -= 1.3F;
@@ -479,7 +484,7 @@ public class ModelLittleMaid_Chloe2 extends ModelLittleMaidBase {
 				mainFrame.rotationPointZ += 1F;
 			}
 			// ��蕨�ɏ���Ă���
-			else*/
+			else
 			{
 				upperRightArm.rotateAngleX -= 0.1F;
 				upperLeftArm.rotateAngleX -= 0.1F;
