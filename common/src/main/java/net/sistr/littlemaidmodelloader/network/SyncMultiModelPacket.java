@@ -37,8 +37,8 @@ public class SyncMultiModelPacket {
         for (Part part : Part.values()) {
             passedData.writeString(hasMultiModel.getTextureHolder(Layer.INNER, part).getTextureName());
         }
-        passedData.writeEnumConstant(hasMultiModel.getColor());
-        passedData.writeBoolean(hasMultiModel.isContract());
+        passedData.writeEnumConstant(hasMultiModel.getColorMM());
+        passedData.writeBoolean(hasMultiModel.isContractMM());
         return passedData;
     }
 
@@ -54,8 +54,8 @@ public class SyncMultiModelPacket {
         for (Part part : Part.values()) {
             passedData.writeString(hasMultiModel.getTextureHolder(Layer.INNER, part).getTextureName());
         }
-        passedData.writeEnumConstant(hasMultiModel.getColor());
-        passedData.writeBoolean(hasMultiModel.isContract());
+        passedData.writeEnumConstant(hasMultiModel.getColorMM());
+        passedData.writeBoolean(hasMultiModel.isContractMM());
         return passedData;
     }
 
@@ -81,8 +81,8 @@ public class SyncMultiModelPacket {
         if (world == null) return;
         Entity entity = world.getEntityById(entityId);
         if (!(entity instanceof IHasMultiModel multiModel)) return;
-        multiModel.setContract(isContract);
-        multiModel.setColor(color);
+        multiModel.setContractMM(isContract);
+        multiModel.setColorMM(color);
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
         textureManager.getTexture(textureName).filter(textureHolder ->
                         multiModel.isAllowChangeTexture(entity, textureHolder, Layer.SKIN, Part.HEAD))
@@ -114,8 +114,8 @@ public class SyncMultiModelPacket {
                                              String textureName, ArmorSets<String> armorTextureName) {
         Entity entity = player.world.getEntityById(entityId);
         if (!(entity instanceof IHasMultiModel multiModel)) return;
-        multiModel.setContract(isContract);
-        multiModel.setColor(color);
+        multiModel.setContractMM(isContract);
+        multiModel.setColorMM(color);
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
         textureManager.getTexture(textureName).filter(textureHolder ->
                         multiModel.isAllowChangeTexture(entity, textureHolder, Layer.SKIN, Part.HEAD))

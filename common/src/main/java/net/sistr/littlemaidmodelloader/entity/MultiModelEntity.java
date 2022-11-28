@@ -193,23 +193,23 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public void setColor(TextureColors color) {
-        multiModel.setColor(color);
+    public void setColorMM(TextureColors color) {
+        multiModel.setColorMM(color);
     }
 
     @Override
-    public TextureColors getColor() {
-        return multiModel.getColor();
+    public TextureColors getColorMM() {
+        return multiModel.getColorMM();
     }
 
     @Override
-    public void setContract(boolean isContract) {
-        multiModel.setContract(isContract);
+    public void setContractMM(boolean isContract) {
+        multiModel.setContractMM(isContract);
     }
 
     @Override
-    public boolean isContract() {
-        return multiModel.isContract();
+    public boolean isContractMM() {
+        return multiModel.isContractMM();
     }
 
     @Override

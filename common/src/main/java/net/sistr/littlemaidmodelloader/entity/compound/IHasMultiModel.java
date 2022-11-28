@@ -22,13 +22,13 @@ public interface IHasMultiModel {
 
     TextureHolder getTextureHolder(Layer layer, Part part);
 
-    void setColor(TextureColors color);
+    void setColorMM(TextureColors color);
 
-    TextureColors getColor();
+    TextureColors getColorMM();
 
-    void setContract(boolean isContract);
+    void setContractMM(boolean isContract);
 
-    boolean isContract();
+    boolean isContractMM();
 
     Optional<IMultiModel> getModel(Layer layer, Part part);
 

@@ -285,8 +285,8 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                 g.getSelectColor().ifPresent(color -> {
                     TextureHolder texture = g.getTexture();
                     //カラーと契約を更新
-                    entity.setColor(color);
-                    entity.setContract(true);
+                    entity.setColorMM(color);
+                    entity.setContractMM(true);
                     //スキンを更新
                     entity.setTextureHolder(texture, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
                     //防具をスキンと同様に更新
