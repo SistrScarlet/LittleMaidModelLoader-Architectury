@@ -16,7 +16,6 @@ import net.sistr.littlemaidmodelloader.resource.util.ArmorPart;
 import net.sistr.littlemaidmodelloader.resource.util.ArmorSets;
 import org.lwjgl.glfw.GLFW;
 
-//todo モデル選択方式の改善
 public class ArmorModelGUI extends GUIElement implements ListGUIElement {
     private static final ArmorSets<ItemStack> ARMOR_ICONS = new ArmorSets<>();
     private final MarginedClickable selectBox = new MarginedClickable(4);
@@ -111,6 +110,19 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
                         armors.setArmor(null, part);
                     } else {
                         armors.setArmor(this, part);
+                    }
+                } else {
+                    //全選択か全除去
+                    boolean selectAll = false;
+                    for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
+                        //選択していたものが今選択したやつ・・・でなければ全選択
+                        if (armors.getArmor(part).filter(g -> g == this).isEmpty()) {
+                            selectAll = true;
+                            break;
+                        }
+                    }
+                    for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
+                        armors.setArmor(selectAll ? this : null, part);
                     }
                 }
                 return true;
