@@ -41,7 +41,7 @@ public class LMTextureManager {
 
     public Optional<TextureHolder> getTexture(String textureName) {
         TextureHolder textureHolder = textures.get(textureName.toLowerCase());
-        //サーバー側で読み込んでないテクスチャでもテクスチャ名だけは保持する
+        //サーバー側で読み込んでないテクスチャでもテクスチャ名nだけは保持する
         if (Platform.getEnv() == EnvType.SERVER && textureHolder == null) {
             TextureHolder serverHolder = new TextureHolder(textureName, ResourceHelper.getModelName(textureName));
             textures.put(textureName.toLowerCase(), serverHolder);

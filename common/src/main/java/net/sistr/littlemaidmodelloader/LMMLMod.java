@@ -49,6 +49,7 @@ public class LMMLMod {
 
         initFileLoader();
         initModelLoader();
+        //todo クライアントセットアップ
         if (Platform.getEnv() == EnvType.CLIENT) {
             addGhastMaidVoice();
             initTextureLoader();
@@ -93,7 +94,6 @@ public class LMMLMod {
         modelManager.addModel("Archetype", ModelLittleMaid_Archetype.class);
         modelManager.addModel("Steve", ModelMulti_Steve.class);
         modelManager.addModel("Stef", ModelMulti_Stef.class);
-        //modelManager.addModel("Alicia", new MultiModel_Alicia(), new MultiModel_Alicia(), new MultiModel_Alicia());
         modelManager.addModel("Beverly7", ModelLittleMaid_Beverly7.class);
         modelManager.addModel("Chloe2", ModelLittleMaid_Chloe2.class);
         modelManager.addModel("Elsa5", ModelLittleMaid_Elsa5.class);
@@ -116,8 +116,8 @@ public class LMMLMod {
     }
 
     public static void registerAttribute() {
-        EntityAttributeRegistry.register(Registration.MULTI_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
-        EntityAttributeRegistry.register(Registration.DUMMY_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(Registration.MULTI_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(Registration.DUMMY_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
     }
 
     public static LMMLConfig getConfig() {

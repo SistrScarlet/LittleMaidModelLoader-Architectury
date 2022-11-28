@@ -30,7 +30,7 @@ import java.util.Optional;
 public class MultiModelGUIUtil {
 
     public static Optional<IMultiModel> getModel(LMModelManager modelManager, TextureHolder texture) {
-        if (!modelManager.getModel(texture.getModelName(), IHasMultiModel.Layer.SKIN).isPresent()) {
+        if (modelManager.getModel(texture.getModelName(), IHasMultiModel.Layer.SKIN).isEmpty()) {
             return Optional.empty();
         }
         return modelManager.getModel(texture.getModelName(), IHasMultiModel.Layer.SKIN);

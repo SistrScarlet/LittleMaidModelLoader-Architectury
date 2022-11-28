@@ -8,8 +8,6 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -33,7 +31,7 @@ import java.util.zip.ZipFile;
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
     public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaidModelLoader!!!"), 6);
+            new PackResourceMetadata(Text.literal("LittleMaidModelLoader!!!"), 9);
     protected static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
 
     //いつ呼ばれるのか不明
@@ -98,33 +96,17 @@ public class ResourceWrapper implements ResourcePack {
         PATHS.put(resourcePath, new Resource(path, homePath, isArchive));
     }
 
-    private static class Resource {
-        private final String path;
-        private final Path homePath;
-        private final boolean isArchive;
-
-        private Resource(String path, Path homePath, boolean isArchive) {
-            this.path = path;
-            this.homePath = homePath;
-            this.isArchive = isArchive;
-        }
+    private record Resource(String path, Path homePath, boolean isArchive) {
 
         public InputStream getInputStream() throws IOException {
             if (isArchive) {
                 String resourcePath = homePath.toString();
-                ZipFile zipfile = new ZipFile(resourcePath);
-                ZipEntry zipentry = zipfile.getEntry(path);
-                if (zipentry != null) {
-                    return zipfile.getInputStream(zipentry);
-                }
-                //上記より遅い
-                /*ZipInputStream zipStream = new ZipInputStream(Files.newInputStream(homePath));
-                ZipEntry entry;
-                while ((entry = zipStream.getNextEntry()) != null) {
-                    if (entry.getName().equals(path)) {
-                        return zipStream;
+                try (ZipFile zipfile = new ZipFile(resourcePath)) {
+                    ZipEntry zipentry = zipfile.getEntry(path);
+                    if (zipentry != null) {
+                        return zipfile.getInputStream(zipentry);
                     }
-                }*/
+                }
                 throw new NoSuchFileException(path);
             } else {
                 return Files.newInputStream(Paths.get(homePath.toString(), path));

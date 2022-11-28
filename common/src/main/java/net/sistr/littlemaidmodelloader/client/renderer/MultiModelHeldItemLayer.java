@@ -15,12 +15,9 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.math.Vec3f;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> extends FeatureRenderer<T, MultiModel<T>> {
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public MultiModelHeldItemLayer(FeatureRendererContext<T, MultiModel<T>> context) {
         super(context);

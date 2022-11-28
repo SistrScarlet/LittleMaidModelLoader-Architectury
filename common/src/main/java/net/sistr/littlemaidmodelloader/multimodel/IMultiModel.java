@@ -9,6 +9,7 @@ import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 /**
  * マルチモデル用識別インターフェース
  */
+//todo 不要メソッドの消去
 public interface IMultiModel {
 
     /**

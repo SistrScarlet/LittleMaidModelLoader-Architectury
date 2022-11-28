@@ -27,17 +27,18 @@ public class MultiModelClassLoader extends URLClassLoader {
         List<URL> urlList = new ArrayList<>();
         folderPaths.forEach(folderPath -> {
             try {
-                Files.walk(folderPath)
-                        .filter(resourcePath -> !Files.isDirectory(resourcePath))
-                        .map(resourcePath -> {
-                            try {
-                                return resourcePath.toUri().toURL();
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
-                        })
-                        .forEach(urlList::add);
+                try (var stream = Files.walk(folderPath)) {
+                    stream.filter(resourcePath -> !Files.isDirectory(resourcePath))
+                            .map(resourcePath -> {
+                                try {
+                                    return resourcePath.toUri().toURL();
+                                } catch (MalformedURLException e) {
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            })
+                            .forEach(urlList::add);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -74,6 +75,7 @@ public class MultiModelClassLoader extends URLClassLoader {
         }
     }
 
+    //todo 今も必要？
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         if (Platform.isForge()) {

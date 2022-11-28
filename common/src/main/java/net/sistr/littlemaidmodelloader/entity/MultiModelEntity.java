@@ -39,7 +39,6 @@ import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidmodelloader.resource.util.TextureColors;
-import net.sistr.littlemaidmodelloader.setup.Registration;
 
 import java.util.Optional;
 
@@ -49,10 +48,6 @@ import java.util.Optional;
 public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel, SoundPlayable, EntitySpawnExtension {
     private final MultiModelCompound multiModel;
     private final SoundPlayableCompound soundPlayer;
-
-    public MultiModelEntity(World worldIn) {
-        this(Registration.MULTI_MODEL_ENTITY.get(), worldIn);
-    }
 
     public MultiModelEntity(EntityType<MultiModelEntity> type, World worldIn) {
         super(type, worldIn);
@@ -106,8 +101,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     @Override
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (stack.getItem() instanceof ArmorItem) {
-            ArmorItem armor = (ArmorItem) stack.getItem();
+        if (stack.getItem() instanceof ArmorItem armor) {
             this.equipStack(armor.getSlotType(), stack);
             return ActionResult.success(player.world.isClient);
         }
