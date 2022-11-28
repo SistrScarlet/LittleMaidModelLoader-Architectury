@@ -29,13 +29,13 @@ side = "BOTH"
 [[dependencies.littlemaidmodelloader]]
 modId = "architectury"
 mandatory = true
-versionRange = "[5.7.28,)"
+versionRange = "[6.3.0,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.littlemaidmodelloader]]
 modId = "cloth_config"
 mandatory = true
-versionRange = "[7.0.73,)"
+versionRange = "[8.2.0,)"
 ordering = "NONE"
 side = "BOTH"

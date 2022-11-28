@@ -38,8 +38,8 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.19",
-    "architectury": ">=5.7.28",
-    "modmenu": ">=4.0.4",
-    "cloth-config": ">=7.0.73"
+    "architectury": ">=6.3.0",
+    "modmenu": ">=4.0.0",
+    "cloth-config": ">=8.2.0"
   }
 }
