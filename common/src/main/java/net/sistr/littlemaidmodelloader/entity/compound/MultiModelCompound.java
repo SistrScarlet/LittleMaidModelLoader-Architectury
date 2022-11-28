@@ -196,28 +196,28 @@ public class MultiModelCompound implements IHasMultiModel {
         return true;
     }
 
-    public void setColor(TextureColors color) {
+    public void setColorMM(TextureColors color) {
         this.color = color;
         updateMain();
     }
 
-    public TextureColors getColor() {
+    public TextureColors getColorMM() {
         return color;
     }
 
-    public void setContract(boolean contract) {
+    public void setContractMM(boolean contract) {
         this.isContract = contract;
         updateMain();
     }
 
     @Override
-    public boolean isContract() {
+    public boolean isContractMM() {
         return isContract;
     }
 
     public void writeToNbt(NbtCompound nbt) {
-        nbt.putByte("SkinColor", (byte) getColor().getIndex());
-        nbt.putBoolean("IsContract", isContract());
+        nbt.putByte("SkinColor", (byte) getColorMM().getIndex());
+        nbt.putBoolean("IsContract", isContractMM());
         nbt.putString("SkinTexture", getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
         for (Part part : Part.values()) {
             nbt.putString("ArmorTextureInner" + part.getPartName(),
@@ -229,9 +229,9 @@ public class MultiModelCompound implements IHasMultiModel {
 
     public void readFromNbt(NbtCompound nbt) {
         if (nbt.contains("SkinColor")) {
-            setColor(TextureColors.getColor(nbt.getByte("SkinColor")));
+            setColorMM(TextureColors.getColor(nbt.getByte("SkinColor")));
         }
-        setContract(nbt.getBoolean("IsContract"));
+        setContractMM(nbt.getBoolean("IsContract"));
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
         if (nbt.contains("SkinTexture")) {
             textureManager.getTexture(nbt.getString("SkinTexture"))
@@ -252,8 +252,8 @@ public class MultiModelCompound implements IHasMultiModel {
     }
 
     public void writeToPacket(PacketByteBuf packet) {
-        packet.writeEnumConstant(getColor());
-        packet.writeBoolean(isContract());
+        packet.writeEnumConstant(getColorMM());
+        packet.writeBoolean(isContractMM());
         packet.writeString(getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
         for (Part part : Part.values()) {
             packet.writeString(getTextureHolder(Layer.INNER, part).getTextureName());
@@ -263,8 +263,8 @@ public class MultiModelCompound implements IHasMultiModel {
 
     public void readFromPacket(PacketByteBuf packet) {
         //readString()はクラ処理。このメソッドでは、クラ側なので問題なし
-        setColor(packet.readEnumConstant(TextureColors.class));
-        setContract(packet.readBoolean());
+        setColorMM(packet.readEnumConstant(TextureColors.class));
+        setContractMM(packet.readBoolean());
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
         textureManager.getTexture(packet.readString())
                 .ifPresent(textureHolder -> setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));

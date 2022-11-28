@@ -180,25 +180,25 @@ public class MultiModelGUIUtil {
 
         @Deprecated
         @Override
-        public void setColor(TextureColors color) {
+        public void setColorMM(TextureColors color) {
             throw new UnsupportedOperationException();
         }
 
         @Deprecated
         @Override
-        public TextureColors getColor() {
+        public TextureColors getColorMM() {
             throw new UnsupportedOperationException();
         }
 
         @Deprecated
         @Override
-        public void setContract(boolean isContract) {
+        public void setContractMM(boolean isContract) {
             throw new UnsupportedOperationException();
         }
 
         @Deprecated
         @Override
-        public boolean isContract() {
+        public boolean isContractMM() {
             throw new UnsupportedOperationException();
         }
 
