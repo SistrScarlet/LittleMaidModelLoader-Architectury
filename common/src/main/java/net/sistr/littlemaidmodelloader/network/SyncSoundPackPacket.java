@@ -59,8 +59,7 @@ public class SyncSoundPackPacket {
         World world = MinecraftClient.getInstance().world;
         if (world == null) return;
         Entity entity = world.getEntityById(entityId);
-        if (!(entity instanceof SoundPlayable)) return;
-        SoundPlayable soundPlayable = (SoundPlayable) entity;
+        if (!(entity instanceof SoundPlayable soundPlayable)) return;
         ConfigHolder configHolder = LMConfigManager.INSTANCE.getConfig(soundPackName).orElse(LMConfigManager.EMPTY_CONFIG);
         soundPlayable.setConfigHolder(configHolder);
     }
@@ -75,8 +74,7 @@ public class SyncSoundPackPacket {
     //クライアントに倣って分離
     public static void applyMultiModelServer(PlayerEntity player, int entityId, String soundPackName) {
         Entity entity = player.world.getEntityById(entityId);
-        if (!(entity instanceof SoundPlayable)) return;
-        SoundPlayable soundPlayable = (SoundPlayable) entity;
+        if (!(entity instanceof SoundPlayable soundPlayable)) return;
         ConfigHolder configHolder = LMConfigManager.INSTANCE.getConfig(soundPackName).orElse(LMConfigManager.EMPTY_CONFIG);
         soundPlayable.setConfigHolder(configHolder);
         sendS2CPacket(entity, configHolder);

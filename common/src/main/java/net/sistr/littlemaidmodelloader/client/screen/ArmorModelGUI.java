@@ -16,6 +16,7 @@ import net.sistr.littlemaidmodelloader.resource.util.ArmorPart;
 import net.sistr.littlemaidmodelloader.resource.util.ArmorSets;
 import org.lwjgl.glfw.GLFW;
 
+//todo モデル選択方式の改善
 public class ArmorModelGUI extends GUIElement implements ListGUIElement {
     private static final ArmorSets<ItemStack> ARMOR_ICONS = new ArmorSets<>();
     private final MarginedClickable selectBox = new MarginedClickable(4);

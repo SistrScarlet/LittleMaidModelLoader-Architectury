@@ -80,8 +80,7 @@ public class SyncMultiModelPacket {
         World world = MinecraftClient.getInstance().world;
         if (world == null) return;
         Entity entity = world.getEntityById(entityId);
-        if (!(entity instanceof IHasMultiModel)) return;
-        IHasMultiModel multiModel = (IHasMultiModel) entity;
+        if (!(entity instanceof IHasMultiModel multiModel)) return;
         multiModel.setContract(isContract);
         multiModel.setColor(color);
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
@@ -114,8 +113,7 @@ public class SyncMultiModelPacket {
     public static void applyMultiModelServer(PlayerEntity player, int entityId, boolean isContract, TextureColors color,
                                              String textureName, ArmorSets<String> armorTextureName) {
         Entity entity = player.world.getEntityById(entityId);
-        if (!(entity instanceof IHasMultiModel)) return;
-        IHasMultiModel multiModel = (IHasMultiModel) entity;
+        if (!(entity instanceof IHasMultiModel multiModel)) return;
         multiModel.setContract(isContract);
         multiModel.setColor(color);
         LMTextureManager textureManager = LMTextureManager.INSTANCE;

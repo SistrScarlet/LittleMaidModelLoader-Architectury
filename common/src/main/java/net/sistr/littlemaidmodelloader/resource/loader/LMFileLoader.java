@@ -3,10 +3,12 @@ package net.sistr.littlemaidmodelloader.resource.loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -44,10 +46,11 @@ public class LMFileLoader {
                 if (Files.notExists(folderPath)) {
                     Files.createDirectory(folderPath);
                 }
-                Files.walk(folderPath)
-                        .filter(path -> !Files.isDirectory(path))
-                        .forEach(path -> fileLoad(folderPath, path));
-            } catch (Exception e) {
+                try (Stream<Path> stream = Files.walk(folderPath)) {
+                    stream.filter(path -> !Files.isDirectory(path))
+                            .forEach(path -> fileLoad(folderPath, path));
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });
@@ -90,9 +93,10 @@ public class LMFileLoader {
     public void loadFile(Path folderPath, Path path) {
         try {
             String relPath = path.toString().replace(folderPath.toString(), "");
-            InputStream inputStream = Files.newInputStream(path);
-            loaders.stream().filter(loader -> loader.canLoad(relPath, folderPath, inputStream, false))
-                    .forEach(loader -> loader.load(relPath, folderPath, inputStream, false));
+            try (InputStream inputStream = Files.newInputStream(path)) {
+                loaders.stream().filter(loader -> loader.canLoad(relPath, folderPath, inputStream, false))
+                        .forEach(loader -> loader.load(relPath, folderPath, inputStream, false));
+            }
         } catch (Exception e) {
             LOGGER.debug("Error! : " + e.getMessage() + " : " + path);
         }

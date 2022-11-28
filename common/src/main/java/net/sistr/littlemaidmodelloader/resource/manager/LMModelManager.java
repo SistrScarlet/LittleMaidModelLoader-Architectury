@@ -78,16 +78,11 @@ public class LMModelManager {
         }
 
         public IMultiModel getModel(IHasMultiModel.Layer layer) {
-            switch (layer) {
-                case SKIN:
-                    return skin;
-                case INNER:
-                    return inner;
-                case OUTER:
-                    return outer;
-                default:
-                    throw new IllegalStateException();
-            }
+            return switch (layer) {
+                case SKIN -> skin;
+                case INNER -> inner;
+                case OUTER -> outer;
+            };
         }
     }
 }

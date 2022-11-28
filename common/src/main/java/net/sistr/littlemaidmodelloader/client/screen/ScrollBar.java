@@ -46,10 +46,10 @@ public class ScrollBar extends GUIElement {
                 this.y,
                 sliderT
         );
-        int midRange = height - (sliderT.getHeight() + sliderB.getHeight());
+        int midRange = height - (sliderT.height() + sliderB.height());
         int i = 0;
         while (i < midRange) {
-            i += sliderM.getHeight();
+            i += sliderM.height();
             draw(matrices,
                     this.x,
                     this.y + i,
@@ -58,12 +58,12 @@ public class ScrollBar extends GUIElement {
         }
         draw(matrices,
                 this.x,
-                this.y + height - sliderB.getHeight(),
+                this.y + height - sliderB.height(),
                 sliderB
         );
         draw(matrices,
-                this.x + (sliderT.getWidth() - pointer.getWidth()) / 2,
-                (int) ((this.y + (width - pointer.getHeight()) / 2f) + (getPercent() * (height - width))),
+                this.x + (sliderT.width() - pointer.width()) / 2,
+                (int) ((this.y + (width - pointer.height()) / 2f) + (getPercent() * (height - width))),
                 pointer
         );
     }
@@ -72,9 +72,9 @@ public class ScrollBar extends GUIElement {
         drawTexture(
                 matrices,
                 x, y,
-                texture.getU(), texture.getV(),
-                texture.getWidth(), texture.getHeight(),
-                texture.getTexSizeW(), texture.getTexSizeH()
+                texture.u(), texture.v(),
+                texture.width(), texture.height(),
+                texture.texSizeW(), texture.texSizeH()
         );
     }
 

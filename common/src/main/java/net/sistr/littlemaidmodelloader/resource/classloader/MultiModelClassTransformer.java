@@ -19,10 +19,9 @@ import java.util.function.Consumer;
  * 使用しているクラスを置換えて新しいものへ対応。
  */
 public class MultiModelClassTransformer {
-    //private static final Logger LOGGER = LogManager.getLogger();
     private static final String PACKAGE_STRING = "net/sistr/littlemaidmodelloader/maidmodel/";
 
-    private static final Map<String, String> CODE_REPLACE_MAP = new Object2ObjectOpenHashMap<String, String>() {
+    private static final Map<String, String> CODE_REPLACE_MAP = new Object2ObjectOpenHashMap<>() {
         {
             //未使用っぽいのはコメントアウト
 
@@ -108,7 +107,7 @@ public class MultiModelClassTransformer {
         }
     };
 
-    private static final Set<String> GL_REPLACE_MODEL_RENDERER_SET = new ObjectOpenHashSet<String>() {
+    private static final Set<String> GL_REPLACE_MODEL_RENDERER_SET = new ObjectOpenHashSet<>() {
         {
             add("glPushMatrix()V");
             add("glPopMatrix()V");
@@ -135,7 +134,7 @@ public class MultiModelClassTransformer {
         }
     };
 
-    private static final Set<String> GL_REPLACE_DUMMY_SET = new ObjectOpenHashSet<String>() {
+    private static final Set<String> GL_REPLACE_DUMMY_SET = new ObjectOpenHashSet<>() {
         {
             add("()V");
             add("(I)V");
@@ -185,17 +184,14 @@ public class MultiModelClassTransformer {
 
             AbstractInsnNode aNode = mNode.instructions.getFirst();
             while (aNode != null) {
-                if (aNode instanceof FieldInsnNode) {//4
-                    FieldInsnNode fANode = (FieldInsnNode) aNode;
+                if (aNode instanceof FieldInsnNode fANode) {//4
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                     tryReplace(changed, fANode.name, name -> fANode.name = name);
                     tryReplace(changed, fANode.owner, owner -> fANode.owner = owner);
-                } else if (aNode instanceof InvokeDynamicInsnNode) {//6
-                    InvokeDynamicInsnNode fANode = (InvokeDynamicInsnNode) aNode;
+                } else if (aNode instanceof InvokeDynamicInsnNode fANode) {//6
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                     tryReplace(changed, fANode.name, name -> fANode.name = name);
-                } else if (aNode instanceof MethodInsnNode) {//5
-                    MethodInsnNode fANode = (MethodInsnNode) aNode;
+                } else if (aNode instanceof MethodInsnNode fANode) {//5
                     if (shouldRemove(fANode.owner)) {
                         changed.set(true);
                         aNode = aNode.getNext();
@@ -223,14 +219,11 @@ public class MultiModelClassTransformer {
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                     tryReplace(changed, fANode.name, name -> fANode.name = name);
                     tryReplace(changed, fANode.owner, owner -> fANode.owner = owner);
-                } else if (aNode instanceof MultiANewArrayInsnNode) {//13
-                    MultiANewArrayInsnNode fANode = (MultiANewArrayInsnNode) aNode;
+                } else if (aNode instanceof MultiANewArrayInsnNode fANode) {//13
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
-                } else if (aNode instanceof TypeInsnNode) {//3
-                    TypeInsnNode fANode = (TypeInsnNode) aNode;
+                } else if (aNode instanceof TypeInsnNode fANode) {//3
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
-                } else if (aNode instanceof LdcInsnNode && ((LdcInsnNode) aNode).cst instanceof Type) {
-                    LdcInsnNode fANode = (LdcInsnNode) aNode;
+                } else if (aNode instanceof LdcInsnNode fANode && ((LdcInsnNode) aNode).cst instanceof Type) {
                     tryReplace(changed, ((Type) fANode.cst).getInternalName(), desc -> fANode.cst = Type.getObjectType(desc));
                 }
                 aNode = aNode.getNext();
