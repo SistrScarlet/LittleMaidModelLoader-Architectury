@@ -52,7 +52,6 @@ public class MultiModelCompound implements IHasMultiModel {
         update();
     }
 
-    //todo アップデート周りの処理を調整する
     public void update() {
         updateMain();
         updateArmor();
