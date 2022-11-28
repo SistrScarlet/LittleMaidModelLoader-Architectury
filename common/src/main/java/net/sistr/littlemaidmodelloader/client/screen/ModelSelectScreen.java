@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//todo isContract
 //GUIが小さくならない画面の最低サイズ640x480を想定して組む
 //ただし、描画は320x240でやって倍にされるっぽい
 @Environment(EnvType.CLIENT)
@@ -46,16 +45,23 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     public static final Identifier MODEL_SELECT_GUI_TEXTURE =
             new Identifier(LMMLMod.MODID, "textures/gui/model_select.png");
     private static final ItemStack ARMOR = Items.DIAMOND_CHESTPLATE.getDefaultStack();
+    private static final ItemStack MODEL = Items.ARMOR_STAND.getDefaultStack();
+    private static final ItemStack WILD = Items.BONE.getDefaultStack();
+    private static final ItemStack CONTRACT = Items.CAKE.getDefaultStack();
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 196;
     private final T entity;
     private final MultiModelGUIUtil.DummyModelEntity dummy;
     private final ArmorSets<ArmorModelGUI> armors = new ArmorSets<>();
+    private final int scale = 15;
+    private final int heightRatio = 3;
+    private final int heightStack = 4;
     private ScrollBar modelScrollBar;
     private ScrollBar armorScrollBar;
     private ListGUI<MultiModelGUI> modelListGUI;
     private ListGUI<ArmorModelGUI> armorListGUI;
     private boolean guiSwitch = true;
+    private boolean isContract = true;
 
     public ModelSelectScreen(Text titleIn, World world, T entity) {
         super(titleIn);
@@ -70,11 +76,13 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                 LMTextureManager.INSTANCE.getAllTextures();
         Map<String, TextureHolder> map = new HashMap<>();
         textureHolders.forEach(textureHolder -> map.put(textureHolder.getTextureName().toLowerCase(), textureHolder));
-        LMModelManager modelManager = LMModelManager.INSTANCE;
-        int scale = 15;
+        initModelGUI(textureHolders, map);
+        initArmorGUI(textureHolders, map);
+    }
+
+    protected void initModelGUI(Collection<TextureHolder> textureHolders, Map<String, TextureHolder> textureHolderMap) {
         int allColor = 16;
-        int heightRatio = 3;
-        int heightStack = 4;
+        LMModelManager modelManager = LMModelManager.INSTANCE;
         this.modelListGUI = new ListGUI<>(
                 (width - scale * allColor) / 2,
                 (height - scale * heightRatio * heightStack) / 2,
@@ -83,12 +91,12 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                         .map(TextureHolder::getTextureName)
                         .map(String::toLowerCase)
                         .sorted(Comparator.naturalOrder())
-                        .map(map::get)
+                        .map(textureHolderMap::get)
                         .filter(textureHolder ->
-                                textureHolder.hasSkinTexture(true) &&
+                                textureHolder.hasSkinTexture(this.isContract) &&
                                         modelManager.getModel(textureHolder.getModelName(), IHasMultiModel.Layer.SKIN)
                                                 .isPresent())
-                        .map(t -> new MultiModelGUI(t, true, scale, this.dummy))
+                        .map(t -> new MultiModelGUI(t, this.isContract, scale, this.dummy))
                         .collect(Collectors.toList())
         );
         this.modelScrollBar = new ScrollBar(
@@ -108,6 +116,11 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
             }
             index++;
         }
+    }
+
+    protected void initArmorGUI(Collection<TextureHolder> textureHolders, Map<String, TextureHolder> map) {
+        LMModelManager modelManager = LMModelManager.INSTANCE;
+        int allColor = 16;
         this.armorListGUI = new ListGUI<>(
                 (width - scale * allColor) / 2,
                 (height - scale * heightRatio * heightStack) / 2,
@@ -133,7 +146,7 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                 new TextureAddress(0, 224, 10, 6, 256, 256),
                 MODEL_SELECT_GUI_TEXTURE);
         TextureHolder ownerArmorTex = entity.getTextureHolder(IHasMultiModel.Layer.INNER, IHasMultiModel.Part.HEAD);
-        index = 0;
+        int index = 0;
         for (ArmorModelGUI g : this.armorListGUI.getAllElements()) {
             if (g.getTexture() == ownerArmorTex) {
                 armorScrollBar.setPoint(index);
@@ -157,11 +170,15 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
         int relY = (this.height - GUI_HEIGHT) / 2;
         this.drawTexture(matrixStack, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
 
-        MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(ARMOR, relX - 24, relY + GUI_HEIGHT - 16);
+        MinecraftClient.getInstance().getItemRenderer()
+                .renderGuiItemIcon(guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
+        MinecraftClient.getInstance().getItemRenderer()
+                .renderGuiItemIcon(isContract ? CONTRACT : WILD, relX - 24, relY + GUI_HEIGHT - 48);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         this.drawTexture(matrixStack, relX - 24, relY + GUI_HEIGHT - 16, 0, 240, 16, 16);
+        this.drawTexture(matrixStack, relX - 24, relY + GUI_HEIGHT - 48, 0, 240, 16, 16);
 
         if (guiSwitch) {
             modelListGUI.render(matrixStack, mouseX, mouseY, partialTicks);
@@ -204,6 +221,15 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
         int minY = (this.height - GUI_HEIGHT) / 2 + GUI_HEIGHT - 16;
         if (minX <= x && x < minX + 16 && minY <= y && y < minY + 16) {
             guiSwitch = !guiSwitch;
+            playDownSound();
+            return true;
+        } else if (minX <= x && x < minX + 16 && minY - 32 <= y && y < minY - 16) {
+            isContract = !isContract;
+            Collection<TextureHolder> textureHolders =
+                    LMTextureManager.INSTANCE.getAllTextures();
+            Map<String, TextureHolder> map = new HashMap<>();
+            textureHolders.forEach(textureHolder -> map.put(textureHolder.getTextureName().toLowerCase(), textureHolder));
+            initModelGUI(textureHolders, map);
             playDownSound();
             return true;
         }
@@ -286,7 +312,7 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                     TextureHolder texture = g.getTexture();
                     //カラーと契約を更新
                     entity.setColorMM(color);
-                    entity.setContractMM(true);
+                    entity.setContractMM(this.isContract);
                     //スキンを更新
                     entity.setTextureHolder(texture, IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
                     //防具をスキンと同様に更新
