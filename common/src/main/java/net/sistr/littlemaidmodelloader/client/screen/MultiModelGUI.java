@@ -2,7 +2,6 @@ package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
@@ -40,6 +39,14 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        var fontRenderer = MinecraftClient.getInstance().textRenderer;
+        ModelSelectScreen.renderColor(matrices,
+                this.x,
+                this.y,
+                this.x + this.width,
+                this.y + fontRenderer.fontHeight,
+                0xFF404040
+        );
         if (selected && selectColor != null) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
@@ -51,6 +58,9 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
 
         MultiModelGUIUtil.getModel(LMModelManager.INSTANCE, texture).ifPresent(model ->
                 renderAllColorModel(matrices, scale, mouseX, mouseY, model, texture, isContract));
+
+        fontRenderer.draw(matrices, texture.getTextureName(),
+                this.x, this.y, 0xFFFFFFFF);
 
     }
 
@@ -67,9 +77,6 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
                     )
             );
         }
-        TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
-        fontRenderer.draw(matrixStack, holder.getTextureName(),
-                this.x, this.y, 0xFFFFFFFF);
     }
 
     @Override
