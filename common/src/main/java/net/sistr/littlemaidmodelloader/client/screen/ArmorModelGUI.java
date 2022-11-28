@@ -55,6 +55,15 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
             renderColor(matrixStack, 0, 0, this.width, this.height, 0x80FFFFFF);
         }*/
 
+        TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
+        ModelSelectScreen.renderColor(matrixStack,
+                this.x,
+                this.y,
+                this.x + this.width,
+                this.y + fontRenderer.fontHeight,
+                0xFF404040
+        );
+
         int index = 0;
         LMModelManager modelManager = LMModelManager.INSTANCE;
         for (String armorName : armorNames) {
@@ -65,7 +74,7 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
                     mouseX, mouseY, scale,
                     model, armorData, dummy);
         }
-        TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
+
         fontRenderer.draw(matrixStack, texture.getTextureName(),
                 this.x, this.y, 0xFFFFFFFF);
 
