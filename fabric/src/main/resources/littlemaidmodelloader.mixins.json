@@ -2,8 +2,10 @@
     "required": true,
     "package": "net.sistr.littlemaidmodelloader.mixin.fabric",
     "compatibilityLevel": "JAVA_17",
-    "mixins": [  ],
-    "client": [ ],
+    "mixins": [
+      "ResourcePackManagerMixin"
+    ],
+    "client": [],
     "injectors": {
         "defaultRequire": 1
     }
