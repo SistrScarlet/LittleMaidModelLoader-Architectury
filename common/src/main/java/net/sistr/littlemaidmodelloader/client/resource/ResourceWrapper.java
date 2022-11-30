@@ -101,13 +101,16 @@ public class ResourceWrapper implements ResourcePack {
         public InputStream getInputStream() throws IOException {
             if (isArchive) {
                 String resourcePath = homePath.toString();
-                try (ZipFile zipfile = new ZipFile(resourcePath)) {
-                    ZipEntry zipentry = zipfile.getEntry(path);
-                    if (zipentry != null) {
-                        return zipfile.getInputStream(zipentry);
-                    }
+                //try with resourcesしてはいけない
+                //取った結果を返すとき、closeしてしまう
+                ZipFile zipfile = new ZipFile(resourcePath);
+                ZipEntry zipentry = zipfile.getEntry(path);
+                if (zipentry == null) {
+                    zipfile.close();
+                    throw new NoSuchFileException(path);
+                } else {
+                    return zipfile.getInputStream(zipentry);
                 }
-                throw new NoSuchFileException(path);
             } else {
                 return Files.newInputStream(Paths.get(homePath.toString(), path));
             }
