@@ -4,6 +4,7 @@ import dev.architectury.platform.forge.EventBuses;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -11,6 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
+import net.sistr.littlemaidmodelloader.client.resource.LMPackProvider;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 import net.sistr.littlemaidmodelloader.setup.ClientSetup;
 import net.sistr.littlemaidmodelloader.setup.ModSetup;
@@ -30,6 +32,7 @@ public class LMMLForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::packInit);
     }
 
     public void modInit(FMLCommonSetupEvent event) {
@@ -43,6 +46,10 @@ public class LMMLForge {
     public void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
         event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
+    }
+
+    public void packInit(AddPackFindersEvent event) {
+        event.addRepositorySource(new LMPackProvider());
     }
 
 }
