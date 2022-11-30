@@ -173,7 +173,7 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
         MinecraftClient.getInstance().getItemRenderer()
                 .renderGuiItemIcon(guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
         MinecraftClient.getInstance().getItemRenderer()
-                .renderGuiItemIcon(isContract ? CONTRACT : WILD, relX - 24, relY + GUI_HEIGHT - 48);
+                .renderGuiItemIcon(isContract ? WILD : CONTRACT, relX - 24, relY + GUI_HEIGHT - 48);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
