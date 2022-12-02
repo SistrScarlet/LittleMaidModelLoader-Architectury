@@ -1,11 +1,9 @@
-package net.sistr.littlemaidmodelloader.client.resource.loader;
+package net.sistr.littlemaidmodelloader.resource.loader;
 
 import dev.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.client.resource.ResourceWrapper;
-import net.sistr.littlemaidmodelloader.resource.loader.LMLoader;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
 
@@ -17,9 +15,8 @@ import java.util.Optional;
 
 /**
  * 画像ファイルを読み込み、ゲームに登録するクラス
+ * メイドさんのランダムテクスチャのため、サーバーでもテクスチャ名だけは読む
  */
-//サーバーでは読み込まない
-@Environment(EnvType.CLIENT)
 public class LMTextureLoader implements LMLoader {
     private final LMTextureManager textureManager;
     private final HashMap<String, String> converter = new HashMap<>();
@@ -34,7 +31,8 @@ public class LMTextureLoader implements LMLoader {
 
     @Override
     public boolean canLoad(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
-        return Platform.getEnv() == EnvType.CLIENT && path.endsWith(".png") && ResourceHelper.getParentFolderName(path, isArchive).isPresent()
+        return Platform.getEnv() == EnvType.CLIENT && path.endsWith(".png")
+                && ResourceHelper.getParentFolderName(path, isArchive).isPresent()
                 && ResourceHelper.getIndex(path) != -1;
     }
 
@@ -47,7 +45,9 @@ public class LMTextureLoader implements LMLoader {
         String modelName = ResourceHelper.getModelName(textureName);
         textureManager.addTexture(ResourceHelper.getFileName(path, isArchive), textureName, modelName,
                 ResourceHelper.getIndex(path), texturePath);
-        ResourceWrapper.addResourcePath(texturePath, path, folderPath, isArchive);
+        if (Platform.getEnv() == EnvType.CLIENT) {
+            ResourceWrapper.addResourcePath(texturePath, path, folderPath, isArchive);
+        }
     }
 
     /**
