@@ -44,8 +44,7 @@ public class SyncMultiModelPacket {
 
     public static void sendS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
         PacketByteBuf passedData = createS2CPacket(entity, hasMultiModel);
-        PlayerList.tracking(entity).forEach(watchingPlayer ->
-                NetworkManager.sendToPlayer(watchingPlayer, ID, passedData));
+        NetworkManager.sendToPlayers(PlayerList.tracking(entity), ID, passedData);
     }
 
     public static PacketByteBuf createS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
@@ -87,13 +86,13 @@ public class SyncMultiModelPacket {
         multiModel.setColor(color);
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
         textureManager.getTexture(textureName).filter(textureHolder ->
-                multiModel.isAllowChangeTexture(entity, textureHolder, Layer.SKIN, Part.HEAD))
+                        multiModel.isAllowChangeTexture(entity, textureHolder, Layer.SKIN, Part.HEAD))
                 .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));
         for (Part part : Part.values()) {
             String armorName = armorTextureName.getArmor(part)
                     .orElseThrow(() -> new IllegalStateException("テクスチャが存在しません。"));
             textureManager.getTexture(armorName).filter(textureHolder ->
-                    multiModel.isAllowChangeTexture(entity, textureHolder, Layer.INNER, part))
+                            multiModel.isAllowChangeTexture(entity, textureHolder, Layer.INNER, part))
                     .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, Layer.INNER, part));
         }
     }
@@ -121,13 +120,13 @@ public class SyncMultiModelPacket {
         multiModel.setColor(color);
         LMTextureManager textureManager = LMTextureManager.INSTANCE;
         textureManager.getTexture(textureName).filter(textureHolder ->
-                multiModel.isAllowChangeTexture(entity, textureHolder, Layer.SKIN, Part.HEAD))
+                        multiModel.isAllowChangeTexture(entity, textureHolder, Layer.SKIN, Part.HEAD))
                 .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, Layer.SKIN, Part.HEAD));
         for (Part part : Part.values()) {
             String armorName = armorTextureName.getArmor(part)
                     .orElseThrow(() -> new IllegalStateException("テクスチャが存在しません。"));
             textureManager.getTexture(armorName).filter(textureHolder ->
-                    multiModel.isAllowChangeTexture(entity, textureHolder, Layer.INNER, part))
+                            multiModel.isAllowChangeTexture(entity, textureHolder, Layer.INNER, part))
                     .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, Layer.INNER, part));
         }
         sendS2CPacket(entity, multiModel);
