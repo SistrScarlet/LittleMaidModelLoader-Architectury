@@ -99,10 +99,10 @@ public class SyncMultiModelPacket {
 
     public static void receiveC2SPacket(PacketByteBuf buf, NetworkManager.PacketContext context) {
         int entityId = buf.readInt();
-        String textureName = buf.readString(32767);
+        String textureName = buf.readString();
         ArmorSets<String> armorTextureName = new ArmorSets<>();
         for (Part part : Part.values()) {
-            armorTextureName.setArmor(buf.readString(32767), part);
+            armorTextureName.setArmor(buf.readString(), part);
         }
         TextureColors color = buf.readEnumConstant(TextureColors.class);
         boolean isContract = buf.readBoolean();
