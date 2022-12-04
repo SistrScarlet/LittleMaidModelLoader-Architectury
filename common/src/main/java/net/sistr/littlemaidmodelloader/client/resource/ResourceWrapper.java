@@ -31,7 +31,7 @@ import java.util.zip.ZipFile;
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
     public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaidModelLoader!!!"), 9);
+            new PackResourceMetadata(Text.of("LittleMaidModelLoader!!!"), 9);
     protected static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
 
     //いつ呼ばれるのか不明
@@ -55,10 +55,10 @@ public class ResourceWrapper implements ResourcePack {
     //pathInが重要で、これと一致するリソースのみ渡すこと
     //そうでないと画像リソースがフォントに飛んでってクソ時間を食う
     @Override
-    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
+    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
         return PATHS.keySet().stream()
                 .filter(location -> location.getPath().startsWith(namespace))
-                .filter(pathFilter)
+                .filter(t -> pathFilter.test(t.getPath()))
                 .collect(Collectors.toList());
     }
 

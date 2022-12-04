@@ -6,6 +6,8 @@ import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 
 import java.util.function.Consumer;
 
@@ -15,7 +17,7 @@ import java.util.function.Consumer;
 @Environment(EnvType.CLIENT)
 public class LMPackProvider implements ResourcePackProvider {
     public static final ResourcePackSource RESOURCE_PACK_SOURCE =
-            text -> Text.translatable("pack.nameAndSource", text, Text.translatable("pack.source.littlemaidmodelloader"));
+            text -> new TranslatableText("pack.nameAndSource", text, new TranslatableText("pack.source.littlemaidmodelloader")).formatted(Formatting.GRAY);
 
     @Override
     public void register(Consumer<ResourcePackProfile> consumer, ResourcePackProfile.Factory factory) {
