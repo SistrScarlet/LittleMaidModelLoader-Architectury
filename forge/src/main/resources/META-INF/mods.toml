@@ -10,7 +10,7 @@ displayName = "LittleMaid ModelLoader"
 credits = "Created by MMM, remixed by EMB4 & Verclene, patched by firis-games, remade by Sistr, some models created by voms"
 authors = "Sistr"
 description = "メイドさんのモデルローダーです。"
-logoFile = "assets/littlemaidmodelloader/icon.png"
+logoFile = "icon.png"
 
 [[dependencies.littlemaidmodelloader]]
 modId = "forge"

@@ -18,7 +18,7 @@
     "issues": "https://github.com/SistrScarlet/LittleMaidModelLoader-Fabric/issues"
   },
   "license": "https://github.com/SistrScarlet/LittleMaidModelLoader-Fabric/blob/1.16_Architectury/LICENCE.md",
-  "icon": "assets/littlemaidmodelloader/icon.png",
+  "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
