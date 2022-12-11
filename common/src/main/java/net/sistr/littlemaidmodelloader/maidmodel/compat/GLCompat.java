@@ -1,11 +1,12 @@
 package net.sistr.littlemaidmodelloader.maidmodel.compat;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3f;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelBoxBase;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelRenderer;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
@@ -28,7 +29,7 @@ public final class GLCompat {
     private static ModelBoxBase.PositionTextureVertex vertexCurrent;
     private static ModelBoxBase.PositionTextureVertex vertexPrev1;
     private static ModelBoxBase.PositionTextureVertex vertexPrev2;
-    private static Vec3f pos;
+    private static Vector3f pos;
     private static Vec2f tex;
 
     public static void glPushMatrix() {
@@ -58,20 +59,20 @@ public final class GLCompat {
     public static void glScalef(float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
             MatrixStack.Entry entry = ModelRenderer.matrixStack.peek();
-            entry.getPositionMatrix().multiply(Matrix4f.scale(x, y, z));
+            entry.getPositionMatrix().scale(x, y, z);
         } else if (mode == GL11.GL_TEXTURE) {
             MatrixStack.Entry entry = textureStack.peek();
-            entry.getPositionMatrix().multiply(Matrix4f.scale(x, y, z));
+            entry.getPositionMatrix().scale(x, y, z);
         }
     }
 
     public static void glRotatef(float deg, float x, float y, float z) {
         if (mode == GL11.GL_MODELVIEW) {
-            ModelRenderer.matrixStack.multiply(new Vec3f(x, y, z).getDegreesQuaternion(deg));
+            ModelRenderer.matrixStack.multiply(RotationAxis.of(new Vector3f(x, y, z)).rotationDegrees(deg));
         } else if (mode == GL11.GL_TEXTURE) {
             //textureStackはModelしか使わん
             Matrix4f model = textureStack.peek().getPositionMatrix();
-            model.multiply(new Vec3f(x, y, z).getDegreesQuaternion(deg));
+            model.rotate(RotationAxis.of(new Vector3f(x, y, z)).rotationDegrees(deg));
         }
     }
 
@@ -88,32 +89,28 @@ public final class GLCompat {
     //現在のマトリックスを書き込む
     public static void glGetFloat(int mode, FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW_MATRIX) {
-            ModelRenderer.matrixStack.peek().getPositionMatrix().writeColumnMajor(buf);
+            ModelRenderer.matrixStack.peek().getPositionMatrix().get(buf);
         }
     }
 
     //バッファを読み込む
     public static void glLoadMatrix(FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW) {
-            ModelRenderer.matrixStack.peek().getPositionMatrix().readColumnMajor(buf);
+            ModelRenderer.matrixStack.peek().getPositionMatrix().set(buf);
         } else if (mode == GL11.GL_TEXTURE) {
-            textureStack.peek().getPositionMatrix().readColumnMajor(buf);
+            textureStack.peek().getPositionMatrix().set(buf);
         }
     }
 
     public static void glMultMatrix(FloatBuffer buf) {
         if (mode == GL11.GL_MODELVIEW) {
-            //透過バグは直るが当然位置がおかしくなる
-            //float num = buf.get(7);
-            //buf.put(7, num * 0);
             Matrix4f matrix4f = new Matrix4f();
-            matrix4f.readColumnMajor(buf);
-            ModelRenderer.matrixStack.peek().getPositionMatrix().multiply(matrix4f);
-            //buf.put(7, num);
+            matrix4f.set(buf);
+            ModelRenderer.matrixStack.peek().getPositionMatrix().mul(matrix4f);
         } else if (mode == GL11.GL_TEXTURE) {
             Matrix4f matrix4f = new Matrix4f();
-            matrix4f.readColumnMajor(buf);
-            textureStack.peek().getPositionMatrix().multiply(matrix4f);
+            matrix4f.set(buf);
+            textureStack.peek().getPositionMatrix().mul(matrix4f);
         }
     }
 
@@ -128,7 +125,7 @@ public final class GLCompat {
     }
 
     public static void glLoadIdentity() {
-        ModelRenderer.matrixStack.peek().getPositionMatrix().loadIdentity();
+        ModelRenderer.matrixStack.peek().getPositionMatrix().identity();
     }
 
     public static void glBegin(int i) {
@@ -150,7 +147,7 @@ public final class GLCompat {
 
     public static void glVertex3f(float x, float y, float z) {
         if (renderMode == GL11.GL_TRIANGLE_STRIP) {
-            pos = new Vec3f(x, y, z);
+            pos = new Vector3f(x, y, z);
             combine();
         }
 

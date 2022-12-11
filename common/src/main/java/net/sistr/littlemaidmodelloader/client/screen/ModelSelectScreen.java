@@ -163,7 +163,7 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         assert this.client != null;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         int relX = (this.width - GUI_WIDTH) / 2;
@@ -174,7 +174,7 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                 .renderGuiItemIcon(guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
         MinecraftClient.getInstance().getItemRenderer()
                 .renderGuiItemIcon(isContract ? WILD : CONTRACT, relX - 24, relY + GUI_HEIGHT - 48);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         this.drawTexture(matrixStack, relX - 24, relY + GUI_HEIGHT - 16, 0, 240, 16, 16);

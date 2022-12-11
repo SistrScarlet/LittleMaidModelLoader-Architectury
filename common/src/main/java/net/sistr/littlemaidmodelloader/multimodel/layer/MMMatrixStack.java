@@ -1,8 +1,8 @@
 package net.sistr.littlemaidmodelloader.multimodel.layer;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
+import org.joml.Quaternionf;
 
 public class MMMatrixStack {
     private final MatrixStack matrixStack;
@@ -32,31 +32,31 @@ public class MMMatrixStack {
     }
 
     public void multiply(float x, float y, float z, float w) {
-        matrixStack.multiply(new Quaternion(x, y, z, w));
+        matrixStack.multiply(new Quaternionf(x, y, z, w));
     }
 
     public void rotateXRad(float rad) {
-        matrixStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(rad));
+        matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(rad));
     }
 
     public void rotateXDeg(float deg) {
-        matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(deg));
+        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(deg));
     }
 
     public void rotateYRad(float rad) {
-        matrixStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rad));
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(rad));
     }
 
     public void rotateYDeg(float deg) {
-        matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(deg));
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(deg));
     }
 
     public void rotateZRad(float rad) {
-        matrixStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(rad));
+        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(rad));
     }
 
     public void rotateZDeg(float deg) {
-        matrixStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(deg));
+        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(deg));
     }
 
 }

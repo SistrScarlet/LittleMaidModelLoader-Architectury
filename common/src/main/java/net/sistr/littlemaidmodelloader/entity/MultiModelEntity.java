@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -253,7 +254,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public Packet<?> createSpawnPacket() {
+    public Packet<ClientPlayPacketListener> createSpawnPacket() {
         return NetworkManager.createAddEntityPacket(this);
     }
 }

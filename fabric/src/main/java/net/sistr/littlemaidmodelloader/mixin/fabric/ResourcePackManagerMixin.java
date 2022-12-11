@@ -1,8 +1,7 @@
 package net.sistr.littlemaidmodelloader.mixin.fabric;
 
-import net.minecraft.client.resource.ClientBuiltinResourcePackProvider;
+import net.minecraft.client.resource.DefaultClientResourcePackProvider;
 import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
 import net.sistr.littlemaidmodelloader.client.resource.LMPackProvider;
 import org.spongepowered.asm.mixin.Final;
@@ -24,12 +23,12 @@ public class ResourcePackManagerMixin {
     @Mutable
     private Set<ResourcePackProvider> providers;
 
-    @Inject(method = "<init>(Lnet/minecraft/resource/ResourcePackProfile$Factory;[Lnet/minecraft/resource/ResourcePackProvider;)V", at = @At("RETURN"))
-    public void construct(ResourcePackProfile.Factory profileFactory, ResourcePackProvider[] providers, CallbackInfo ci) {
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void construct(ResourcePackProvider[] providers, CallbackInfo ci) {
         boolean client = false;
         this.providers = new HashSet<>(this.providers);
         for (ResourcePackProvider provider : this.providers) {
-            if (provider instanceof ClientBuiltinResourcePackProvider) {
+            if (provider instanceof DefaultClientResourcePackProvider) {
                 client = true;
                 break;
             }

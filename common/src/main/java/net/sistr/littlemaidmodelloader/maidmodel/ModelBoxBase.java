@@ -4,11 +4,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.math.Vector4f;
 import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public abstract class ModelBoxBase {
     protected PositionTextureVertex[] vertexPositions;
@@ -46,12 +46,12 @@ public abstract class ModelBoxBase {
 
     @Environment(EnvType.CLIENT)
     public static class PositionTextureVertex {
-        public Vec3f vector3D;
+        public Vector3f vector3D;
         public float texturePositionX;
         public float texturePositionY;
 
         public PositionTextureVertex(float x, float y, float z, float u, float v) {
-            this(new Vec3f(x, y, z), u, v);
+            this(new Vector3f(x, y, z), u, v);
         }
 
         public PositionTextureVertex setTexturePosition(float u, float v) {
@@ -64,7 +64,7 @@ public abstract class ModelBoxBase {
             this.texturePositionY = texturePositionYIn;
         }
 
-        public PositionTextureVertex(Vec3f vec, float u, float v) {
+        public PositionTextureVertex(Vector3f vec, float u, float v) {
             this.vector3D = vec;
             this.texturePositionX = u;
             this.texturePositionY = v;
@@ -76,7 +76,7 @@ public abstract class ModelBoxBase {
         public PositionTextureVertex[] vertexPositions;
         public int nVertices;
         //private boolean invertNormal;
-        private Vec3f normalCache;
+        private Vector3f normalCache;
 
         public TexturedQuad(PositionTextureVertex[] vertices) {
             this.vertexPositions = vertices;
@@ -112,12 +112,11 @@ public abstract class ModelBoxBase {
             MatrixStack.Entry entry = matrices.peek();
             Matrix4f matrix4f = entry.getPositionMatrix();
             Matrix3f matrix3f = entry.getNormalMatrix();
-            Vec3f normal = normalCache.copy();
+            Vector3f normal = matrix3f.transform(new Vector3f(normalCache));
 
-            normal.transform(matrix3f);
-            float normalX = normal.getX();
-            float normalY = normal.getY();
-            float normalZ = normal.getZ();
+            float normalX = normal.x();
+            float normalY = normal.y();
+            float normalZ = normal.z();
 
             /*if (this.invertNormal) {
                 normalX = -normalX;
@@ -127,33 +126,32 @@ public abstract class ModelBoxBase {
 
             for (int i = 0; i < 4; ++i) {
                 ModelBoxBase.PositionTextureVertex vertex = this.vertexPositions[i];
-                float x = vertex.vector3D.getX() * scale;
-                float y = vertex.vector3D.getY() * scale;
-                float z = vertex.vector3D.getZ() * scale;
-                Vector4f pos = new Vector4f(x, y, z, 1.0F);
-                pos.transform(matrix4f);
-                if (pos.getW() != 1.0F) {
-                    pos.normalizeProjectiveCoordinates();
+                float x = vertex.vector3D.x() * scale;
+                float y = vertex.vector3D.y() * scale;
+                float z = vertex.vector3D.z() * scale;
+                Vector4f pos = matrix4f.transform(new Vector4f(x, y, z, 1.0F));
+                if (pos.w() != 1.0F) {
+                    pos.normalize();
                 }
 
                 Vector4f uv = new Vector4f(vertex.texturePositionX, vertex.texturePositionY, 0, 1.0F);
                 if (!GLCompat.textureStack.isEmpty()) {
-                    uv.transform(GLCompat.textureStack.peek().getPositionMatrix());
+                    GLCompat.textureStack.peek().getPositionMatrix().transform(uv);
                 }
 
-                buffer.vertex(pos.getX(), pos.getY(), pos.getZ(),
+                buffer.vertex(pos.x(), pos.y(), pos.z(),
                         red, green, blue, alpha,
-                        uv.getX(), uv.getY(),
+                        uv.x(), uv.y(),
                         overlay, light, normalX, normalY, normalZ);
             }
 
         }
 
-        private Vec3f calcNormal() {
-            Vec3f n1 = this.vertexPositions[0].vector3D.copy();
-            Vec3f n2 = this.vertexPositions[2].vector3D.copy();
-            n1.subtract(this.vertexPositions[1].vector3D);
-            n2.subtract(this.vertexPositions[1].vector3D);
+        private Vector3f calcNormal() {
+            Vector3f n1 = new Vector3f(this.vertexPositions[0].vector3D);
+            Vector3f n2 = new Vector3f(this.vertexPositions[2].vector3D);
+            n1.sub(this.vertexPositions[1].vector3D);
+            n2.sub(this.vertexPositions[1].vector3D);
             n2.cross(n1);
             n2.normalize();
             return n2;

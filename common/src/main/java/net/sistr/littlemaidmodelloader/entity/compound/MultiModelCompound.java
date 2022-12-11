@@ -7,8 +7,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.sistr.littlemaidmodelloader.maidmodel.EntityCaps;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
@@ -82,7 +82,7 @@ public class MultiModelCompound implements IHasMultiModel {
         if (entity.world.isClient && item instanceof ArmorItem) {
             return ((ArmorItem) item).getMaterial().getName().toLowerCase();
         }
-        Identifier location = Registry.ITEM.getId(item);
+        Identifier location = Registries.ITEM.getId(item);
         return location.toString();
     }
 

@@ -4,25 +4,23 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -31,40 +29,37 @@ import java.util.zip.ZipFile;
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
     public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaidModelLoader!!!"), 9);
+            new PackResourceMetadata(Text.literal("LittleMaid ModelLoader!!!"), 12);
     protected static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
 
-    //いつ呼ばれるのか不明
-    //少なくとも起動時とリロード時は動かず
+    @Nullable
     @Override
-    public InputStream openRoot(String fileName) {
+    public InputSupplier<InputStream> openRoot(String... segments) {
         return null;
     }
 
     //引数のResourceLocationはlittlemaidmodelloader:textures/...の形式
+    @Nullable
     @Override
-    public InputStream open(ResourceType type, Identifier id) throws IOException {
+    public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
         Resource resource = PATHS.get(id);
         if (resource == null) {
-            throw new FileNotFoundException(id.toString());
+            return null;
         }
-        return resource.getInputStream();
-    }
-
-    //リロード時に呼ばれる
-    //pathInが重要で、これと一致するリソースのみ渡すこと
-    //そうでないと画像リソースがフォントに飛んでってクソ時間を食う
-    @Override
-    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
-        return PATHS.keySet().stream()
-                .filter(location -> location.getPath().startsWith(namespace))
-                .filter(pathFilter)
-                .collect(Collectors.toList());
+        return resource::getInputStream;
     }
 
     @Override
-    public boolean contains(ResourceType type, Identifier id) {
-        return PATHS.containsKey(id);
+    public void findResources(ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
+        PATHS.entrySet().stream()
+                .filter(entry -> entry.getKey().getNamespace().equals(namespace))
+                .filter(entry -> entry.getKey().getPath().startsWith(prefix))
+                .forEach(e -> consumer.accept(e.getKey(), () -> e.getValue().getInputStream()));
+    }
+
+    @Override
+    public boolean isAlwaysStable() {
+        return true;
     }
 
     //初期化時に読み込まれる
