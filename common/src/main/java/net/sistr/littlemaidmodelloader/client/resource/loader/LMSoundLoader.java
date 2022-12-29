@@ -34,7 +34,7 @@ public class LMSoundLoader implements LMLoader {
         String packName = ResourceHelper.getFirstParentName(path, folderPath, isArchive).orElse("");
         String parent = ResourceHelper.getParentFolderName(path, isArchive).orElse("");
         String fileName = ResourceHelper.getFileName(path, isArchive);
-        Identifier location = ResourceHelper.getLocation(packName, fileName);
+        Identifier location = ResourceHelper.getLocation("sounds", packName, fileName);
         fileName = ResourceHelper.removeExtension(fileName);
         fileName = ResourceHelper.removeNameLastIndex(fileName);
         soundManager.addSound(packName, parent, fileName, location);
