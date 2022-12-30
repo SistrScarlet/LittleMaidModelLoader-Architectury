@@ -72,6 +72,9 @@ public class LMMLMod {
         }
         Registration.init();
         registerAttribute();
+
+        //ForgeだとModSetupじゃ遅いためここに
+        LMFileLoader.INSTANCE.load();
     }
 
     public static void initFileLoader() {

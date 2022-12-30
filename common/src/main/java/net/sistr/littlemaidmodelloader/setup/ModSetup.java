@@ -6,7 +6,6 @@ import net.sistr.littlemaidmodelloader.resource.loader.LMFileLoader;
 public class ModSetup {
 
     public static void init() {
-        LMFileLoader.INSTANCE.load();
         Networking.INSTANCE.init();
     }
 
