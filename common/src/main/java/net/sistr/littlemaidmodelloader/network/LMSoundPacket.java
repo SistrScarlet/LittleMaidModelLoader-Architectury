@@ -19,7 +19,10 @@ public class LMSoundPacket {
 
     public static void sendS2CPacket(Entity entity, String soundName) {
         PacketByteBuf passedData = createS2CPacket(entity, soundName);
-        NetworkManager.sendToPlayers(PlayerList.tracking(entity), ID, passedData);
+        NetworkManager.sendToPlayers(PlayerList.tracking(entity)
+                .stream()
+                .filter(p -> p.squaredDistanceTo(entity) < 16 * 16)
+                .toList(), ID, passedData);
     }
 
     public static PacketByteBuf createS2CPacket(Entity entity, String soundName) {
