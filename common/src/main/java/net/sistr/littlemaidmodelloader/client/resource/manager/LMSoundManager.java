@@ -7,7 +7,7 @@ import net.minecraft.client.sound.Sound;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.resource.LMSoundInstance;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class LMSoundManager {
                 (packName + "." + parentName + "." + fileName).toLowerCase(),
                 k -> new WeightedSoundSet(location, packName + "." + fileName));
 
-        soundSet.add(new Sound(location.toString(), (rand) -> 1F, (rand) -> 1F, 1, Sound.RegistrationType.FILE,
+        soundSet.add(new Sound(location.toString(), rand -> 1F, rand -> 1F, 1, Sound.RegistrationType.FILE,
                 false, false, 16) {
             @Override
             public Identifier getLocation() {
@@ -44,9 +44,8 @@ public class LMSoundManager {
         return Optional.ofNullable(soundSet);
     }
 
-    public void play(String soundFileName, SoundCategory soundCategory,
-                     float volume, float pitch, Random random, double x, double y, double z) {
+    public void play(String soundFileName, SoundCategory soundCategory, double x, double y, double z) {
         getSound(soundFileName).ifPresent(soundSet -> MinecraftClient.getInstance().getSoundManager()
-                .play(new LMSoundInstance(soundSet, soundCategory, volume, pitch, random, x, y, z)));
+                .play(new LMSoundInstance(soundSet, soundCategory, LMMLMod.getConfig().getVoiceVolume(), x, y, z)));
     }
 }
