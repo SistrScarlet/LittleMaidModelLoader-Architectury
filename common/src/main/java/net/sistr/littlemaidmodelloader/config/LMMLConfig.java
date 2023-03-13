@@ -8,10 +8,17 @@ import net.sistr.littlemaidmodelloader.LMMLMod;
 @Config(name = LMMLMod.MODID)
 public class LMMLConfig implements ConfigData {
 
+	@ConfigEntry.Category("general")
+	private float voiceVolume;
+
 	//misc
 
 	@ConfigEntry.Category("misc")
 	private boolean debugMode;
+
+	public float getVoiceVolume() {
+		return voiceVolume;
+	}
 
 	public boolean isDebugMode() {
 		return this.debugMode;

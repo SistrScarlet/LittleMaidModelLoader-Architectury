@@ -43,7 +43,7 @@ public class SoundPlayableCompound implements SoundPlayable {
             configHolder.getSoundFileName(soundName.toLowerCase())
                     .ifPresent(soundFileName ->
                             LMSoundManager.INSTANCE.play(soundFileName, entity.getSoundCategory(),
-                                    1F, 1F, entity.getX(), entity.getEyeY(), entity.getZ()));
+                                    entity.getX(), entity.getEyeY(), entity.getZ()));
         } else {
             LMSoundPacket.sendS2CPacket(entity, soundName);
         }

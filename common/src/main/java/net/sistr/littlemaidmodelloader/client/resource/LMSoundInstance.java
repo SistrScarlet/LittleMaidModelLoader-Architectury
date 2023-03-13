@@ -16,19 +16,17 @@ public class LMSoundInstance implements SoundInstance {
     private final Identifier id;
     private final SoundCategory category;
     private final float volume;
-    private final float pitch;
     private final double x;
     private final double y;
     private final double z;
 
     public LMSoundInstance(WeightedSoundSet soundSet, SoundCategory category,
-                           float volume, float pitch, double x, double y, double z) {
+                           float volume, double x, double y, double z) {
         this.soundSet = soundSet;
         this.sound = soundSet.getSound();
         this.id = sound.getIdentifier();
         this.category = category;
         this.volume = volume;
-        this.pitch = pitch;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -76,7 +74,7 @@ public class LMSoundInstance implements SoundInstance {
 
     @Override
     public float getPitch() {
-        return pitch;
+        return 1f;
     }
 
     @Override

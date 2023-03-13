@@ -7,6 +7,7 @@ import net.minecraft.client.sound.Sound;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.resource.LMSoundInstance;
 
 import java.util.HashMap;
@@ -43,9 +44,8 @@ public class LMSoundManager {
         return Optional.ofNullable(soundSet);
     }
 
-    public void play(String soundFileName, SoundCategory soundCategory,
-                     float volume, float pitch, double x, double y, double z) {
+    public void play(String soundFileName, SoundCategory soundCategory, double x, double y, double z) {
         getSound(soundFileName).ifPresent(soundSet -> MinecraftClient.getInstance().getSoundManager()
-                .play(new LMSoundInstance(soundSet, soundCategory, volume, pitch, x, y, z)));
+                .play(new LMSoundInstance(soundSet, soundCategory, LMMLMod.getConfig().getVoiceVolume(), x, y, z)));
     }
 }
