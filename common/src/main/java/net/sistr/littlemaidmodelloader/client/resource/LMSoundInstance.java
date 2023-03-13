@@ -8,7 +8,6 @@ import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
 
 @Environment(EnvType.CLIENT)
 public class LMSoundInstance implements SoundInstance {
@@ -17,19 +16,17 @@ public class LMSoundInstance implements SoundInstance {
     private final Identifier id;
     private final SoundCategory category;
     private final float volume;
-    private final float pitch;
     private final double x;
     private final double y;
     private final double z;
 
     public LMSoundInstance(WeightedSoundSet soundSet, SoundCategory category,
-                           float volume, float pitch, Random random, double x, double y, double z) {
+                           float volume, double x, double y, double z) {
         this.soundSet = soundSet;
-        this.sound = soundSet.getSound(random);
+        this.sound = soundSet.getSound(SoundInstance.createRandom());
         this.id = sound.getIdentifier();
         this.category = category;
         this.volume = volume;
-        this.pitch = pitch;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -77,7 +74,7 @@ public class LMSoundInstance implements SoundInstance {
 
     @Override
     public float getPitch() {
-        return pitch;
+        return 1f;
     }
 
     @Override
