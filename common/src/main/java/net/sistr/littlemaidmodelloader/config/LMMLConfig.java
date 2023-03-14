@@ -9,7 +9,7 @@ import net.sistr.littlemaidmodelloader.LMMLMod;
 public class LMMLConfig implements ConfigData {
 
 	@ConfigEntry.Category("general")
-	private float voiceVolume;
+	private float voiceVolume = 1.0f;
 
 	//misc
 
