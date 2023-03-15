@@ -7,7 +7,7 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -37,14 +37,14 @@ public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> ex
                 matrices.scale(0.5F, 0.5F, 0.5F);
             }
 
-            this.handRender(entity, rightStack, ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND, Arm.RIGHT, matrices, vertexConsumers, light);
-            this.handRender(entity, leftStack, ModelTransformation.Mode.THIRD_PERSON_LEFT_HAND, Arm.LEFT, matrices, vertexConsumers, light);
+            this.handRender(entity, rightStack, ModelTransformationMode.THIRD_PERSON_RIGHT_HAND, Arm.RIGHT, matrices, vertexConsumers, light);
+            this.handRender(entity, leftStack, ModelTransformationMode.THIRD_PERSON_LEFT_HAND, Arm.LEFT, matrices, vertexConsumers, light);
             matrices.pop();
         }
     }
 
     //todo 位置調整
-    private void handRender(T entity, ItemStack stack, ModelTransformation.Mode mode, Arm hand, MatrixStack matrixStack, VertexConsumerProvider buffer, int light) {
+    private void handRender(T entity, ItemStack stack, ModelTransformationMode mode, Arm hand, MatrixStack matrixStack, VertexConsumerProvider buffer, int light) {
         if (!stack.isEmpty()) {
             matrixStack.push();
             boolean isLeft = hand == Arm.LEFT;

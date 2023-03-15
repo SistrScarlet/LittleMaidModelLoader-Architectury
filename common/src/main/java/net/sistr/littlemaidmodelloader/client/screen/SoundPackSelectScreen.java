@@ -2,6 +2,7 @@ package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -53,7 +54,7 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         int relX = (this.width - GUI_WIDTH) / 2;
         int relY = (this.height - GUI_HEIGHT) / 2;
-        this.drawTexture(matrices, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        drawTexture(matrices, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
 
         super.render(matrices, mouseX, mouseY, delta);
         this.soundPackListGUI.render(matrices, mouseX, mouseY, delta);

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -43,7 +44,7 @@ public class MultiModelGUIUtil {
                         holder.getTexture(color, isContract, true).orElse(null)));
     }
 
-    public static void renderModel(int posX, int posY, float mouseX, float mouseY, int scale,
+    public static void renderModel(MatrixStack matrixStack, int posX, int posY, float mouseX, float mouseY, int scale,
                                    IMultiModel model, TexturePair texturePair, DummyModelEntity dummy) {
         dummy.setSkinModel(model);
         dummy.setSkinTexture(texturePair);
@@ -52,7 +53,7 @@ public class MultiModelGUIUtil {
             dummy.setArmorData(ModelSelectScreen.EMPTY_ARMOR_DATA, part);
         }
         dummy.setAllArmorVisible(false);
-        renderEntity(posX, posY, mouseX, mouseY, scale, model, dummy);
+        renderEntity(matrixStack, posX, posY, mouseX, mouseY, scale, model, dummy);
     }
 
     public static ArmorPart getArmorDate(LMModelManager modelManager, TextureHolder texture, String armorName) {
@@ -75,7 +76,7 @@ public class MultiModelGUIUtil {
         );
     }
 
-    public static void renderArmor(int posX, int posY, float mouseX, float mouseY, int scale,
+    public static void renderArmor(MatrixStack matrixStack, int posX, int posY, float mouseX, float mouseY, int scale,
                                    IMultiModel model, ArmorPart data, DummyModelEntity dummy) {
         dummy.setSkinModel(model);
         dummy.setSkinTexture(ModelSelectScreen.EMPTY_TEXTURE_PAIR);
@@ -83,10 +84,10 @@ public class MultiModelGUIUtil {
             dummy.setArmorVisible(true, part);
             dummy.setArmorData(data, part);
         }
-        renderEntity(posX, posY, mouseX, mouseY, scale, model, dummy);
+        renderEntity(matrixStack, posX, posY, mouseX, mouseY, scale, model, dummy);
     }
 
-    public static void renderArmorPart(int posX, int posY, float mouseX, float mouseY, int scale,
+    public static void renderArmorPart(MatrixStack matrixStack, int posX, int posY, float mouseX, float mouseY, int scale,
                                        IMultiModel model, ArmorPart data, IHasMultiModel.Part armorPart, DummyModelEntity dummy) {
         dummy.setSkinModel(model);
         dummy.setSkinTexture(ModelSelectScreen.EMPTY_TEXTURE_PAIR);
@@ -96,12 +97,12 @@ public class MultiModelGUIUtil {
         }
         dummy.setArmorVisible(true, armorPart);
         dummy.setArmorData(data, armorPart);
-        renderEntity(posX, posY, mouseX, mouseY, scale, model, dummy);
+        renderEntity(matrixStack, posX, posY, mouseX, mouseY, scale, model, dummy);
     }
 
-    public static void renderEntity(int posX, int posY, float mouseX, float mouseY, int scale,
+    public static void renderEntity(MatrixStack matrixStack, int posX, int posY, float mouseX, float mouseY, int scale,
                                     IMultiModel model, DummyModelEntity dummy) {
-        InventoryScreen.drawEntity(
+        InventoryScreen.drawEntity(matrixStack,
                 posX, posY, scale,
                 posX - mouseX,
                 posY - mouseY - model.getEyeHeight(dummy.getCaps(), MMPose.STANDING) * scale,

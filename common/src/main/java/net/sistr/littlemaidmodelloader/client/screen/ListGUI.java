@@ -224,11 +224,6 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
     }
 
     @Override
-    public boolean changeFocus(boolean lookForwards) {
-        return super.changeFocus(lookForwards);
-    }
-
-    @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         Optional<T> e = getElement(mouseX, mouseY);
         if (e.isPresent()) {

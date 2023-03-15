@@ -9,6 +9,7 @@ public abstract class GUIElement extends DrawableHelper implements Drawable, Ele
     protected int y;
     protected final int width;
     protected final int height;
+    private boolean focused;
 
     protected GUIElement(int width, int height) {
         this.width = width;
@@ -36,4 +37,13 @@ public abstract class GUIElement extends DrawableHelper implements Drawable, Ele
         return this.height;
     }
 
+    @Override
+    public void setFocused(boolean focused) {
+        this.focused = focused;
+    }
+
+    @Override
+    public boolean isFocused() {
+        return this.focused;
+    }
 }
