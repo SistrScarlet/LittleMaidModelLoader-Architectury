@@ -216,6 +216,9 @@ public class MultiModelGUIUtil {
         @Override
         public Optional<Identifier> getTexture(Layer layer, Part part, boolean isLight) {
             if (layer == Layer.SKIN) {
+                if (skinTexture == null) {
+                    return Optional.empty();
+                }
                 return Optional.ofNullable(skinTexture.getTexture(isLight));
             } else {
                 return armorsData.getArmor(part)
