@@ -208,10 +208,8 @@ public class MultiModelGUIUtil {
             if (layer == Layer.SKIN) {
                 return Optional.ofNullable(skinModel);
             } else {
-                IMultiModel model = armorsData.getArmor(part)
-                        .orElseThrow(() -> new IllegalStateException("防具データが存在しません"))
-                        .getModel(layer);
-                return Optional.ofNullable(model);
+                return armorsData.getArmor(part)
+                        .map(armorPart -> armorPart.getModel(layer));
             }
         }
 
@@ -221,10 +219,8 @@ public class MultiModelGUIUtil {
             if (layer == Layer.SKIN) {
                 return Optional.ofNullable(skinTexture.getTexture(isLight));
             } else {
-                Identifier resourceLocation = armorsData.getArmor(part)
-                        .orElseThrow(() -> new IllegalStateException("防具データが存在しません"))
-                        .getTexture(layer, isLight);
-                return Optional.ofNullable(resourceLocation);
+                return armorsData.getArmor(part)
+                        .map(armorPart -> armorPart.getTexture(layer, isLight));
             }
         }
 
