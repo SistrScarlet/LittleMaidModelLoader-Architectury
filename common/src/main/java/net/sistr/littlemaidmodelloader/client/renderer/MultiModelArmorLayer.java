@@ -76,7 +76,7 @@ public class MultiModelArmorLayer<T extends LivingEntity & IHasMultiModel> exten
         entity.getTexture(layer, part, isLight).ifPresent(resourceLocation ->
                 entity.getModel(layer, part).ifPresent(model -> {
                     model.showArmorParts(part.getIndex(), layer.getPartIndex());
-                    RenderLayer type = RenderLayer.getEntityTranslucent(resourceLocation);
+                    RenderLayer type = MultiModelRenderLayer.getDefault(resourceLocation);
                     VertexConsumer builder = ItemRenderer.getArmorGlintConsumer(vertexConsumers, type, false, glint);
                     int light0 = isLight ? 0xF00000 : light;
                     model.animateModel(caps, limbAngle, limbDistance, tickDelta);
