@@ -3,6 +3,12 @@
 
   "text.autoconfig.littlemaidmodelloader.title": "LittleMaid ModelLoader コンフィグ",
 
+  "text.autoconfig.littlemaidmodelloader.category.general": "一般",
+  "text.autoconfig.littlemaidmodelloader.option.voiceVolume": "Voice Volume",
+
+  "text.autoconfig.littlemaidmodelloader.category.render": "描画",
+  "text.autoconfig.littlemaidmodelloader.option.enableAlpha": "Enable Alpha",
+
   "text.autoconfig.littlemaidmodelloader.category.misc": "その他",
   "text.autoconfig.littlemaidmodelloader.option.debugMode": "デバッグモード"
 }
