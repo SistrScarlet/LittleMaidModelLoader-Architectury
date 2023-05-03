@@ -11,6 +11,9 @@ public class LMMLConfig implements ConfigData {
 	@ConfigEntry.Category("general")
 	private float voiceVolume = 1.0f;
 
+	@ConfigEntry.Category("render")
+	private boolean enableAlpha = true;
+
 	//misc
 
 	@ConfigEntry.Category("misc")
@@ -24,4 +27,7 @@ public class LMMLConfig implements ConfigData {
 		return this.debugMode;
 	}
 
+	public boolean isEnableAlpha() {
+		return enableAlpha;
+	}
 }

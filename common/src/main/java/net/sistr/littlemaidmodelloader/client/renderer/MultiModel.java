@@ -15,7 +15,7 @@ public class MultiModel<T extends LivingEntity & IHasMultiModel> extends EntityM
     private T entity;
 
     public MultiModel() {
-        super(RenderLayer::getEntityTranslucent);
+        super(MultiModelRenderLayer::getDefault);
     }
 
     @Override

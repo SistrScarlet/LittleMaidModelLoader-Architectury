@@ -41,7 +41,7 @@ public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel> exten
                                   float headYaw, float headPitch, IModelCaps caps) {
         entity.getTexture(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD, true).ifPresent(resourceLocation ->
                 entity.getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD).ifPresent(model -> {
-                    VertexConsumer builder = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(resourceLocation));
+                    VertexConsumer builder = vertexConsumers.getBuffer(MultiModelRenderLayer.getDefault(resourceLocation));
                     model.animateModel(caps, limbAngle, limbDistance, tickDelta);
                     model.setAngles(caps, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
                     model.render(new MMRenderContext(matrices, builder, 0xF00000, OverlayTexture.DEFAULT_UV,
