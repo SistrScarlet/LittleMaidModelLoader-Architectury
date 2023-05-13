@@ -89,6 +89,8 @@ public class LMMLMod {
         modelManager.addModel("Archetype", ModelLittleMaid_Archetype.class);
         modelManager.addModel("Steve", ModelMulti_Steve.class);
         modelManager.addModel("Stef", ModelMulti_Stef.class);
+        modelManager.addModel("Classic64", ModelMulti_Classic64.class);
+        modelManager.addModel("Slim64", ModelMulti_Slim64.class);
         modelManager.addModel("Beverly7", ModelLittleMaid_Beverly7.class);
         modelManager.addModel("Chloe2", ModelLittleMaid_Chloe2.class);
         modelManager.addModel("Elsa5", ModelLittleMaid_Elsa5.class);
