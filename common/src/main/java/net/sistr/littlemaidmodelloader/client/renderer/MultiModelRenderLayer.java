@@ -10,7 +10,7 @@ public class MultiModelRenderLayer {
         if (LMMLMod.getConfig().isEnableAlpha()) {
             return RenderLayer.getEntityTranslucent(identifier);
         }
-        return RenderLayer.getEntityCutout(identifier);
+        return RenderLayer.getEntityCutoutNoCull(identifier);
     }
 
 }
