@@ -79,7 +79,7 @@ public class MultiModelCompound implements IHasMultiModel {
 
     private String getName(Item item) {
         //クライアント限定
-        if (entity.world.isClient && item instanceof ArmorItem) {
+        if (entity.getWorld().isClient && item instanceof ArmorItem) {
             return ((ArmorItem) item).getMaterial().getName().toLowerCase();
         }
         Identifier location = Registries.ITEM.getId(item);

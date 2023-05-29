@@ -104,14 +104,14 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() instanceof ArmorItem armor) {
             this.equipStack(armor.getSlotType(), stack);
-            return ActionResult.success(player.world.isClient);
+            return ActionResult.success(player.getWorld().isClient);
         }
         ItemStack thisStack = this.getMainHandStack();
-        if (hand == Hand.MAIN_HAND && !world.isClient && !stack.isEmpty() == thisStack.isEmpty()) {
+        if (hand == Hand.MAIN_HAND && !getWorld().isClient && !stack.isEmpty() == thisStack.isEmpty()) {
             player.setStackInHand(Hand.MAIN_HAND, thisStack);
             this.setStackInHand(Hand.MAIN_HAND, stack);
         }
-        if (world.isClient) {
+        if (getWorld().isClient) {
             openGUI(player.isSneaking());
             play(LMSounds.LIVING_DAYTIME);
         }
@@ -122,7 +122,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     public void openGUI(boolean shift) {
         MinecraftClient.getInstance().setScreen(
                 shift ? new SoundPackSelectScreen<>(Text.of(""), this) :
-                        new ModelSelectScreen<>(Text.of(""), this.world, this));
+                        new ModelSelectScreen<>(Text.of(""), this.getWorld(), this));
     }
 
     //このままだとEntityDimensionsが作っては捨てられてを繰り返すのでパフォーマンスはよろしくない

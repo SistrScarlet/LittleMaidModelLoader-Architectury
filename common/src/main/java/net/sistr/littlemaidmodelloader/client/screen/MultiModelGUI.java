@@ -2,7 +2,7 @@ package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.MathHelper;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
@@ -38,9 +38,9 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         var fontRenderer = MinecraftClient.getInstance().textRenderer;
-        ModelSelectScreen.renderColor(matrices,
+        ModelSelectScreen.renderColor(context,
                 this.x,
                 this.y,
                 this.x + this.width,
@@ -50,26 +50,25 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
         if (selected && selectColor != null) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            fill(matrices, this.x + selectColor.getIndex() * scale, this.y,
+            context.fill(this.x + selectColor.getIndex() * scale, this.y,
                     this.x + selectColor.getIndex() * scale + scale, this.y + height,
                     (0x80 << 24) | selectColor.getColorCode());
             RenderSystem.disableBlend();
         }
 
         MultiModelGUIUtil.getModel(LMModelManager.INSTANCE, texture).ifPresent(model ->
-                renderAllColorModel(matrices, scale, mouseX, mouseY, model, texture, isContract));
+                renderAllColorModel(context, scale, mouseX, mouseY, model, texture, isContract));
 
-        fontRenderer.draw(matrices, texture.getTextureName(),
-                this.x, this.y, 0xFFFFFFFF);
-
+        context.drawText(fontRenderer, texture.getTextureName(),
+                this.x, this.y, 0xFFFFFFFF, false);
     }
 
-    private void renderAllColorModel(MatrixStack matrixStack,
+    private void renderAllColorModel(DrawContext context,
                                      int scale, float mouseX, float mouseY,
                                      IMultiModel model, TextureHolder holder, boolean isContract) {
         for (TextureColors color : TextureColors.values()) {
             MultiModelGUIUtil.getTexturePair(holder, color, isContract).ifPresent(texturePair ->
-                    MultiModelGUIUtil.renderModel(matrixStack,
+                    MultiModelGUIUtil.renderModel(context,
                             this.x + (color.getIndex() + 1) * scale - scale / 2,
                             this.y + height,
                             mouseX, mouseY, scale,

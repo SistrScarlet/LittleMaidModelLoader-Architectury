@@ -43,7 +43,7 @@ public class LMSoundPacket {
     public static void playSoundClient(int entityId, String soundName) {
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return;
-        Entity entity = player.world.getEntityById(entityId);
+        Entity entity = player.getWorld().getEntityById(entityId);
         if (entity instanceof SoundPlayable) {
             ((SoundPlayable) entity).play(soundName);
         }

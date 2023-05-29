@@ -39,7 +39,7 @@ public class SoundPlayableCompound implements SoundPlayable {
 
     @Override
     public void play(String soundName) {
-        if (entity.world.isClient) {
+        if (entity.getWorld().isClient) {
             configHolder.getSoundFileName(soundName.toLowerCase())
                     .ifPresent(soundFileName ->
                             LMSoundManager.INSTANCE.play(soundFileName, entity.getSoundCategory(),

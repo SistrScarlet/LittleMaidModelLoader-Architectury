@@ -3,8 +3,8 @@ package net.sistr.littlemaidmodelloader.client.screen;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
@@ -44,19 +44,19 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         MultiModelGUIUtil.getModel(LMModelManager.INSTANCE, texture).ifPresent(model ->
-                renderAllArmorModel(matrices, scale, mouseX, mouseY, model, texture, dummy));
+                renderAllArmorModel(context, scale, mouseX, mouseY, model, texture, dummy));
     }
 
-    public void renderAllArmorModel(MatrixStack matrixStack, int scale, float mouseX, float mouseY,
+    public void renderAllArmorModel(DrawContext context, int scale, float mouseX, float mouseY,
                                     IMultiModel model, TextureHolder texture, MultiModelGUIUtil.DummyModelEntity dummy) {
         /*if (this.clicked && this.selected) {
             renderColor(matrixStack, 0, 0, this.width, this.height, 0x80FFFFFF);
         }*/
 
         TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
-        ModelSelectScreen.renderColor(matrixStack,
+        ModelSelectScreen.renderColor(context,
                 this.x,
                 this.y,
                 this.x + this.width,
@@ -69,24 +69,23 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
         for (String armorName : armorNames) {
             index++;
             ArmorPart armorData = MultiModelGUIUtil.getArmorDate(modelManager, texture, armorName);
-            MultiModelGUIUtil.renderArmor(matrixStack,
+            MultiModelGUIUtil.renderArmor(context,
                     this.x + index * scale - scale / 2, this.y + height,
                     mouseX, mouseY, scale,
                     model, armorData, dummy);
         }
 
-        fontRenderer.draw(matrixStack, texture.getTextureName(),
-                this.x, this.y, 0xFFFFFFFF);
+        context.drawText(fontRenderer, texture.getTextureName(),
+                this.x, this.y, 0xFFFFFFFF, false);
 
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         ARMOR_ICONS.foreach((part, stack) ->
-                itemRenderer.renderGuiItemIcon(matrixStack, stack,
+                context.drawItemInSlot(fontRenderer, stack,
                         this.x + this.width - 16 * (part.getIndex() + 1),
-                        this.y + fontRenderer.fontHeight
-                ));
+                        this.y + fontRenderer.fontHeight));
         armors.foreach((p, g) -> {
             if (g == this) {
-                ModelSelectScreen.renderColor(matrixStack,
+                ModelSelectScreen.renderColor(context,
                         this.x + this.width - 16 * (p.getIndex() + 1),
                         this.y + fontRenderer.fontHeight,
                         this.x + this.width - 16 * (p.getIndex() + 1) + 16,

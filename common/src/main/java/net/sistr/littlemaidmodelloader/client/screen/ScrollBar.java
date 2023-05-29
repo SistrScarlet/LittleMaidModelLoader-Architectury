@@ -1,8 +1,8 @@
 package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
@@ -37,11 +37,11 @@ public class ScrollBar extends GUIElement {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, this.texture);
-        draw(matrices,
+        draw(context,
                 this.x,
                 this.y,
                 sliderT
@@ -50,27 +50,27 @@ public class ScrollBar extends GUIElement {
         int i = 0;
         while (i < midRange) {
             i += sliderM.height();
-            draw(matrices,
+            draw(context,
                     this.x,
                     this.y + i,
                     sliderM
             );
         }
-        draw(matrices,
+        draw(context,
                 this.x,
                 this.y + height - sliderB.height(),
                 sliderB
         );
-        draw(matrices,
+        draw(context,
                 this.x + (sliderT.width() - pointer.width()) / 2,
                 (int) ((this.y + (width - pointer.height()) / 2f) + (getPercent() * (height - width))),
                 pointer
         );
     }
 
-    private void draw(MatrixStack matrices, int x, int y, TextureAddress texture) {
-        drawTexture(
-                matrices,
+    private void draw(DrawContext context, int x, int y, TextureAddress texture) {
+        context.drawTexture(
+                this.texture,
                 x, y,
                 texture.u(), texture.v(),
                 texture.width(), texture.height(),

@@ -73,7 +73,7 @@ public class SyncSoundPackPacket {
 
     //クライアントに倣って分離
     public static void applyMultiModelServer(PlayerEntity player, int entityId, String soundPackName) {
-        Entity entity = player.world.getEntityById(entityId);
+        Entity entity = player.getWorld().getEntityById(entityId);
         if (!(entity instanceof SoundPlayable soundPlayable)) return;
         ConfigHolder configHolder = LMConfigManager.INSTANCE.getConfig(soundPackName).orElse(LMConfigManager.EMPTY_CONFIG);
         soundPlayable.setConfigHolder(configHolder);

@@ -60,7 +60,7 @@ public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> ex
              */
             matrixStack.translate(isLeft ? -0.0125F : 0.0125F, 0.05f, -0.15f);
             MinecraftClient.getInstance().getItemRenderer().renderItem(entity, stack, mode, isLeft,
-                    matrixStack, buffer, entity.world, light, OverlayTexture.DEFAULT_UV, entity.getId() + mode.ordinal());
+                    matrixStack, buffer, entity.getWorld(), light, OverlayTexture.DEFAULT_UV, entity.getId() + mode.ordinal());
             matrixStack.pop();
         }
     }

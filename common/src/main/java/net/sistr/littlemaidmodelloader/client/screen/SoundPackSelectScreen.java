@@ -2,10 +2,9 @@ package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -47,17 +46,17 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         assert this.client != null;
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         int relX = (this.width - GUI_WIDTH) / 2;
         int relY = (this.height - GUI_HEIGHT) / 2;
-        drawTexture(matrices, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
 
-        super.render(matrices, mouseX, mouseY, delta);
-        this.soundPackListGUI.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
+        this.soundPackListGUI.render(context, mouseX, mouseY, delta);
     }
 
     @Override
@@ -98,17 +97,17 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
         }
 
         @Override
-        public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            textRenderer.draw(matrices, configHolder.getPackName(),
-                    this.x, this.y + 1, 0xffffff);
-            textRenderer.draw(matrices, configHolder.getParentName(),
-                    this.x, this.y + 1 + (textRenderer.fontHeight + 1), 0xffffff);
-            textRenderer.draw(matrices, configHolder.getFileName(),
-                    this.x, this.y + 1 + (textRenderer.fontHeight + 1) * 2, 0xffffff);
-            fill(matrices, this.x, this.y + this.height - 1,
+        public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+            context.drawText(textRenderer, configHolder.getPackName(),
+                    this.x, this.y + 1, 0xffffff, false);
+            context.drawText(textRenderer, configHolder.getParentName(),
+                    this.x, this.y + 1 + (textRenderer.fontHeight + 1), 0xffffff, false);
+            context.drawText(textRenderer, configHolder.getFileName(),
+                    this.x, this.y + 1 + (textRenderer.fontHeight + 1) * 2, 0xffffff, false);
+            context.fill(this.x, this.y + this.height - 1,
                     this.x + this.width, this.y + this.height, 0xffffffff);
             if (this.selected) {
-                fill(matrices, this.x, this.y, this.x + this.width, this.y + this.height, 0x80ffffff);
+                context.fill(this.x, this.y, this.x + this.width, this.y + this.height, 0x80ffffff);
             }
         }
 

@@ -112,7 +112,7 @@ public class SyncMultiModelPacket {
     //クライアントに倣って分離
     public static void applyMultiModelServer(PlayerEntity player, int entityId, boolean isContract, TextureColors color,
                                              String textureName, ArmorSets<String> armorTextureName) {
-        Entity entity = player.world.getEntityById(entityId);
+        Entity entity = player.getWorld().getEntityById(entityId);
         if (!(entity instanceof IHasMultiModel multiModel)) return;
         multiModel.setContractMM(isContract);
         multiModel.setColorMM(color);

@@ -4,11 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -156,32 +155,27 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
         }
     }
 
-    public static void renderColor(MatrixStack matrixStack, int minX, int minY, int maxX, int maxY, int rgba) {
-        DrawableHelper.fill(matrixStack, minX, minY, maxX, maxY, rgba);
+    public static void renderColor(DrawContext context, int minX, int minY, int maxX, int maxY, int rgba) {
+        context.fill(minX, minY, maxX, maxY, rgba);
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(DrawContext context, int mouseX, int mouseY, float partialTicks) {
         assert this.client != null;
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         int relX = (this.width - GUI_WIDTH) / 2;
         int relY = (this.height - GUI_HEIGHT) / 2;
-        drawTexture(matrixStack, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
 
-        MinecraftClient.getInstance().getItemRenderer()
-                .renderGuiItemIcon(matrixStack, guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
-        MinecraftClient.getInstance().getItemRenderer()
-                .renderGuiItemIcon(matrixStack, isContract ? WILD : CONTRACT, relX - 24, relY + GUI_HEIGHT - 48);
+        context.drawItemInSlot(textRenderer, guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
+        context.drawItemInSlot(textRenderer, isContract ? WILD : CONTRACT, relX - 24, relY + GUI_HEIGHT - 48);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
-        drawTexture(matrixStack, relX - 24, relY + GUI_HEIGHT - 16, 0, 240, 16, 16);
-        drawTexture(matrixStack, relX - 24, relY + GUI_HEIGHT - 48, 0, 240, 16, 16);
+        context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX - 24, relY + GUI_HEIGHT - 16, 0, 240, 16, 16);
+        context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX - 24, relY + GUI_HEIGHT - 48, 0, 240, 16, 16);
 
         if (guiSwitch) {
-            modelListGUI.render(matrixStack, mouseX, mouseY, partialTicks);
+            modelListGUI.render(context, mouseX, mouseY, partialTicks);
             modelListGUI.getSelectElement()
                     .filter(MultiModelGUI::isSelected)
                     .ifPresent(g -> g.getSelectColor().ifPresent(color -> {
@@ -189,7 +183,7 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                         MultiModelGUIUtil.getModel(LMModelManager.INSTANCE, texture).ifPresent(model -> {
                             int scale = 15 * 3;
                             MultiModelGUIUtil.getTexturePair(texture, color, true).ifPresent(texturePair ->
-                                    MultiModelGUIUtil.renderModel(matrixStack,
+                                    MultiModelGUIUtil.renderModel(context,
                                             (width + 15 * 16 + scale * 2) / 2,
                                             height - scale,
                                             mouseX, mouseY, scale,
@@ -198,20 +192,20 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                             );
                         });
                     }));
-            modelScrollBar.render(matrixStack, mouseX, mouseY, partialTicks);
+            modelScrollBar.render(context, mouseX, mouseY, partialTicks);
         } else {
-            armorListGUI.render(matrixStack, mouseX, mouseY, partialTicks);
+            armorListGUI.render(context, mouseX, mouseY, partialTicks);
             this.armors.foreach((p, g) -> {
                 TextureHolder texture = g.getTexture();
                 MultiModelGUIUtil.getModel(LMModelManager.INSTANCE, texture).ifPresent(model -> {
                     int scale = 15 * 3;
                     LMModelManager modelManager = LMModelManager.INSTANCE;
                     ArmorPart armorData = MultiModelGUIUtil.getArmorDate(modelManager, texture, "default");
-                    MultiModelGUIUtil.renderArmorPart(matrixStack,(width + 15 * 16 + scale * 2) / 2, height - scale,
+                    MultiModelGUIUtil.renderArmorPart(context, (width + 15 * 16 + scale * 2) / 2, height - scale,
                             mouseX, mouseY, scale, model, armorData, p, this.dummy);
                 });
             });
-            armorScrollBar.render(matrixStack, mouseX, mouseY, partialTicks);
+            armorScrollBar.render(context, mouseX, mouseY, partialTicks);
         }
     }
 
