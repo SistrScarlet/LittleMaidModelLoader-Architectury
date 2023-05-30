@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
@@ -78,9 +77,8 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
         context.drawText(fontRenderer, texture.getTextureName(),
                 this.x, this.y, 0xFFFFFFFF, false);
 
-        ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         ARMOR_ICONS.foreach((part, stack) ->
-                context.drawItemInSlot(fontRenderer, stack,
+                context.drawItem(stack,
                         this.x + this.width - 16 * (part.getIndex() + 1),
                         this.y + fontRenderer.fontHeight));
         armors.foreach((p, g) -> {

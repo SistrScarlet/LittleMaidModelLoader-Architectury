@@ -166,8 +166,8 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
         int relY = (this.height - GUI_HEIGHT) / 2;
         context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
 
-        context.drawItemInSlot(textRenderer, guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
-        context.drawItemInSlot(textRenderer, isContract ? WILD : CONTRACT, relX - 24, relY + GUI_HEIGHT - 48);
+        context.drawItem(guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
+        context.drawItem(isContract ? WILD : CONTRACT, relX - 24, relY + GUI_HEIGHT - 48);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
