@@ -29,7 +29,7 @@ import java.util.zip.ZipFile;
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
     public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaid ModelLoader!!!"), 12);
+            new PackResourceMetadata(Text.literal("LittleMaid ModelLoader!!!"), 15);
     protected static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
 
     @Nullable
