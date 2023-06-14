@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class PlayerListImpl {
 
     public static Collection<ServerPlayerEntity> tracking(Entity entity) {
-        return entity.world.getPlayers().stream().map(p -> (ServerPlayerEntity) p).collect(Collectors.toList());
+        return entity.getWorld().getPlayers().stream().map(p -> (ServerPlayerEntity) p).collect(Collectors.toList());
     }
 
 }
