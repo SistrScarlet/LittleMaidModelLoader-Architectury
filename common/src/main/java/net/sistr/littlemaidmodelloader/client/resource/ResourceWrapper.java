@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.MinecraftVersion;
 import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -20,6 +21,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -29,8 +31,10 @@ import java.util.zip.ZipFile;
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
     public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaid ModelLoader!!!"), 15);
-    protected static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
+            new PackResourceMetadata(Text.literal("LittleMaid ModelLoader!!!"),
+                    MinecraftVersion.CURRENT.getResourceVersion(ResourceType.CLIENT_RESOURCES),
+                    Optional.empty());
+    private static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
 
     @Nullable
     @Override

@@ -149,7 +149,8 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
                 .getEyeHeight(getCaps(), MMPose.convertPose(pose));
     }
 
-    //上になんか乗ってるやつのオフセット
+    //todo マウント系の位置調整メソッドを実装すること。
+    /*//上になんか乗ってるやつのオフセット
     @Override
     public double getMountedHeightOffset() {
         IMultiModel model = getModel(Layer.SKIN, Part.HEAD)
@@ -163,7 +164,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
         IMultiModel model = getModel(Layer.SKIN, Part.HEAD)
                 .orElse(LMModelManager.INSTANCE.getDefaultModel());
         return model.getyOffset(getCaps()) - getHeight();
-    }
+    }*/
 
     //防具の更新
     @Override

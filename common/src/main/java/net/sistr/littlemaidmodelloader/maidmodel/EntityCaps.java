@@ -122,12 +122,13 @@ public class EntityCaps implements IModelCaps {
             }
             return null;
         });
+        //todo マウント系のアレをアレする(?)
         register("rotationYaw", caps_rotationYaw, (entity, arg) -> entity.getYaw());
         register("rotationPitch", caps_rotationPitch, (entity, arg) -> entity.getPitch());
         register("prevRotationYaw", caps_prevRotationYaw, (entity, arg) -> entity.prevYaw);
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
-        register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> entity.getMountedHeightOffset());
+        register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> 0f/*entity.getMountedHeightOffset()*/);
         register("isRidingPlayer", caps_isRidingPlayer, (entity, arg) -> entity.getVehicle() instanceof PlayerEntity);
         register("WorldTotalTime", caps_WorldTotalTime, (entity, arg) -> entity.getEntityWorld().getTime());
         register("WorldTime", caps_WorldTime, (entity, arg) -> entity.getEntityWorld().getTimeOfDay());
@@ -135,8 +136,8 @@ public class EntityCaps implements IModelCaps {
         register("entityIdFactor", caps_entityIdFactor, (entity, arg) -> 0F);
         register("height", caps_height, (entity, arg) -> entity.getHeight());
         register("width", caps_width, (entity, arg) -> entity.getWidth());
-        register("YOffset", caps_YOffset, (entity, arg) -> entity.getHeightOffset());
-        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> entity.getMountedHeightOffset());
+        register("YOffset", caps_YOffset, (entity, arg) -> 0f/*entity.getHeightOffset()*/);
+        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> 0f/*entity.getMountedHeightOffset()*/);
         register("dominantArm", caps_dominantArm, (entity, arg) -> entity.getMainArm() == Arm.LEFT ? 0 : 1);
         register("PosBlockID", caps_PosBlockID, (entity, arg) ->
                 entity.getEntityWorld().getBlockState(new BlockPos(

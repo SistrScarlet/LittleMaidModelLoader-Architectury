@@ -272,24 +272,24 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double scrollAmount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (guiSwitch) {
-            if (modelScrollBar.mouseScrolled(x, y, scrollAmount)) {
+            if (modelScrollBar.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
                 modelListGUI.setScroll(modelScrollBar.getPoint());
                 return true;
             } else {
-                if (modelListGUI.mouseScrolled(x, y, scrollAmount)) {
+                if (modelListGUI.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
                     modelScrollBar.setPoint(modelListGUI.getScroll());
                     return true;
                 }
                 return false;
             }
         } else {
-            if (armorScrollBar.mouseScrolled(x, y, scrollAmount)) {
+            if (armorScrollBar.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
                 armorListGUI.setScroll(armorScrollBar.getPoint());
                 return true;
             } else {
-                if (armorListGUI.mouseScrolled(x, y, scrollAmount)) {
+                if (armorListGUI.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
                     armorScrollBar.setPoint(armorListGUI.getScroll());
                     return true;
                 }

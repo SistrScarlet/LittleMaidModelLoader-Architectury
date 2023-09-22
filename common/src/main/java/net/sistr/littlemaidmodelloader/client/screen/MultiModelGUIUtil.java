@@ -102,8 +102,10 @@ public class MultiModelGUIUtil {
 
     public static void renderEntity(DrawContext context, int posX, int posY, float mouseX, float mouseY, int scale,
                                     IMultiModel model, DummyModelEntity dummy) {
+        //todo 位置調整
         InventoryScreen.drawEntity(context,
-                posX, posY, scale,
+                posX, posY, posX, posY, scale,
+                0f,
                 posX - mouseX,
                 posY - mouseY - model.getEyeHeight(dummy.getCaps(), MMPose.STANDING) * scale,
                 dummy

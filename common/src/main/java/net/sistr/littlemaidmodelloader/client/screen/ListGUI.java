@@ -195,15 +195,15 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         Optional<T> e = getElement(mouseX, mouseY);
         if (e.isPresent()) {
             T element = e.get();
-            if (element.mouseScrolled(getElementX(mouseX), getElementY(mouseY), amount)) {
+            if (element.mouseScrolled(getElementX(mouseX), getElementY(mouseY), horizontalAmount, verticalAmount)) {
                 return true;
             }
         }
-        scroll = scroll + (0 < amount ? -1 : 1);
+        scroll = scroll + (0 < verticalAmount ? -1 : 1);
         this.scroll = MathHelper.clamp(this.scroll, 0, size() / widthStack - 1);
         return true;
     }
