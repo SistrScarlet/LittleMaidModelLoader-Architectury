@@ -102,12 +102,17 @@ public class MultiModelGUIUtil {
 
     public static void renderEntity(DrawContext context, int posX, int posY, float mouseX, float mouseY, int scale,
                                     IMultiModel model, DummyModelEntity dummy) {
-        //todo 位置調整
+        //drawEntity()ではx1y1 x2y2で指定された枠内のど真ん中にモデルが配置される
+        //枠は横scale,縦scale * 3
         InventoryScreen.drawEntity(context,
-                posX, posY, posX, posY, scale,
-                0f,
-                posX - mouseX,
-                posY - mouseY - model.getEyeHeight(dummy.getCaps(), MMPose.STANDING) * scale,
+                posX, posY, posX + scale, posY + scale * 3, scale,
+                //描画オフセット
+                //足元ぴったりから描画するため位置の調節をしている
+                //Entity.getHeight() / 2 を引いているのはdrawEntityにて計算されてしまうのを打ち消すためのもの
+                //枠の最下部に足が付くように、scale * 3 / 2fを足してモデルを下にズラしている
+                -dummy.getHeight() / 2 + scale * 3 / 2f / scale,
+                mouseX,
+                mouseY,
                 dummy
         );
     }

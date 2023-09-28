@@ -69,8 +69,8 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
         for (TextureColors color : TextureColors.values()) {
             MultiModelGUIUtil.getTexturePair(holder, color, isContract).ifPresent(texturePair ->
                     MultiModelGUIUtil.renderModel(context,
-                            this.x + (color.getIndex() + 1) * scale - scale / 2,
-                            this.y + height,
+                            this.x + color.getIndex() * scale,
+                            this.y,
                             mouseX, mouseY, scale,
                             model, texturePair, dummy
                     )

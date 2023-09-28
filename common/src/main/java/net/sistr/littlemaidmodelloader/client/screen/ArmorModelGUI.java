@@ -66,12 +66,12 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
         int index = 0;
         LMModelManager modelManager = LMModelManager.INSTANCE;
         for (String armorName : armorNames) {
-            index++;
             ArmorPart armorData = MultiModelGUIUtil.getArmorDate(modelManager, texture, armorName);
             MultiModelGUIUtil.renderArmor(context,
-                    this.x + index * scale - scale / 2, this.y + height,
+                    this.x + index * scale, this.y,
                     mouseX, mouseY, scale,
                     model, armorData, dummy);
+            index++;
         }
 
         context.drawText(fontRenderer, texture.getTextureName(),
