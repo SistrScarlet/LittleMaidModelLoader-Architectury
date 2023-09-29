@@ -306,7 +306,7 @@ public class ModelMulti_Steve extends ModelMultiBase {
 
     @Override
     public float getMountedYOffset() {
-        return getHeight() * 0.75F;
+        return 0.6f;
     }
 
     @Override

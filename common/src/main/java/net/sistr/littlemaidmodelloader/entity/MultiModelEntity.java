@@ -40,6 +40,7 @@ import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidmodelloader.resource.util.TextureColors;
+import org.joml.Vector3f;
 
 import java.util.Optional;
 
@@ -149,22 +150,27 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
                 .getEyeHeight(getCaps(), MMPose.convertPose(pose));
     }
 
-    //todo マウント系の位置調整メソッドを実装すること。
-    /*//上になんか乗ってるやつのオフセット
+    //メイドさんに乗る場合の座る位置
+    //todo 肩車のようにする？
+    //todo モデルから着席位置を取得する
     @Override
-    public double getMountedHeightOffset() {
-        IMultiModel model = getModel(Layer.SKIN, Part.HEAD)
+    protected Vector3f getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
+        var model = getModel(Layer.SKIN, Part.HEAD)
                 .orElse(LMModelManager.INSTANCE.getDefaultModel());
-        return model.getMountedYOffset(getCaps());
+        var caps = getCaps();
+        var height = model.getHeight(caps, MMPose.STANDING);
+        //当たり判定の高さより見た目が少し高いので、決め打ちで1ドット分高くしている
+        //見た目と判定のズレはモデルによってまちまちなので、モデルによっては大きくズレるかもしれない
+        return new Vector3f(0.0f, height + 1 / 16f * scaleFactor, 0.0f);
     }
 
-    //騎乗時のオフセット
+    //メイドさんが騎乗時のオフセット
     @Override
-    public double getHeightOffset() {
-        IMultiModel model = getModel(Layer.SKIN, Part.HEAD)
+    protected float getUnscaledRidingOffset(Entity vehicle) {
+        var model = getModel(Layer.SKIN, Part.HEAD)
                 .orElse(LMModelManager.INSTANCE.getDefaultModel());
-        return model.getyOffset(getCaps()) - getHeight();
-    }*/
+        return -model.getMountedYOffset(getCaps());
+    }
 
     //防具の更新
     @Override

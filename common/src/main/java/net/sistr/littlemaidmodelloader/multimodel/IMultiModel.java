@@ -81,12 +81,12 @@ public interface IMultiModel {
     float getEyeHeight(IModelCaps caps, MMPose pose);
 
     /**
-     * モデルのYオフセット
+     * (メイドさんの上に乗る)モデルのYオフセット
      */
     float getyOffset(IModelCaps caps);
 
     /**
-     * 上に乗せる時のオフセット高
+     * (メイドさんを)上に乗せる時のオフセット高
      */
     float getMountedYOffset(IModelCaps caps);
 
