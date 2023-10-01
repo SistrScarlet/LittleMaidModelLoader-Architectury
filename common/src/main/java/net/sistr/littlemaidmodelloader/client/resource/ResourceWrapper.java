@@ -2,8 +2,10 @@ package net.sistr.littlemaidmodelloader.client.resource;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.mojang.bridge.game.PackType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.MinecraftVersion;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.PackResourceMetadata;
@@ -31,7 +33,8 @@ import java.util.zip.ZipFile;
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
     public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaidModelLoader!!!"), 9);
+            new PackResourceMetadata(Text.literal("LittleMaidModelLoader!!!"),
+                    MinecraftVersion.CURRENT.getPackVersion(PackType.RESOURCE));
     protected static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
 
     //いつ呼ばれるのか不明
