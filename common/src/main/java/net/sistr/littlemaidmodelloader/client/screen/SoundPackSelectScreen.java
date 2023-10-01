@@ -55,7 +55,6 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
         int relY = (this.height - GUI_HEIGHT) / 2;
         context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
 
-        super.render(context, mouseX, mouseY, delta);
         this.soundPackListGUI.render(context, mouseX, mouseY, delta);
     }
 
