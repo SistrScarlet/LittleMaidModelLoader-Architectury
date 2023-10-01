@@ -1,10 +1,8 @@
 package net.sistr.littlemaidmodelloader.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -48,9 +46,6 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         assert this.client != null;
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         int relX = (this.width - GUI_WIDTH) / 2;
         int relY = (this.height - GUI_HEIGHT) / 2;
         context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);

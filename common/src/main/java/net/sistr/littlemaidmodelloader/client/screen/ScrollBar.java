@@ -1,8 +1,6 @@
 package net.sistr.littlemaidmodelloader.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
@@ -38,9 +36,6 @@ public class ScrollBar extends GUIElement {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, this.texture);
         draw(context,
                 this.x,
                 this.y,
