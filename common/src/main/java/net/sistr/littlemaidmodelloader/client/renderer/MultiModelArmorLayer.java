@@ -19,9 +19,9 @@ import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 
 //todo 重すぎる
 @Environment(EnvType.CLIENT)
-public class MultiModelArmorLayer<T extends LivingEntity & IHasMultiModel> extends FeatureRenderer<T, MultiModel<T>> {
+public class MultiModelArmorLayer<T extends LivingEntity & IHasMultiModel, M extends MultiModel<T>> extends FeatureRenderer<T, M> {
 
-    public MultiModelArmorLayer(FeatureRendererContext<T, MultiModel<T>> context) {
+    public MultiModelArmorLayer(FeatureRendererContext<T, M> context) {
         super(context);
     }
 
