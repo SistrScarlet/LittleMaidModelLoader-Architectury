@@ -1,6 +1,5 @@
 package net.sistr.littlemaidmodelloader.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.MathHelper;
@@ -48,12 +47,9 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
                 0xFF404040
         );
         if (selected && selectColor != null) {
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
             context.fill(this.x + selectColor.getIndex() * scale, this.y,
                     this.x + selectColor.getIndex() * scale + scale, this.y + height,
                     (0x80 << 24) | selectColor.getColorCode());
-            RenderSystem.disableBlend();
         }
 
         MultiModelGUIUtil.getModel(LMModelManager.INSTANCE, texture).ifPresent(model ->

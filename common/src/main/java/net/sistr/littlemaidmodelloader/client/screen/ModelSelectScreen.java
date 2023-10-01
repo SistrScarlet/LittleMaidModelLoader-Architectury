@@ -1,12 +1,10 @@
 package net.sistr.littlemaidmodelloader.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -168,9 +166,6 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
 
         context.drawItem(guiSwitch ? ARMOR : MODEL, relX - 24, relY + GUI_HEIGHT - 16);
         context.drawItem(isContract ? WILD : CONTRACT, relX - 24, relY + GUI_HEIGHT - 48);
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, MODEL_SELECT_GUI_TEXTURE);
         context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX - 24, relY + GUI_HEIGHT - 16, 0, 240, 16, 16);
         context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX - 24, relY + GUI_HEIGHT - 48, 0, 240, 16, 16);
 
