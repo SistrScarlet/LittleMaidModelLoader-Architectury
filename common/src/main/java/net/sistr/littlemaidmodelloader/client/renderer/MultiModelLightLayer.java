@@ -18,9 +18,9 @@ import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 
 //スキンの発光レイヤー、防具の発光レイヤーは防具でやってる
 @Environment(EnvType.CLIENT)
-public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel> extends FeatureRenderer<T, MultiModel<T>> {
+public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel, M extends MultiModel<T>> extends FeatureRenderer<T, M> {
 
-    public MultiModelLightLayer(FeatureRendererContext<T, MultiModel<T>> context) {
+    public MultiModelLightLayer(FeatureRendererContext<T, M> context) {
         super(context);
     }
 

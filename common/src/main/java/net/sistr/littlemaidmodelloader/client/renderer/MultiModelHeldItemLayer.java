@@ -17,9 +17,9 @@ import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 
 @Environment(EnvType.CLIENT)
-public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> extends FeatureRenderer<T, MultiModel<T>> {
+public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel, M extends MultiModel<T>> extends FeatureRenderer<T, M> {
 
-    public MultiModelHeldItemLayer(FeatureRendererContext<T, MultiModel<T>> context) {
+    public MultiModelHeldItemLayer(FeatureRendererContext<T, M> context) {
         super(context);
     }
 
