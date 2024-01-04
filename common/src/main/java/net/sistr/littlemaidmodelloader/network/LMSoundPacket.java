@@ -1,7 +1,7 @@
 package net.sistr.littlemaidmodelloader.network;
 
-import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
+import me.shedaniel.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -27,7 +27,7 @@ public class LMSoundPacket {
 
     public static PacketByteBuf createS2CPacket(Entity entity, String soundName) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeVarInt(entity.getId());
+        passedData.writeVarInt(entity.getEntityId());
         passedData.writeString(soundName);
         return passedData;
     }

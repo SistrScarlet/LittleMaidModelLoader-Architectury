@@ -1,8 +1,8 @@
 package net.sistr.littlemaidmodelloader.entity;
 
 
-import dev.architectury.extensions.network.EntitySpawnExtension;
-import dev.architectury.networking.NetworkManager;
+import me.shedaniel.architectury.extensions.network.EntitySpawnExtension;
+import me.shedaniel.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -119,7 +119,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
 
     @Environment(EnvType.CLIENT)
     public void openGUI(boolean shift) {
-        MinecraftClient.getInstance().setScreen(
+        MinecraftClient.getInstance().openScreen(
                 shift ? new SoundPackSelectScreen<>(Text.of(""), this) :
                         new ModelSelectScreen<>(Text.of(""), this.world, this));
     }

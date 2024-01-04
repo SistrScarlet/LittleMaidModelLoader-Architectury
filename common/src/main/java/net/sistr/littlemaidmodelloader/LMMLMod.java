@@ -1,14 +1,15 @@
 package net.sistr.littlemaidmodelloader;
 
 import com.google.common.collect.ImmutableMap;
-import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.platform.Platform;
-import dev.architectury.registry.level.entity.EntityAttributeRegistry;
+import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent;
+import me.shedaniel.architectury.platform.Platform;
+import me.shedaniel.architectury.registry.entity.EntityAttributes;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -113,8 +114,8 @@ public class LMMLMod {
     }
 
     public static void registerAttribute() {
-        EntityAttributeRegistry.register(Registration.MULTI_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
-        EntityAttributeRegistry.register(Registration.DUMMY_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
+        EntityAttributes.register(Registration.MULTI_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
+        EntityAttributes.register(Registration.DUMMY_MODEL_ENTITY::get, MultiModelEntity::createMobAttributes);
     }
 
     public static LMMLConfig getConfig() {

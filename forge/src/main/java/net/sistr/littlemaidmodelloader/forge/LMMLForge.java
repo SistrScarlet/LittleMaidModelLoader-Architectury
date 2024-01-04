@@ -1,16 +1,16 @@
 package net.sistr.littlemaidmodelloader.forge;
 
-import dev.architectury.platform.forge.EventBuses;
+import me.shedaniel.architectury.platform.forge.EventBuses;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraft.resource.ResourceType;
-import net.minecraftforge.client.ConfigGuiHandler;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.AddPackFindersEvent;
+import net.minecraft.client.MinecraftClient;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
 import net.sistr.littlemaidmodelloader.client.resource.LMPackProvider;
@@ -26,14 +26,17 @@ public class LMMLForge {
         EventBuses.registerModEventBus(LMMLMod.MODID, FMLJavaModLoadingContext.get().getModEventBus());
         LMMLMod.init();
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-                () -> new ConfigGuiHandler.ConfigGuiFactory((client, parent) ->
-                        AutoConfig.getConfigScreen(LMMLConfig.class, parent).get()));
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
+                () -> (client, parent) ->
+                        AutoConfig.getConfigScreen(LMMLConfig.class, parent).get());
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::packInit);
+
+        //このタイミングでないと遅すぎる
+        if (FMLEnvironment.dist.isClient()) {
+            packInit();
+        }
     }
 
     public void modInit(FMLCommonSetupEvent event) {
@@ -42,17 +45,16 @@ public class LMMLForge {
 
     public void clientInit(FMLClientSetupEvent event) {
         ClientSetup.init();
+        rendererInit();
     }
 
-    public void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
-        event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
+    public void rendererInit() {
+        RenderingRegistry.registerEntityRenderingHandler(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
     }
 
-    public void packInit(AddPackFindersEvent event) {
-        if (event.getPackType() == ResourceType.CLIENT_RESOURCES) {
-            event.addRepositorySource(new LMPackProvider());
-        }
+    public void packInit() {
+        MinecraftClient.getInstance().getResourcePackManager().addPackFinder(new LMPackProvider());
     }
 
 }

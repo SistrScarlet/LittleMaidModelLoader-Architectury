@@ -1,8 +1,8 @@
 package net.sistr.littlemaidmodelloader.resource.classloader;
 
-import dev.architectury.platform.Platform;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import me.shedaniel.architectury.platform.Platform;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
