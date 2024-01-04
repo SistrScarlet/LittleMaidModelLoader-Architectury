@@ -82,7 +82,7 @@ public class EntityCaps implements IModelCaps {
             else if (vehicle instanceof MobEntity) return "mob";
             else return "entity";
         });
-        register("entityName", caps_entityName, (entity, arg) -> entity.getName().asString());
+        register("entityName", caps_entityName, (entity, arg) -> entity.getName().getString());
         register("posX", caps_posX, (entity, arg) -> entity.getX());
         register("posY", caps_posY, (entity, arg) -> entity.getY());
         register("posZ", caps_posZ, (entity, arg) -> entity.getZ());

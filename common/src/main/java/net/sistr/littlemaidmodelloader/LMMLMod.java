@@ -13,7 +13,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
-import net.sistr.littlemaidmodelloader.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
@@ -23,6 +22,7 @@ import net.sistr.littlemaidmodelloader.resource.classloader.MultiModelClassLoade
 import net.sistr.littlemaidmodelloader.resource.loader.LMConfigLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMFileLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMMultiModelLoader;
+import net.sistr.littlemaidmodelloader.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;

@@ -3,6 +3,7 @@ package net.sistr.littlemaidmodelloader.client.renderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -16,9 +17,9 @@ import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 
 @Environment(EnvType.CLIENT)
-public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> extends FeatureRenderer<T, MultiModel<T>> {
+public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel, M extends MultiModel<T>> extends FeatureRenderer<T, M> {
 
-    public MultiModelHeldItemLayer(FeatureRendererContext<T, MultiModel<T>> context) {
+    public MultiModelHeldItemLayer(FeatureRendererContext<T, M> context) {
         super(context);
     }
 
@@ -58,7 +59,8 @@ public class MultiModelHeldItemLayer<T extends LivingEntity & IHasMultiModel> ex
              * z: 腕に平行な方向(-で向かって手の先方向に移動)
              */
             matrixStack.translate(isLeft ? -0.0125F : 0.0125F, 0.05f, -0.15f);
-            MinecraftClient.getInstance().getHeldItemRenderer().renderItem(entity, stack, mode, isLeft, matrixStack, buffer, light);
+            MinecraftClient.getInstance().getItemRenderer().renderItem(entity, stack, mode, isLeft,
+                    matrixStack, buffer, entity.world, light, OverlayTexture.DEFAULT_UV, entity.getId() + mode.ordinal());
             matrixStack.pop();
         }
     }

@@ -1,6 +1,8 @@
 package net.sistr.littlemaidmodelloader.entity;
 
 
+import dev.architectury.extensions.network.EntitySpawnExtension;
+import dev.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -17,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -31,8 +33,6 @@ import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayableCompound;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
-import net.sistr.littlemaidmodelloader.network.CustomMobSpawnPacket;
-import net.sistr.littlemaidmodelloader.network.util.CustomPacketEntity;
 import net.sistr.littlemaidmodelloader.resource.holder.ConfigHolder;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
@@ -45,7 +45,7 @@ import java.util.Optional;
 /**
  * テスト用エンティティ
  */
-public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel, SoundPlayable, CustomPacketEntity {
+public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel, SoundPlayable, EntitySpawnExtension {
     private final MultiModelCompound multiModel;
     private final SoundPlayableCompound soundPlayer;
 
@@ -89,12 +89,12 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public void writeCustomPacket(PacketByteBuf packet) {
+    public void saveAdditionalSpawnData(PacketByteBuf packet) {
         multiModel.writeToPacket(packet);
     }
 
     @Override
-    public void readCustomPacket(PacketByteBuf packet) {
+    public void loadAdditionalSpawnData(PacketByteBuf packet) {
         multiModel.readFromPacket(packet);
     }
 
@@ -120,8 +120,8 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     @Environment(EnvType.CLIENT)
     public void openGUI(boolean shift) {
         MinecraftClient.getInstance().setScreen(
-                shift ? new SoundPackSelectScreen<>(new LiteralText(""), this) :
-                        new ModelSelectScreen<>(new LiteralText(""), this.world, this));
+                shift ? new SoundPackSelectScreen<>(Text.of(""), this) :
+                        new ModelSelectScreen<>(Text.of(""), this.world, this));
     }
 
     //このままだとEntityDimensionsが作っては捨てられてを繰り返すのでパフォーマンスはよろしくない
@@ -254,6 +254,6 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
 
     @Override
     public Packet<?> createSpawnPacket() {
-        return CustomMobSpawnPacket.createPacket(this);
+        return NetworkManager.createAddEntityPacket(this);
     }
 }

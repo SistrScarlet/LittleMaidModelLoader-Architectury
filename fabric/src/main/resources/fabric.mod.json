@@ -37,7 +37,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.18.2",
+    "minecraft": "1.18.2",
     "architectury": ">=4.0.0",
     "modmenu": ">=3.0.0",
     "cloth-config": ">=6.0.0"
