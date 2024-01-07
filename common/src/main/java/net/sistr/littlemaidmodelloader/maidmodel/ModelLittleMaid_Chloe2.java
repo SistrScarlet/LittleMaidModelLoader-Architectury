@@ -1,5 +1,6 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -455,8 +456,8 @@ public class ModelLittleMaid_Chloe2 extends ModelLittleMaidBase {
 		{
 			// �w�����Ă���
 			//現バージョン向けに改変 sistr
-			var ent = (LivingEntity)ModelCapsHelper.getCapsValue(pEntityCaps, caps_Entity);
-			var ridingEntity = ent.getVehicle();
+			LivingEntity ent = (LivingEntity)ModelCapsHelper.getCapsValue(pEntityCaps, caps_Entity);
+			Entity ridingEntity = ent.getVehicle();
 			if(ridingEntity instanceof PlayerEntity || ridingEntity instanceof IMultiModel)
 			{
 				bipedRightArm.rotateAngleX -= 1.3F;
@@ -547,17 +548,17 @@ public class ModelLittleMaid_Chloe2 extends ModelLittleMaidBase {
 				float f16 = mh_cos(f * 0.6767F); //wave2
 				float f22 = f15 > f16 ? f15 : f16; //upper wave
 				float f35 = f15 < f16 ? f15 : f16; //lower wave
-		
+
 				upperRightArm.rotateAngleX -= f15 * 0.2F * f1;
 				upperLeftArm.rotateAngleX += f15 * 0.2F * f1;
 				bipedRightArm.rotateAngleX -= f22 * 0.7F * f1;
 				bipedLeftArm.rotateAngleX += f35 * 0.7F * f1;
-		
+
 				upperRightLeg.rotateAngleX += f15 * 0.2F * f1;
 				upperLeftLeg.rotateAngleX -= f15 * 0.2F * f1;
 				bipedRightLeg.rotateAngleX += f22 * 0.7F * f1;
 				bipedLeftLeg.rotateAngleX -= f35 * 0.7F * f1;
-		
+
 				bipedBody.rotateAngleY -= f15 * 0.1F * f1;
 				hipBody.rotateAngleY += f15 * 0.1F * f1 - bipedBody.rotateAngleY;
 				breastR.rotateAngleX -= f16 * f16 * 0.18F * f1 - mh_sin(ticksExisted * 0.060F) * 0.05F;
@@ -571,17 +572,17 @@ public class ModelLittleMaid_Chloe2 extends ModelLittleMaidBase {
 				float f16 = mh_cos(f * 0.5050F); //wave2
 				float f22 = f15 > f16 ? f15 : f16; //upper wave
 				float f35 = f15 < f16 ? f15 : f16; //lower wave
-		
+
 				upperRightArm.rotateAngleX -= f15 * 0.7F * f1;
 				upperLeftArm.rotateAngleX += f15 * 0.7F * f1;
 				bipedRightArm.rotateAngleX -= f22 * 0.7F * f1;
 				bipedLeftArm.rotateAngleX += f35 * 0.7F * f1;
-		
+
 				upperRightLeg.rotateAngleX += f15 * 0.9F * f1;
 				upperLeftLeg.rotateAngleX -= f15 * 0.9F * f1;
 				bipedRightLeg.rotateAngleX += f22 * 0.9F * f1;
 				bipedLeftLeg.rotateAngleX -= f35 * 0.9F * f1;
-		
+
 				bipedBody.rotateAngleY -= f15 * 0.2F * f1;
 				hipBody.rotateAngleY += f15 * 0.3F * f1 - bipedBody.rotateAngleY;
 				breastR.rotateAngleX -= f16 * f16 * 0.18F * f1 - mh_sin(ticksExisted * 0.060F) * 0.05F;

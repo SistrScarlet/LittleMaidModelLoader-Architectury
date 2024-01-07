@@ -125,7 +125,7 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
                     boolean selectAll = false;
                     for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
                         //選択していたものが今選択したやつ・・・でなければ全選択
-                        if (armors.getArmor(part).filter(g -> g == this).isEmpty()) {
+                        if (!armors.getArmor(part).filter(g -> g == this).isPresent()) {
                             selectAll = true;
                             break;
                         }

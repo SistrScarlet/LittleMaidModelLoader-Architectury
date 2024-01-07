@@ -2,8 +2,8 @@ package net.sistr.littlemaidmodelloader.resource.manager;
 
 import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
-import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelMultiBase;
+import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,11 +78,13 @@ public class LMModelManager {
         }
 
         public IMultiModel getModel(IHasMultiModel.Layer layer) {
-            return switch (layer) {
-                case SKIN -> skin;
-                case INNER -> inner;
-                case OUTER -> outer;
-            };
+            if (layer == IHasMultiModel.Layer.SKIN) {
+                return skin;
+            } else if (layer == IHasMultiModel.Layer.INNER) {
+                return inner;
+            } else {
+                return outer;
+            }
         }
     }
 }

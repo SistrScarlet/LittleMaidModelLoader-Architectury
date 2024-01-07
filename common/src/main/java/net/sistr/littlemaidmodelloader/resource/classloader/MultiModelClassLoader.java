@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class MultiModelClassLoader extends URLClassLoader {
     private final MultiModelClassTransformer transformer = new MultiModelClassTransformer();
@@ -27,7 +28,7 @@ public class MultiModelClassLoader extends URLClassLoader {
         List<URL> urlList = new ArrayList<>();
         folderPaths.forEach(folderPath -> {
             try {
-                try (var stream = Files.walk(folderPath)) {
+                try (Stream<Path> stream = Files.walk(folderPath)) {
                     stream.filter(resourcePath -> !Files.isDirectory(resourcePath))
                             .map(resourcePath -> {
                                 try {

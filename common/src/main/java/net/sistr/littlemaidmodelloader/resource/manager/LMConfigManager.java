@@ -29,10 +29,10 @@ public class LMConfigManager {
     }
 
     public ConfigHolder getAnyConfig() {
-        var configHolderList = configs.values().stream()
+        List<ConfigHolder> configHolderList = configs.values().stream()
                 .filter(configHolder ->
                         configHolder.getFileName().equalsIgnoreCase("littlemaidmob"))
-                .toList();
+                .collect(Collectors.toList());
         if (configHolderList.isEmpty()) {
             return EMPTY_CONFIG;
         }

@@ -1,5 +1,6 @@
 package net.sistr.littlemaidmodelloader.maidmodel;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -444,39 +445,35 @@ public class ModelLittleMaid_Beverly7 extends ModelLittleMaidBase {
         }
 
         if (isRiding) {
-			// �w�����Ă���
+            // �w�����Ă���
             //現バージョン向けに改変 sistr
-            var ent = (LivingEntity)ModelCapsHelper.getCapsValue(pEntityCaps, caps_Entity);
-            var ridingEntity = ent.getVehicle();
-            if(ridingEntity instanceof PlayerEntity || ridingEntity instanceof IMultiModel)
-			{
-				bipedRightArm.rotateAngleX -= 1.3F;
-				bipedLeftArm.rotateAngleX -= 1.3F;
-				upperRightLeg.rotateAngleX -= 1.1F;
-				upperLeftLeg.rotateAngleX -= 1.1F;
-				bipedRightLeg.rotateAngleX += 0.9F;
-				bipedLeftLeg.rotateAngleX += 0.9F;
-				upperRightLeg.rotateAngleY += 0.3F;
-				upperLeftLeg.rotateAngleY -= 0.3F;
-				mainFrame.rotationPointY += 12F;
-				mainFrame.rotationPointZ += 1F;
-			}
-			else if(ridingEntity instanceof AnimalEntity)
-			{
-				bipedRightArm.rotateAngleX -= 1.3F;
-				bipedLeftArm.rotateAngleX -= 1.3F;
-				upperRightLeg.rotateAngleX -= 1.0F;
-				upperLeftLeg.rotateAngleX -= 1.0F;
-				bipedRightLeg.rotateAngleX += 1.0F;
-				bipedLeftLeg.rotateAngleX += 1.0F;
-				upperRightLeg.rotateAngleY += 0.3F;
-				upperLeftLeg.rotateAngleY -= 0.3F;
-				mainFrame.rotationPointY += 4F;
-				mainFrame.rotationPointZ += 1F;
-			}
-			// ��蕨�ɏ���Ă���
-			else
-            {
+            LivingEntity ent = (LivingEntity) ModelCapsHelper.getCapsValue(pEntityCaps, caps_Entity);
+            Entity ridingEntity = ent.getVehicle();
+            if (ridingEntity instanceof PlayerEntity || ridingEntity instanceof IMultiModel) {
+                bipedRightArm.rotateAngleX -= 1.3F;
+                bipedLeftArm.rotateAngleX -= 1.3F;
+                upperRightLeg.rotateAngleX -= 1.1F;
+                upperLeftLeg.rotateAngleX -= 1.1F;
+                bipedRightLeg.rotateAngleX += 0.9F;
+                bipedLeftLeg.rotateAngleX += 0.9F;
+                upperRightLeg.rotateAngleY += 0.3F;
+                upperLeftLeg.rotateAngleY -= 0.3F;
+                mainFrame.rotationPointY += 12F;
+                mainFrame.rotationPointZ += 1F;
+            } else if (ridingEntity instanceof AnimalEntity) {
+                bipedRightArm.rotateAngleX -= 1.3F;
+                bipedLeftArm.rotateAngleX -= 1.3F;
+                upperRightLeg.rotateAngleX -= 1.0F;
+                upperLeftLeg.rotateAngleX -= 1.0F;
+                bipedRightLeg.rotateAngleX += 1.0F;
+                bipedLeftLeg.rotateAngleX += 1.0F;
+                upperRightLeg.rotateAngleY += 0.3F;
+                upperLeftLeg.rotateAngleY -= 0.3F;
+                mainFrame.rotationPointY += 4F;
+                mainFrame.rotationPointZ += 1F;
+            }
+            // ��蕨�ɏ���Ă���
+            else {
                 upperRightArm.rotateAngleX -= 0.1F;
                 upperLeftArm.rotateAngleX -= 0.1F;
                 upperRightLeg.rotateAngleX -= 1.3F;

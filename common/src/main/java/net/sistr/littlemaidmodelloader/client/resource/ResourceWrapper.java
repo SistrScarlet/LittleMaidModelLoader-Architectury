@@ -98,7 +98,16 @@ public class ResourceWrapper implements ResourcePack {
         PATHS.put(resourcePath, new Resource(path, homePath, isArchive));
     }
 
-    private record Resource(String path, Path homePath, boolean isArchive) {
+    protected static class Resource {
+        public final String path;
+        public final Path homePath;
+        public final boolean isArchive;
+
+        public Resource(String path, Path homePath, boolean isArchive) {
+            this.path = path;
+            this.homePath = homePath;
+            this.isArchive = isArchive;
+        }
 
         public InputStream getInputStream() throws IOException {
             if (isArchive) {

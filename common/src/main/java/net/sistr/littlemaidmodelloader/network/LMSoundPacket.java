@@ -13,6 +13,8 @@ import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.util.PlayerList;
 
+import java.util.stream.Collectors;
+
 public class LMSoundPacket {
     public static final Identifier ID =
             new Identifier(LMMLMod.MODID, "lm_sound");
@@ -22,7 +24,7 @@ public class LMSoundPacket {
         NetworkManager.sendToPlayers(PlayerList.tracking(entity)
                 .stream()
                 .filter(p -> p.squaredDistanceTo(entity) < 16 * 16)
-                .toList(), ID, passedData);
+                .collect(Collectors.toList()), ID, passedData);
     }
 
     public static PacketByteBuf createS2CPacket(Entity entity, String soundName) {

@@ -2,6 +2,7 @@ package net.sistr.littlemaidmodelloader.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
@@ -39,7 +40,7 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        var fontRenderer = MinecraftClient.getInstance().textRenderer;
+        TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
         ModelSelectScreen.renderColor(matrices,
                 this.x,
                 this.y,
