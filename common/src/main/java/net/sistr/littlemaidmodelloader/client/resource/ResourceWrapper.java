@@ -60,7 +60,7 @@ public class ResourceWrapper implements ResourcePack {
     @Override
     public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
         return PATHS.keySet().stream()
-                .filter(location -> location.getNamespace().startsWith(namespace))
+                .filter(location -> location.getNamespace().equals(namespace))
                 .filter(location -> location.getPath().startsWith(prefix))
                 .filter(pathFilter)
                 .collect(Collectors.toList());
