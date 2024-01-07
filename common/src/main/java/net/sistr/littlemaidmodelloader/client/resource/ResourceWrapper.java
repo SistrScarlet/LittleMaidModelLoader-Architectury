@@ -11,6 +11,7 @@ import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.sistr.littlemaidmodelloader.resource.util.ResourceHelper;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -58,9 +60,12 @@ public class ResourceWrapper implements ResourcePack {
     //そうでないと画像リソースがフォントに飛んでってクソ時間を食う
     @Override
     public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
-        return PATHS.keySet().stream()
-                .filter(location -> location.getPath().startsWith(namespace))
-                .filter(t -> pathFilter.test(t.getPath()))
+        return PATHS.entrySet().stream()
+                .filter(entry -> entry.getKey().getNamespace().equals(namespace))
+                .filter(entry -> entry.getKey().getPath().startsWith(prefix))
+                .filter(entry -> pathFilter.test(
+                        ResourceHelper.getFileName(entry.getValue().path, entry.getValue().isArchive)))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
