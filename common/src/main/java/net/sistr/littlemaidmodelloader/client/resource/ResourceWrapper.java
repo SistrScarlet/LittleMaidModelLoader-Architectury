@@ -62,7 +62,7 @@ public class ResourceWrapper implements ResourcePack {
     @Override
     public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
         return PATHS.entrySet().stream()
-                .filter(entry -> entry.getKey().getNamespace().startsWith(namespace))
+                .filter(entry -> entry.getKey().getNamespace().equals(namespace))
                 .filter(entry -> entry.getKey().getPath().startsWith(prefix))
                 .filter(entry -> pathFilter.test(
                         ResourceHelper.getFileName(entry.getValue().path(), entry.getValue().isArchive())))
