@@ -1,0 +1,41 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
+
+[[mods]]
+modId = "littlemaidmodelloader"
+version = "${version}"
+displayName = "LittleMaidModelLoader"
+authors = "Me!"
+description = '''
+This is an example description! Tell everyone what your mod is about!
+'''
+#logoFile = ""
+
+[[dependencies.littlemaidmodelloader]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.littlemaidmodelloader]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.littlemaidmodelloader]]
+modId = "architectury"
+type = "required"
+versionRange = "[13.0.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mixins]]
+config = "littlemaidmodelloader.mixins.json"
+
+[[mixins]]
+config = "littlemaidmodelloader-common.mixins.json"

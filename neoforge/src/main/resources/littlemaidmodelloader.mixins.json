@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.sistr.mixin",
+  "package": "net.sistr.littlemaidmodelloader.mixin.neoforge",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
