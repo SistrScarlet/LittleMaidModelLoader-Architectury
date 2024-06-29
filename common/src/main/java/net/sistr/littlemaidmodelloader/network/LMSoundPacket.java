@@ -8,6 +8,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
@@ -15,18 +17,18 @@ import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class LMSoundPacket {
     public static final Identifier ID =
-            new Identifier(LMMLMod.MODID, "lm_sound");
+            Identifier.of(LMMLMod.MODID, "lm_sound");
 
-    public static void sendS2CPacket(Entity entity, String soundName) {
-        PacketByteBuf passedData = createS2CPacket(entity, soundName);
+    public static void sendS2CPacket(Entity entity, String soundName, DynamicRegistryManager access) {
+        var passedData = createS2CPacket(entity, soundName, access);
         NetworkManager.sendToPlayers(PlayerList.tracking(entity)
                 .stream()
                 .filter(p -> p.squaredDistanceTo(entity) < 16 * 16)
                 .toList(), ID, passedData);
     }
 
-    public static PacketByteBuf createS2CPacket(Entity entity, String soundName) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
+    public static RegistryByteBuf createS2CPacket(Entity entity, String soundName, DynamicRegistryManager access) {
+        var passedData = new RegistryByteBuf(Unpooled.buffer(), access);
         passedData.writeVarInt(entity.getId());
         passedData.writeString(soundName);
         return passedData;

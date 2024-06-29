@@ -8,6 +8,7 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMColor;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 
 @Environment(EnvType.CLIENT)
@@ -32,12 +33,12 @@ public class MultiModel<T extends LivingEntity & IHasMultiModel> extends EntityM
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
+    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
         if (this.entity == null) {
             return;
         }
         this.entity.getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD)
-                .ifPresent(model -> model.render(new MMRenderContext(matrices, vertices, light, overlay, red, green, blue, alpha)));
+                .ifPresent(model -> model.render(new MMRenderContext(matrices, vertices, light, overlay, MMColor.fromARGB(color))));
         this.entity = null;
     }
 

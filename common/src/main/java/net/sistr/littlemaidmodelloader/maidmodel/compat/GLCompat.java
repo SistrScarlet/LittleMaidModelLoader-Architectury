@@ -5,6 +5,7 @@ import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelBoxBase;
 import net.sistr.littlemaidmodelloader.maidmodel.ModelRenderer;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMColor;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -77,9 +78,11 @@ public final class GLCompat {
     }
 
     public static void glColor3f(float red, float green, float blue) {
-        ModelRenderer.red = red;
-        ModelRenderer.green = green;
-        ModelRenderer.blue = blue;
+        if (ModelRenderer.color != null) {
+            ModelRenderer.color = MMColor.from4F(red, green, blue, ModelRenderer.color.alpha());
+        } else {
+            ModelRenderer.color = MMColor.from4F(red, green, blue, 1f);
+        }
     }
 
     public static void glMatrixMode(int mode) {
@@ -120,7 +123,8 @@ public final class GLCompat {
 
     public static void glCallList(int i) {
         for (ModelBoxBase boxBase : modelRenderer.cubeList) {
-            boxBase.render(ModelRenderer.matrixStack, ModelRenderer.buffer, ModelRenderer.light, ModelRenderer.overlay, ModelRenderer.red, ModelRenderer.green, ModelRenderer.blue, ModelRenderer.alpha, modelRenderer.scale);
+            boxBase.render(ModelRenderer.matrixStack, ModelRenderer.buffer, ModelRenderer.light, ModelRenderer.overlay,
+                    ModelRenderer.color, modelRenderer.scale);
         }
     }
 
@@ -174,7 +178,8 @@ public final class GLCompat {
             if (vertexPrev2 != null) {
                 ModelBoxBase.TexturedQuad quad = new ModelBoxBase.TexturedQuad(
                         new ModelBoxBase.PositionTextureVertex[]{vertexPrev2, vertexPrev1, vertexCurrent, vertexCurrent});
-                quad.draw(ModelRenderer.matrixStack, ModelRenderer.buffer, ModelRenderer.light, ModelRenderer.overlay, ModelRenderer.red, ModelRenderer.green, ModelRenderer.blue, ModelRenderer.alpha, 1F);
+                quad.draw(ModelRenderer.matrixStack, ModelRenderer.buffer,
+                        ModelRenderer.light, ModelRenderer.overlay, ModelRenderer.color, 1F);
             }
         }
     }

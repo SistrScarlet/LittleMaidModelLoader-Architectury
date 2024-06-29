@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Screen {
     public static final Identifier MODEL_SELECT_GUI_TEXTURE =
-            new Identifier(LMMLMod.MODID, "textures/gui/model_select.png");
+            Identifier.of(LMMLMod.MODID, "textures/gui/model_select.png");
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 196;
     private final T entity;
@@ -76,7 +76,7 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
     public void close() {
         super.close();
         soundPackListGUI.getSelectElement()
-                .ifPresent(gui -> SyncSoundPackPacket.sendC2SPacket(this.entity, gui.getConfigHolder()));
+                .ifPresent(gui -> SyncSoundPackPacket.sendC2SPacket(entity, gui.getConfigHolder(), entity.getRegistryManager()));
     }
 
     public static class SoundPackGUI extends GUIElement implements ListGUIElement {

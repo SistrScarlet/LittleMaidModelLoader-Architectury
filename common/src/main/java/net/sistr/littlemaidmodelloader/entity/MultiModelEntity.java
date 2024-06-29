@@ -20,10 +20,12 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
 import net.sistr.littlemaidmodelloader.client.screen.SoundPackSelectScreen;
@@ -40,7 +42,6 @@ import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidmodelloader.resource.util.TextureColors;
-import org.joml.Vector3f;
 
 import java.util.Optional;
 
@@ -126,56 +127,37 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
                         new ModelSelectScreen<>(Text.of(""), this.getWorld(), this));
     }
 
-    //このままだとEntityDimensionsが作っては捨てられてを繰り返すのでパフォーマンスはよろしくない
+    //todo Dimensions周り諸々対応すること
     @Override
-    public EntityDimensions getDimensions(EntityPose pose) {
-        EntityDimensions dimensions;
+    protected EntityDimensions getBaseDimensions(EntityPose pose) {
         IMultiModel model = getModel(Layer.SKIN, Part.HEAD)
                 .orElse(LMModelManager.INSTANCE.getDefaultModel());
         IModelCaps caps = getCaps();
         MMPose mmPose = MMPose.convertPose(pose);
         float height = model.getHeight(caps, mmPose);
         float width = model.getWidth(caps, mmPose);
-        dimensions = EntityDimensions.changing(width, height);
-        return dimensions.scaled(getScaleFactor());
-    }
 
-    //視点調整
-    @Override
-    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-        //初期化前に呼ばれることがあるためチェック
-        if (multiModel == null) return dimensions.height * 0.85F;
-        return getModel(Layer.SKIN, Part.HEAD)
-                .orElse(LMModelManager.INSTANCE.getDefaultModel())
-                .getEyeHeight(getCaps(), MMPose.convertPose(pose));
+        return EntityDimensions.changing(width, height);
     }
 
     //メイドさんに乗る場合の座る位置
     //todo 肩車のようにする？
     //todo モデルから着席位置を取得する
     @Override
-    protected Vector3f getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
+    protected Vec3d getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
         var model = getModel(Layer.SKIN, Part.HEAD)
                 .orElse(LMModelManager.INSTANCE.getDefaultModel());
         var caps = getCaps();
         var height = model.getHeight(caps, MMPose.STANDING);
         //当たり判定の高さより見た目が少し高いので、決め打ちで1ドット分高くしている
         //見た目と判定のズレはモデルによってまちまちなので、モデルによっては大きくズレるかもしれない
-        return new Vector3f(0.0f, height + 1 / 16f * scaleFactor, 0.0f);
-    }
-
-    //メイドさんが騎乗時のオフセット
-    @Override
-    protected float getUnscaledRidingOffset(Entity vehicle) {
-        var model = getModel(Layer.SKIN, Part.HEAD)
-                .orElse(LMModelManager.INSTANCE.getDefaultModel());
-        return -model.getMountedYOffset(getCaps());
+        return new Vec3d(0.0f, height + 1 / 16f * scaleFactor, 0.0f);
     }
 
     //防具の更新
     @Override
     public void equipStack(EquipmentSlot slot, ItemStack stack) {
-        if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+        if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
             multiModel.updateArmor();
         }
         super.equipStack(slot, stack);
@@ -183,7 +165,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
 
     @Environment(EnvType.CLIENT)
     @Override
-    public Optional<Identifier> getTexture(IHasMultiModel.Layer layer, IHasMultiModel.Part part, boolean isLight) {
+    public Optional<Identifier> getTexture(Layer layer, Part part, boolean isLight) {
         return multiModel.getTexture(layer, part, isLight);
     }
 
@@ -196,7 +178,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public TextureHolder getTextureHolder(IHasMultiModel.Layer layer, IHasMultiModel.Part part) {
+    public TextureHolder getTextureHolder(Layer layer, Part part) {
         return multiModel.getTextureHolder(layer, part);
     }
 
@@ -241,7 +223,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public boolean isAllowChangeTexture(Entity changer, TextureHolder textureHolder, IHasMultiModel.Layer layer, IHasMultiModel.Part part) {
+    public boolean isAllowChangeTexture(Entity changer, TextureHolder textureHolder, Layer layer, Part part) {
         return true;
     }
 
@@ -261,7 +243,7 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     }
 
     @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
-        return NetworkManager.createAddEntityPacket(this);
+    public Packet<ClientPlayPacketListener> createSpawnPacket(EntityTrackerEntry entityTrackerEntry) {
+        return NetworkManager.createAddEntityPacket(this, entityTrackerEntry);
     }
 }

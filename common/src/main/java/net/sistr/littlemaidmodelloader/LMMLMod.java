@@ -9,11 +9,11 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.client.resource.loader.LMSoundLoader;
-import net.sistr.littlemaidmodelloader.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.client.resource.manager.LMSoundManager;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
@@ -23,6 +23,7 @@ import net.sistr.littlemaidmodelloader.resource.classloader.MultiModelClassLoade
 import net.sistr.littlemaidmodelloader.resource.loader.LMConfigLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMFileLoader;
 import net.sistr.littlemaidmodelloader.resource.loader.LMMultiModelLoader;
+import net.sistr.littlemaidmodelloader.resource.loader.LMTextureLoader;
 import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
@@ -56,6 +57,10 @@ public class LMMLMod {
                 Collection<Identifier> resourceLocations = cs.getResourceManager()
                         .findResources("textures/entity/littlemaid", s -> true)
                         .keySet();
+                //何らかの不具合でリソースが読めなかった場合、ゲームをクラッシュさせる
+                if (resourceLocations.isEmpty()) {
+                    throw new RuntimeException("リソースが読み込めませんでした。Minecraftの再起動をお試しください。");
+                }
                 //テクスチャを読み込む
                 resourceLocations.forEach(resourcePath -> {
                     String path = resourcePath.getPath();

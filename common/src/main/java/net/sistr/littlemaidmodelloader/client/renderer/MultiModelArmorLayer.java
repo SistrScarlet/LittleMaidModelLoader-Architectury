@@ -15,6 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.profiler.Profiler;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMColor;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 
 //todo 重すぎる
@@ -77,12 +78,12 @@ public class MultiModelArmorLayer<T extends LivingEntity & IHasMultiModel, M ext
                 entity.getModel(layer, part).ifPresent(model -> {
                     model.showArmorParts(part.getIndex(), layer.getPartIndex());
                     RenderLayer type = MultiModelRenderLayer.getDefault(resourceLocation);
-                    VertexConsumer builder = ItemRenderer.getArmorGlintConsumer(vertexConsumers, type, false, glint);
+                    VertexConsumer builder = ItemRenderer.getArmorGlintConsumer(vertexConsumers, type, glint);
                     int light0 = isLight ? 0xF00000 : light;
                     model.animateModel(caps, limbAngle, limbDistance, tickDelta);
                     model.setAngles(caps, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
                     model.render(new MMRenderContext(matrices, builder, light0, OverlayTexture.DEFAULT_UV,
-                            1F, 1F, 1F, 1F));
+                            MMColor.from4F(1, 1, 1, 1)));
                 })
         );
     }

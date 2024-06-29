@@ -3,8 +3,6 @@ package net.sistr.littlemaidmodelloader.client.resource;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resource.*;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
@@ -13,40 +11,24 @@ import java.util.function.Consumer;
 //Fabric/Forgeでも似たようなことをやってModのリソースを読み込んでいる
 @Environment(EnvType.CLIENT)
 public class LMPackProvider implements ResourcePackProvider {
-    public static final ResourcePackSource RESOURCE_PACK_SOURCE = new ResourcePackSource() {
-        @Override
-        public Text decorate(Text packName) {
-            return Text.translatable("pack.nameAndSource", packName, Text.translatable("pack.source.littlemaidmodelloader"));
-        }
-
-        @Override
-        public boolean canBeEnabledLater() {
-            return true;
-        }
-    };
 
     @Override
     public void register(Consumer<ResourcePackProfile> profileAdder) {
-        MutableText title = Text.translatable("pack.name.littlemaidmodelloader");
-        //todo なんこれ？
         var profile = ResourcePackProfile.create(
-                "LittleMaid ModelLoader",
-                title,
-                true,
+                ResourceWrapper.INSTANCE.getInfo(),
                 new ResourcePackProfile.PackFactory() {
                     @Override
-                    public ResourcePack open(String name) {
+                    public ResourcePack open(ResourcePackInfo resourcePackInfo) {
                         return ResourceWrapper.INSTANCE;
                     }
 
                     @Override
-                    public ResourcePack openWithOverlays(String name, ResourcePackProfile.Metadata metadata) {
-                        return ResourceWrapper.INSTANCE;
+                    public ResourcePack openWithOverlays(ResourcePackInfo resourcePackInfo, ResourcePackProfile.Metadata metadata) {
+                        return open(resourcePackInfo);
                     }
                 },
                 ResourceType.CLIENT_RESOURCES,
-                ResourcePackProfile.InsertionPosition.TOP,
-                RESOURCE_PACK_SOURCE);
+                new ResourcePackPosition(true, ResourcePackProfile.InsertionPosition.TOP, false));
         profileAdder.accept(profile);
     }
 }

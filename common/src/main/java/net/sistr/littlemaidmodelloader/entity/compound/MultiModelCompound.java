@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 public class MultiModelCompound implements IHasMultiModel {
 
-    private final Entity entity;
+    private final LivingEntity entity;
     private final IModelCaps caps;
 
     private final TextureHolder defaultMainPackage;
@@ -80,7 +80,7 @@ public class MultiModelCompound implements IHasMultiModel {
     private String getName(Item item) {
         //クライアント限定
         if (entity.getWorld().isClient && item instanceof ArmorItem) {
-            return ((ArmorItem) item).getMaterial().getName().toLowerCase();
+            return ((ArmorItem) item).getMaterial().getIdAsString();
         }
         Identifier location = Registries.ITEM.getId(item);
         return location.toString();

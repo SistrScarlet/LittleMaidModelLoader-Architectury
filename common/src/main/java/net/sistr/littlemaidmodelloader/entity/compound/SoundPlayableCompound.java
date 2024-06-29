@@ -45,7 +45,7 @@ public class SoundPlayableCompound implements SoundPlayable {
                             LMSoundManager.INSTANCE.play(soundFileName, entity.getSoundCategory(),
                                     entity.getX(), entity.getEyeY(), entity.getZ()));
         } else {
-            LMSoundPacket.sendS2CPacket(entity, soundName);
+            LMSoundPacket.sendS2CPacket(entity, soundName, entity.getRegistryManager());
         }
     }
 

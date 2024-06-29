@@ -78,7 +78,7 @@ public class MultiModelClassLoader extends URLClassLoader {
     //todo 今も必要？
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (Platform.isForge()) {
+        if (Platform.isMinecraftForge()) {
             try {
                 return super.loadClass(name, resolve);
             } catch (IndexOutOfBoundsException e) {//ForgeのModuleClassLoaderがsubstringで落ちた場合

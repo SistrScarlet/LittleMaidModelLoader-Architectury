@@ -14,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.profiler.Profiler;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMColor;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 
 //スキンの発光レイヤー、防具の発光レイヤーは防具でやってる
@@ -45,7 +46,7 @@ public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel, M ext
                     model.animateModel(caps, limbAngle, limbDistance, tickDelta);
                     model.setAngles(caps, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
                     model.render(new MMRenderContext(matrices, builder, 0xF00000, OverlayTexture.DEFAULT_UV,
-                            1F, 1F, 1F, 1F));
+                            MMColor.from4F(1, 1, 1, 1)));
                 }));
     }
 

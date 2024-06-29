@@ -8,6 +8,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.LMMLMod;
@@ -21,16 +23,17 @@ import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class SyncMultiModelPacket {
     public static final Identifier ID =
-            new Identifier(LMMLMod.MODID, "sync_multi_model");
+            Identifier.of(LMMLMod.MODID, "sync_multi_model");
 
     @Environment(EnvType.CLIENT)
-    public static void sendC2SPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = createC2SPacket(entity, hasMultiModel);
+    public static void sendC2SPacket(Entity entity, IHasMultiModel hasMultiModel, DynamicRegistryManager access) {
+        var passedData = createC2SPacket(entity, hasMultiModel, access);
         NetworkManager.sendToServer(ID, passedData);
     }
 
-    public static PacketByteBuf createC2SPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
+    public static RegistryByteBuf createC2SPacket(Entity entity, IHasMultiModel hasMultiModel,
+                                                  DynamicRegistryManager access) {
+        var passedData = new RegistryByteBuf(Unpooled.buffer(), access);
         passedData.writeInt(entity.getId());
         passedData.writeString(hasMultiModel.getTextureHolder(Layer.SKIN, Part.HEAD)
                 .getTextureName());
@@ -42,13 +45,14 @@ public class SyncMultiModelPacket {
         return passedData;
     }
 
-    public static void sendS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = createS2CPacket(entity, hasMultiModel);
+    public static void sendS2CPacket(Entity entity, IHasMultiModel hasMultiModel, DynamicRegistryManager access) {
+        var passedData = createS2CPacket(entity, hasMultiModel, access);
         NetworkManager.sendToPlayers(PlayerList.tracking(entity), ID, passedData);
     }
 
-    public static PacketByteBuf createS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
+    public static RegistryByteBuf createS2CPacket(Entity entity, IHasMultiModel hasMultiModel,
+                                                  DynamicRegistryManager access) {
+        var passedData = new RegistryByteBuf(Unpooled.buffer(), access);
         passedData.writeInt(entity.getId());
         passedData.writeString(hasMultiModel.getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
         for (Part part : Part.values()) {
@@ -106,12 +110,14 @@ public class SyncMultiModelPacket {
         TextureColors color = buf.readEnumConstant(TextureColors.class);
         boolean isContract = buf.readBoolean();
         context.queue(() ->
-                applyMultiModelServer(context.getPlayer(), entityId, isContract, color, textureName, armorTextureName));
+                applyMultiModelServer(context.getPlayer(), entityId, isContract, color, textureName, armorTextureName,
+                        context.registryAccess()));
     }
 
     //クライアントに倣って分離
     public static void applyMultiModelServer(PlayerEntity player, int entityId, boolean isContract, TextureColors color,
-                                             String textureName, ArmorSets<String> armorTextureName) {
+                                             String textureName, ArmorSets<String> armorTextureName,
+                                             DynamicRegistryManager access) {
         Entity entity = player.getWorld().getEntityById(entityId);
         if (!(entity instanceof IHasMultiModel multiModel)) return;
         multiModel.setContractMM(isContract);
@@ -127,7 +133,7 @@ public class SyncMultiModelPacket {
                             multiModel.isAllowChangeTexture(entity, textureHolder, Layer.INNER, part))
                     .ifPresent(textureHolder -> multiModel.setTextureHolder(textureHolder, Layer.INNER, part));
         }
-        sendS2CPacket(entity, multiModel);
+        sendS2CPacket(entity, multiModel, access);
     }
 
 }

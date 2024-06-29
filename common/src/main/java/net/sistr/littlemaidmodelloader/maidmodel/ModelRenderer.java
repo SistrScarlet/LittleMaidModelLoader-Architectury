@@ -5,6 +5,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RotationAxis;
 import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMColor;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMVertexConsumer;
 import org.lwjgl.BufferUtils;
@@ -28,21 +29,15 @@ public class ModelRenderer {
     public static VertexConsumer buffer;
     public static int light;
     public static int overlay;
-    public static float red;
-    public static float green;
-    public static float blue;
-    public static float alpha;
+    public static MMColor color;
 
     public static void setParam(MMMatrixStack matrixStack, MMVertexConsumer buffer, int light, int overlay,
-                                float red, float green, float blue, float alpha) {
+                                MMColor color) {
         ModelRenderer.matrixStack = matrixStack.getVanillaMatrixStack();
         ModelRenderer.buffer = buffer.getVanillaVertexConsumer();
         ModelRenderer.light = light;
         ModelRenderer.overlay = overlay;
-        ModelRenderer.red = red;
-        ModelRenderer.green = green;
-        ModelRenderer.blue = blue;
-        ModelRenderer.alpha = alpha;
+        ModelRenderer.color = color;
     }
 
     //15~追加ココマデ

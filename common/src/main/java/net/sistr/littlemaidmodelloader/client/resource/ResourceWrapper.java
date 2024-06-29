@@ -4,14 +4,14 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.MinecraftVersion;
-import net.minecraft.resource.InputSupplier;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.SharedConstants;
+import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.PackResourceMetadata;
+import net.minecraft.resource.metadata.ResourceMetadataMap;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.sistr.littlemaidmodelloader.LMMLMod;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -30,11 +30,32 @@ import java.util.zip.ZipFile;
 @Environment(EnvType.CLIENT)
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
-    public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaid ModelLoader!!!"),
-                    MinecraftVersion.CURRENT.getResourceVersion(ResourceType.CLIENT_RESOURCES),
+    private static final PackResourceMetadata METADATA =
+            new PackResourceMetadata(Text.translatable("pack.description.littlemaimodelloader"),
+                    SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES),
                     Optional.empty());
     private static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
+    private static final ResourcePackSource RESOURCE_PACK_SOURCE = new ResourcePackSource() {
+        @Override
+        public Text decorate(Text packName) {
+            return Text.translatable(
+                    "pack.nameAndSource",
+                    packName,
+                    Text.translatable("pack.source." + LMMLMod.MODID)
+            );
+        }
+
+        @Override
+        public boolean canBeEnabledLater() {
+            return true;
+        }
+    };
+    private static final ResourcePackInfo PACK_INFO = new ResourcePackInfo(
+            LMMLMod.MODID,
+            Text.translatable("pack.name." + LMMLMod.MODID),
+            RESOURCE_PACK_SOURCE,
+            Optional.empty()
+    );
 
     @Nullable
     @Override
@@ -61,29 +82,25 @@ public class ResourceWrapper implements ResourcePack {
                 .forEach(e -> consumer.accept(e.getKey(), () -> e.getValue().getInputStream()));
     }
 
-    @Override
-    public boolean isAlwaysStable() {
-        return true;
-    }
-
     //初期化時に読み込まれる
     @Override
     public Set<String> getNamespaces(ResourceType type) {
-        return Sets.newHashSet("littlemaidmodelloader");
+        return Sets.newHashSet(LMMLMod.MODID);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-        if (metaReader.getKey().equals("pack")) {
-            return (T) PACK_INFO;
-        }
-        return null;
+        return ResourceMetadataMap.of(PackResourceMetadata.SERIALIZER, METADATA).get(metaReader);
     }
 
     @Override
-    public String getName() {
-        return "LMModelLoader";
+    public ResourcePackInfo getInfo() {
+        return PACK_INFO;
+    }
+
+    @Override
+    public String getId() {
+        return LMMLMod.MODID;
     }
 
     @Override

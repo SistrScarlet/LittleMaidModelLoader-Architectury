@@ -25,7 +25,7 @@ public class LMSoundManager {
                 (packName + "." + parentName + "." + fileName).toLowerCase(),
                 k -> new WeightedSoundSet(location, packName + "." + fileName));
 
-        soundSet.add(new Sound(location.toString(), rand -> 1F, rand -> 1F, 1, Sound.RegistrationType.FILE,
+        soundSet.add(new Sound(location, rand -> 1F, rand -> 1F, 1, Sound.RegistrationType.FILE,
                 false, false, 16) {
             @Override
             public Identifier getLocation() {
@@ -37,7 +37,7 @@ public class LMSoundManager {
     public Optional<WeightedSoundSet> getSound(String soundFileLocation) {
         if (soundFileLocation.contains(":")) {
             return Optional.ofNullable(MinecraftClient.getInstance().getSoundManager()
-                    .get(new Identifier(soundFileLocation.toLowerCase())));
+                    .get(Identifier.of(soundFileLocation.toLowerCase())));
         }
 
         WeightedSoundSet soundSet = soundPaths.get(soundFileLocation);

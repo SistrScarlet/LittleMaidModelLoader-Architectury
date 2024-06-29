@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.sistr.littlemaidmodelloader.maidmodel.compat.GLCompat;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMColor;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -32,10 +33,10 @@ public abstract class ModelBoxBase {
     }
 
     public final void render(MatrixStack matrices, VertexConsumer buffer,
-                             int light, int overlay, float red, float green, float blue, float alpha,
+                             int light, int overlay, MMColor color,
                              float scale) {
         for (TexturedQuad texturedQuad : quadList) {
-            texturedQuad.draw(matrices, buffer, light, overlay, red, green, blue, alpha, scale);
+            texturedQuad.draw(matrices, buffer, light, overlay, color, scale);
         }
     }
 
@@ -108,7 +109,7 @@ public abstract class ModelBoxBase {
         }
 
         public final void draw(MatrixStack matrices, VertexConsumer buffer,
-                               int light, int overlay, float red, float green, float blue, float alpha, float scale) {
+                               int light, int overlay, MMColor color, float scale) {
             MatrixStack.Entry entry = matrices.peek();
             Matrix4f matrix4f = entry.getPositionMatrix();
             Matrix3f matrix3f = entry.getNormalMatrix();
@@ -125,7 +126,7 @@ public abstract class ModelBoxBase {
             }*/
 
             for (int i = 0; i < 4; ++i) {
-                ModelBoxBase.PositionTextureVertex vertex = this.vertexPositions[i];
+                PositionTextureVertex vertex = this.vertexPositions[i];
                 float x = vertex.vector3D.x() * scale;
                 float y = vertex.vector3D.y() * scale;
                 float z = vertex.vector3D.z() * scale;
@@ -140,7 +141,7 @@ public abstract class ModelBoxBase {
                 }
 
                 buffer.vertex(pos.x(), pos.y(), pos.z(),
-                        red, green, blue, alpha,
+                        color.argb(),
                         uv.x(), uv.y(),
                         overlay, light, normalX, normalY, normalZ);
             }

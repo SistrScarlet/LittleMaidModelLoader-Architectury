@@ -44,7 +44,7 @@ public class EntityCaps implements IModelCaps {
         register("health", caps_health, (entity, arg) -> (int) entity.getHealth());
         register("ticksExisted", caps_ticksExisted, (entity, arg) -> entity.age);
         register("currentEquippedItem", caps_currentEquippedItem, (entity, arg) -> {
-            List<ItemStack> items = Lists.newArrayList(entity.getItemsEquipped());
+            List<ItemStack> items = Lists.newArrayList(entity.getEquippedItems());
             ItemStack item = items.get((Integer) arg[0]);
             if (item.isEmpty()) item = null;
             return item;
@@ -127,7 +127,8 @@ public class EntityCaps implements IModelCaps {
         register("prevRotationYaw", caps_prevRotationYaw, (entity, arg) -> entity.prevYaw);
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
-        register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> entity.getRidingOffset(entity));
+        //todo
+//        register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> entity.getRidingOffset(entity));
         register("isRidingPlayer", caps_isRidingPlayer, (entity, arg) -> entity.getVehicle() instanceof PlayerEntity);
         register("WorldTotalTime", caps_WorldTotalTime, (entity, arg) -> entity.getEntityWorld().getTime());
         register("WorldTime", caps_WorldTime, (entity, arg) -> entity.getEntityWorld().getTimeOfDay());
@@ -136,7 +137,8 @@ public class EntityCaps implements IModelCaps {
         register("height", caps_height, (entity, arg) -> entity.getHeight());
         register("width", caps_width, (entity, arg) -> entity.getWidth());
         register("YOffset", caps_YOffset, (entity, arg) -> entity.getPassengerRidingPos(entity).getY());
-        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> entity.getRidingOffset(entity));
+        //todo
+//        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> entity.getRidingOffset(entity));
         register("dominantArm", caps_dominantArm, (entity, arg) -> entity.getMainArm() == Arm.LEFT ? 0 : 1);
         register("PosBlockID", caps_PosBlockID, (entity, arg) ->
                 entity.getEntityWorld().getBlockState(new BlockPos(
@@ -167,7 +169,7 @@ public class EntityCaps implements IModelCaps {
                         MathHelper.floor(entity.getY() + (Double) arg[1]),
                         MathHelper.floor(entity.getZ() + (Double) arg[2]))));
         register("isSwimming", caps_isSwimming, (entity, arg) -> entity.isSwimming());
-        register("roll", caps_roll, (entity, arg) -> entity.getRoll());
+        register("roll", caps_roll, (entity, arg) -> entity.getFallFlyingTicks());
         register("leaningPitch", caps_leaningPitch, (entity, arg) -> entity.getLeaningPitch(1F));
         register("lastLeaningPitch", caps_lastLeaningPitch, (entity, arg) -> entity.getLeaningPitch(0F));
         register("isUsingRiptide", caps_isUsingRiptide, (entity, arg) -> entity.isUsingRiptide());

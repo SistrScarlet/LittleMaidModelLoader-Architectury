@@ -8,6 +8,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.LMMLMod;
@@ -18,28 +20,32 @@ import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class SyncSoundPackPacket {
     public static final Identifier ID =
-            new Identifier(LMMLMod.MODID, "sync_sound_pack");
+            Identifier.of(LMMLMod.MODID, "sync_sound_pack");
 
     @Environment(EnvType.CLIENT)
-    public static void sendC2SPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = createC2SPacket(entity, configHolder);
+    public static void sendC2SPacket(Entity entity, ConfigHolder configHolder,
+                                     DynamicRegistryManager access) {
+        var passedData = createC2SPacket(entity, configHolder, access);
         NetworkManager.sendToServer(ID, passedData);
     }
 
-    public static PacketByteBuf createC2SPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
+    public static RegistryByteBuf createC2SPacket(Entity entity, ConfigHolder configHolder,
+                                                  DynamicRegistryManager access) {
+        var passedData = new RegistryByteBuf(Unpooled.buffer(), access);
         passedData.writeInt(entity.getId());
         passedData.writeString(configHolder.getName());
         return passedData;
     }
 
-    public static void sendS2CPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = createS2CPacket(entity, configHolder);
+    public static void sendS2CPacket(Entity entity, ConfigHolder configHolder,
+                                     DynamicRegistryManager access) {
+        var passedData = createS2CPacket(entity, configHolder, access);
         NetworkManager.sendToPlayers(PlayerList.tracking(entity), ID, passedData);
     }
 
-    public static PacketByteBuf createS2CPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
+    public static RegistryByteBuf createS2CPacket(Entity entity, ConfigHolder configHolder,
+                                                  DynamicRegistryManager access) {
+        var passedData = new RegistryByteBuf(Unpooled.buffer(), access);
         passedData.writeInt(entity.getId());
         passedData.writeString(configHolder.getName());
         return passedData;
@@ -68,16 +74,17 @@ public class SyncSoundPackPacket {
         int entityId = buf.readInt();
         String soundPackName = buf.readString();
         context.queue(() ->
-                applyMultiModelServer(context.getPlayer(), entityId, soundPackName));
+                applyMultiModelServer(context.getPlayer(), entityId, soundPackName, context.registryAccess()));
     }
 
     //クライアントに倣って分離
-    public static void applyMultiModelServer(PlayerEntity player, int entityId, String soundPackName) {
+    public static void applyMultiModelServer(PlayerEntity player, int entityId, String soundPackName,
+                                             DynamicRegistryManager access) {
         Entity entity = player.getWorld().getEntityById(entityId);
         if (!(entity instanceof SoundPlayable soundPlayable)) return;
         ConfigHolder configHolder = LMConfigManager.INSTANCE.getConfig(soundPackName).orElse(LMConfigManager.EMPTY_CONFIG);
         soundPlayable.setConfigHolder(configHolder);
-        sendS2CPacket(entity, configHolder);
+        sendS2CPacket(entity, configHolder, access);
     }
 
 }

@@ -23,7 +23,7 @@ import static net.sistr.littlemaidmodelloader.maidmodel.IModelCaps.*;
 //別な奴を継承しながら使いたいなら移譲でどうにかするか自作してね
 @Environment(EnvType.CLIENT)
 public class MultiModelRenderer<T extends LivingEntity & IHasMultiModel> extends LivingEntityRenderer<T, MultiModel<T>> {
-    private static final Identifier NULL_TEXTURE = new Identifier(LMMLMod.MODID, "null");
+    private static final Identifier NULL_TEXTURE = Identifier.of(LMMLMod.MODID, "null");
 
     public MultiModelRenderer(EntityRendererFactory.Context ctx) {
         super(ctx, new MultiModel<>(), 0.5F);
@@ -38,9 +38,10 @@ public class MultiModelRenderer<T extends LivingEntity & IHasMultiModel> extends
                 && mobEntity == this.dispatcher.targetedEntity);
     }
 
+    //todo スケールに対応する
     @Override
-    protected void setupTransforms(T entity, MatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta) {
-        super.setupTransforms(entity, matrices, animationProgress, bodyYaw, tickDelta);
+    protected void setupTransforms(T entity, MatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta, float scale) {
+        super.setupTransforms(entity, matrices, animationProgress, bodyYaw, tickDelta, scale);
         entity.getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD)
                 .ifPresent(model -> model.setupTransform(entity.getCaps(),
                         new MMMatrixStack(matrices), animationProgress, bodyYaw, tickDelta));

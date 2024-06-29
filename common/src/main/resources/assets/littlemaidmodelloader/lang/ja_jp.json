@@ -1,4 +1,8 @@
 {
+  "pack.source.littlemaidmodelloader": "LittleMaidModelLoader",
+  "pack.name.littlemaidmodelloader": "LittleMaidModelLoader",
+  "pack.description.littlemaimodelloader": "LittleMaidModelLoader",
+
   "screen.littlemaidmodelloader.model_select_screen.change_screen": "Model / Armor",
 
   "text.autoconfig.littlemaidmodelloader.title": "LittleMaid ModelLoader コンフィグ",

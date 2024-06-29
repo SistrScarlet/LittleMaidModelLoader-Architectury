@@ -213,7 +213,7 @@ public class ResourceHelper {
     public static Identifier getLocation(String packName, String fileName) {
         packName = packName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
         fileName = fileName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
-        return new Identifier("littlemaidmodelloader", packName + "/" + fileName);
+        return Identifier.of("littlemaidmodelloader", packName + "/" + fileName);
     }
 
     /**
@@ -223,7 +223,7 @@ public class ResourceHelper {
     public static Identifier getLocation(String prefix, String packName, String fileName) {
         packName = packName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
         fileName = fileName.toLowerCase().replaceAll("[^a-z0-9/._\\-]", "-");
-        return new Identifier("littlemaidmodelloader", prefix + "/" + packName + "/" + fileName);
+        return Identifier.of("littlemaidmodelloader", prefix + "/" + packName + "/" + fileName);
     }
 
 }
