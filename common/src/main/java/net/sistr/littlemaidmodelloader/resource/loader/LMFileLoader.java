@@ -32,7 +32,7 @@ public class LMFileLoader {
             try {
                 Files.createDirectory(path);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e);
                 return;
             }
         }
@@ -45,7 +45,7 @@ public class LMFileLoader {
 
     public void load() {
         long start = System.nanoTime();
-        LOGGER.debug("Loading start");
+        LOGGER.info("LMML Loading start");
         folderPaths.forEach(folderPath -> {
             try {
                 if (Files.notExists(folderPath)) {
@@ -56,11 +56,11 @@ public class LMFileLoader {
                         .forEach(path -> fileLoad(folderPath, path));
                 stream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         });
         long end = System.nanoTime();
-        LOGGER.debug("Loading end : " + ((end - start) / (1000D * 1000D)) + "ms");
+        LOGGER.info("Loading end : {}ms", (end - start) / (1000D * 1000D));
     }
 
     private void fileLoad(Path folderPath, Path path) {
@@ -74,7 +74,7 @@ public class LMFileLoader {
     public void loadArchive(Path folderPath, Path path) {
         if (!loadArchive(folderPath, path, StandardCharsets.UTF_8)
                 && Util.getOperatingSystem() == Util.OperatingSystem.WINDOWS) {
-            LOGGER.info("MS932でリトライします。 : " + path);
+            LOGGER.info("MS932でリトライします。 : {}", path);
             if (loadArchive(folderPath, path, Charset.forName("MS932"))) {
                 LOGGER.info("読み込みに成功。");
             } else {
@@ -95,25 +95,25 @@ public class LMFileLoader {
                         .forEach(loader -> loader.load(entry.getName(), path, zipStream, true));
             }
         } catch (ZipException e) {
-            LOGGER.error("Zipの読み込み中にエラーが発生。" +
-                    "ファイル名に日本語などが入っている可能性があります。" +
-                    "Error while loading Zip, " +
-                    "possibly due to Japanese characters in the file name. : " + path);
+            LOGGER.error("Zipの読み込み中にエラーが発生。ファイル名に日本語などが入っている可能性があります。" +
+                            "Error while loading Zip, possibly due to Japanese characters in the file name. : {}",
+                    path);
             result = false;
         } catch (IllegalArgumentException e) {
             if (e.getCause() instanceof MalformedInputException) {
-                LOGGER.error("Zipの読み込み中にエラーが発生。" +
-                        "Zip内のファイル名に日本語などが入っている可能性があります。" +
-                        "Error while loading Zip, " +
-                        "possibly due to Japanese characters in the file name in the Zip. : " + path);
+                LOGGER.error("Zipの読み込み中にエラーが発生。Zip内のファイル名に日本語などが入っている可能性があります。" +
+                                "Error while loading Zip, possibly due to Japanese characters in the file name in the Zip. : {}",
+                        path);
             } else {
                 LOGGER.error("不明なエラーによりZipが読み込めません。" +
-                        "Unknown error prevents Zip from loading. : " + path);
+                        "Unknown error prevents Zip from loading. : {}", path);
             }
             result = false;
         } catch (Exception e) {
-            LOGGER.error("不明なエラーによりZipが読み込めません。" +
-                    "Unknown error prevents Zip from loading. : " + path);
+            LOGGER.error(
+                    "不明なエラーによりZipが読み込めません。" +
+                            "Unknown error prevents Zip from loading. : {}",
+                    path);
             result = false;
         }
         return result;
@@ -125,7 +125,7 @@ public class LMFileLoader {
             loaders.stream().filter(loader -> loader.canLoad(relPath, folderPath, inputStream, false))
                     .forEach(loader -> loader.load(relPath, folderPath, inputStream, false));
         } catch (Exception e) {
-            LOGGER.error("Error! : " + e.getMessage() + " : " + path);
+            LOGGER.error("Error! : {} : {}", e.getMessage(), path);
         }
     }
 
