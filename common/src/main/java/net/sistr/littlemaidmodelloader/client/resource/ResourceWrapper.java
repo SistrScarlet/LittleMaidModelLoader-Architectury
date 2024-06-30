@@ -1,7 +1,6 @@
 package net.sistr.littlemaidmodelloader.client.resource;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.SharedConstants;
@@ -11,7 +10,6 @@ import net.minecraft.resource.metadata.ResourceMetadataMap;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.sistr.littlemaidmodelloader.LMMLMod;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -23,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -30,8 +29,9 @@ import java.util.zip.ZipFile;
 @Environment(EnvType.CLIENT)
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
+    private static final String PACK_ID = "lmmlresources";
     private static final PackResourceMetadata METADATA =
-            new PackResourceMetadata(Text.translatable("pack.description.littlemaimodelloader"),
+            new PackResourceMetadata(Text.translatable("pack.description." + PACK_ID),
                     SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES),
                     Optional.empty());
     private static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
@@ -41,7 +41,7 @@ public class ResourceWrapper implements ResourcePack {
             return Text.translatable(
                     "pack.nameAndSource",
                     packName,
-                    Text.translatable("pack.source." + LMMLMod.MODID)
+                    Text.translatable("pack.source." + PACK_ID)
             );
         }
 
@@ -51,8 +51,8 @@ public class ResourceWrapper implements ResourcePack {
         }
     };
     private static final ResourcePackInfo PACK_INFO = new ResourcePackInfo(
-            LMMLMod.MODID,
-            Text.translatable("pack.name." + LMMLMod.MODID),
+            PACK_ID,
+            Text.translatable("pack.name." + PACK_ID),
             RESOURCE_PACK_SOURCE,
             Optional.empty()
     );
@@ -85,7 +85,9 @@ public class ResourceWrapper implements ResourcePack {
     //初期化時に読み込まれる
     @Override
     public Set<String> getNamespaces(ResourceType type) {
-        return Sets.newHashSet(LMMLMod.MODID);
+        return PATHS.keySet().stream()
+                .map(Identifier::getNamespace)
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -100,7 +102,7 @@ public class ResourceWrapper implements ResourcePack {
 
     @Override
     public String getId() {
-        return LMMLMod.MODID;
+        return PACK_ID;
     }
 
     @Override
@@ -112,7 +114,7 @@ public class ResourceWrapper implements ResourcePack {
         PATHS.put(resourcePath, new Resource(path, homePath, isArchive));
     }
 
-    private record Resource(String path, Path homePath, boolean isArchive) {
+    public record Resource(String path, Path homePath, boolean isArchive) {
 
         public InputStream getInputStream() throws IOException {
             if (isArchive) {
