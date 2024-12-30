@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
@@ -161,8 +162,10 @@ public class MultiModelClassTransformer {
         //パラレルで処理すると1.3倍くらい早くなった
 
         // フィールドの置き換え
-        cNode.fields.parallelStream().forEach(fNode ->
-                tryReplace(changed, fNode.desc, desc -> fNode.desc = desc));
+        cNode.fields.parallelStream().forEach(fNode -> {
+            tryReplace(changed, fNode.desc, desc -> fNode.desc = desc);
+            tryReplace(changed, fNode.signature, signature -> fNode.signature = signature);
+        });
 
         // メソッドの置き換え
         cNode.methods.parallelStream().forEach(mNode -> {
@@ -191,6 +194,25 @@ public class MultiModelClassTransformer {
                 } else if (aNode instanceof InvokeDynamicInsnNode fANode) {//6
                     tryReplace(changed, fANode.desc, desc -> fANode.desc = desc);
                     tryReplace(changed, fANode.name, name -> fANode.name = name);
+                    for (int i = 0; i < fANode.bsmArgs.length; i++) {
+                        var bsmArg = fANode.bsmArgs[i];
+                        if (bsmArg instanceof Type type) {
+                            int finalI = i;
+                            if (type.getSort() == Type.METHOD) {
+                                tryReplace(changed, type.getDescriptor(),
+                                        desc -> fANode.bsmArgs[finalI] = Type.getMethodType(desc));
+                            }
+                        } else if (bsmArg instanceof Handle handle) {
+                            int finalI = i;
+                            tryReplace(changed, handle.getDesc(),
+                                    desc -> fANode.bsmArgs[finalI] = new Handle(
+                                            handle.getTag(),
+                                            handle.getOwner(),
+                                            handle.getName(),
+                                            desc,
+                                            handle.isInterface()));
+                        }
+                    }
                 } else if (aNode instanceof MethodInsnNode fANode) {//5
                     if (shouldRemove(fANode.owner)) {
                         changed.set(true);
