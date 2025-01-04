@@ -3,6 +3,7 @@ package net.sistr.littlemaidmodelloader.maidmodel;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.CobwebBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
@@ -32,14 +34,19 @@ public class EntityCaps implements IModelCaps {
     protected LivingEntity owner;
 
     static {
+        // ModelBase
         register("onGround", caps_onGround, (entity, arg) -> entity.isOnGround());
         register("isRiding", caps_isRiding, (entity, arg) -> entity.hasVehicle());
         register("isChild", caps_isChild, (entity, arg) -> entity.isBaby());
+
+        // ModelBiped
         register("heldItemLeft", caps_heldItemLeft, (entity, arg) -> 0F);
         register("heldItemRight", caps_heldItemRight, (entity, arg) -> 0F);
         register("heldItems", caps_heldItems, (entity, arg) -> new float[]{0.0F, 0.0F});
         register("isSneak", caps_isSneak, (entity, arg) -> entity.isSneaking());
         register("aimedBow", caps_aimedBow, (entity, arg) -> 0 < entity.getItemUseTime());
+
+        // EntityCaps
         register("Entity", caps_Entity, (entity, arg) -> entity);
         register("health", caps_health, (entity, arg) -> (int) entity.getHealth());
         register("ticksExisted", caps_ticksExisted, (entity, arg) -> entity.age);
@@ -56,6 +63,8 @@ public class EntityCaps implements IModelCaps {
             return armor;
         });
         register("healthFloat", caps_healthFloat, (entity, arg) -> entity.getHealth());
+
+
         register("currentLeftHandItem", caps_currentLeftHandItem, (entity, arg) ->
                 entity.getMainArm() == Arm.LEFT
                         ? entity.getMainHandStack()
@@ -64,16 +73,39 @@ public class EntityCaps implements IModelCaps {
                 entity.getMainArm() == Arm.RIGHT
                         ? entity.getMainHandStack()
                         : entity.getOffHandStack());
+
+        // EntityLiving
         register("isWet", caps_isWet, (entity, arg) -> entity.isWet());
         register("isDead", caps_isDead, (entity, arg) -> !entity.isAlive());
+        register("isInWeb", caps_isInWeb, (entity, arg) -> {
+            // checkBlockCollisionと同じ実装
+            Box box = entity.getBoundingBox();
+            BlockPos min = BlockPos.ofFloored(box.minX + 1.0E-7, box.minY + 1.0E-7, box.minZ + 1.0E-7);
+            BlockPos max = BlockPos.ofFloored(box.maxX - 1.0E-7, box.maxY - 1.0E-7, box.maxZ - 1.0E-7);
+            if (entity.getWorld().isRegionLoaded(min, max)) {
+                BlockPos.Mutable mutable = new BlockPos.Mutable();
+                for (int i = min.getX(); i <= max.getX(); ++i) {
+                    for (int j = min.getY(); j <= max.getY(); ++j) {
+                        for (int k = min.getZ(); k <= max.getZ(); ++k) {
+                            mutable.set(i, j, k);
+                            BlockState blockState = entity.getWorld().getBlockState(mutable);
+                            return blockState.getBlock() instanceof CobwebBlock;
+                        }
+                    }
+                }
+            }
+            return false;
+        });
         register("isSwingInProgress", caps_isSwingInProgress, (entity, arg) -> 0 < entity.handSwingProgress);
         register("isBurning", caps_isBurning, (entity, arg) -> entity.isOnFire());
         register("isInWater", caps_isInWater, (entity, arg) -> entity.isTouchingWater());
         register("isInvisible", caps_isInvisible, (entity, arg) -> entity.isInvisible());
         register("isSprinting", caps_isSprinting, (entity, arg) -> entity.isSprinting());
+
         register("getRidingName", caps_getRidingName, (entity, arg) -> entity.getVehicle() == null
                 ? ""
                 : EntityType.getId(entity.getVehicle().getType()).toString());
+
         register("getRidingType", caps_getRidingType, (entity, arg) -> {
             Entity vehicle = entity.getVehicle();
             if (vehicle == null) return "null";
@@ -82,7 +114,10 @@ public class EntityCaps implements IModelCaps {
             else if (vehicle instanceof MobEntity) return "mob";
             else return "entity";
         });
+
         register("entityName", caps_entityName, (entity, arg) -> entity.getName().getString());
+
+
         register("posX", caps_posX, (entity, arg) -> entity.getX());
         register("posY", caps_posY, (entity, arg) -> entity.getY());
         register("posZ", caps_posZ, (entity, arg) -> entity.getZ());
@@ -127,17 +162,9 @@ public class EntityCaps implements IModelCaps {
         register("prevRotationYaw", caps_prevRotationYaw, (entity, arg) -> entity.prevYaw);
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
+
         register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> entity.getMountedHeightOffset());
-        register("isRidingPlayer", caps_isRidingPlayer, (entity, arg) -> entity.getVehicle() instanceof PlayerEntity);
-        register("WorldTotalTime", caps_WorldTotalTime, (entity, arg) -> entity.getEntityWorld().getTime());
-        register("WorldTime", caps_WorldTime, (entity, arg) -> entity.getEntityWorld().getTimeOfDay());
-        register("MoonPhase", caps_MoonPhase, (entity, arg) -> entity.getEntityWorld().getMoonPhase());
-        register("entityIdFactor", caps_entityIdFactor, (entity, arg) -> 0F);
-        register("height", caps_height, (entity, arg) -> entity.getHeight());
-        register("width", caps_width, (entity, arg) -> entity.getWidth());
-        register("YOffset", caps_YOffset, (entity, arg) -> entity.getHeightOffset());
-        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> entity.getMountedHeightOffset());
-        register("dominantArm", caps_dominantArm, (entity, arg) -> entity.getMainArm() == Arm.LEFT ? 0 : 1);
+
         register("PosBlockID", caps_PosBlockID, (entity, arg) ->
                 entity.getEntityWorld().getBlockState(new BlockPos(
                         MathHelper.floor(entity.getX() + (Double) arg[0]),
@@ -166,6 +193,19 @@ public class EntityCaps implements IModelCaps {
                         MathHelper.floor(entity.getX() + (Double) arg[0]),
                         MathHelper.floor(entity.getY() + (Double) arg[1]),
                         MathHelper.floor(entity.getZ() + (Double) arg[2]))));
+
+        register("isRidingPlayer", caps_isRidingPlayer, (entity, arg) -> entity.getVehicle() instanceof PlayerEntity);
+
+        register("WorldTotalTime", caps_WorldTotalTime, (entity, arg) -> entity.getEntityWorld().getTime());
+        register("WorldTime", caps_WorldTime, (entity, arg) -> entity.getEntityWorld().getTimeOfDay());
+        register("MoonPhase", caps_MoonPhase, (entity, arg) -> entity.getEntityWorld().getMoonPhase());
+
+        register("height", caps_height, (entity, arg) -> entity.getHeight());
+        register("width", caps_width, (entity, arg) -> entity.getWidth());
+        register("YOffset", caps_YOffset, (entity, arg) -> entity.getHeightOffset());
+        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> entity.getMountedHeightOffset());
+        register("dominantArm", caps_dominantArm, (entity, arg) -> entity.getMainArm() == Arm.LEFT ? 0 : 1);
+
         register("isSwimming", caps_isSwimming, (entity, arg) -> entity.isSwimming());
         register("roll", caps_roll, (entity, arg) -> entity.getRoll());
         register("leaningPitch", caps_leaningPitch, (entity, arg) -> entity.getLeaningPitch(1F));
