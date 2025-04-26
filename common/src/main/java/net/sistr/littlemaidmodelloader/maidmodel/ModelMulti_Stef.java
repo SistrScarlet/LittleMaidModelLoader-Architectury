@@ -114,7 +114,9 @@ public class ModelMulti_Stef extends ModelMulti_Steve {
 		bipedLeftArm.setRotationPoint(4.4F, 2.85F, 0.0F).setRotateAngleDeg(0.0F, 0.0F, -10.0F);
 		bipedRightLeg.setRotationPoint(-2.3F, 11.5F, 0.0F).setRotateAngleDeg(0.0F, 0.0F, -2.0F);
 		bipedLeftLeg.setRotationPoint(2.3F, 11.5F, 0.0F).setRotateAngleDeg(0.0F, 0.0F, 2.0F);
+		bipedTorso.setRotationPoint(0.0F, 0.0F, 0.0F).setRotateAngle(0.0F, 0.0F, 0.0F);
 		bipedNeck.setRotationPoint(0.0F, 0.0F, 0.0F).setRotateAngle(0.0F, 0.0F, 0.0F);
+		bipedPelvic.setRotationPoint(0.0F, 0.0F, 0.0F).setRotateAngle(0.0F, 0.0F, 0.0F);
 		bust.setRotationPoint(0.0F, 4.25F, -1.4F).setRotateAngleDeg(50F, 0F, 0F);
 	}
 
