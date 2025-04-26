@@ -80,8 +80,8 @@ public class EntityCaps implements IModelCaps {
         register("isInWeb", caps_isInWeb, (entity, arg) -> {
             // checkBlockCollisionと同じ実装
             Box box = entity.getBoundingBox();
-            BlockPos min = BlockPos.ofFloored(box.minX + 1.0E-7, box.minY + 1.0E-7, box.minZ + 1.0E-7);
-            BlockPos max = BlockPos.ofFloored(box.maxX - 1.0E-7, box.maxY - 1.0E-7, box.maxZ - 1.0E-7);
+            BlockPos min = new BlockPos(box.minX + 1.0E-7, box.minY + 1.0E-7, box.minZ + 1.0E-7);
+            BlockPos max = new BlockPos(box.maxX - 1.0E-7, box.maxY - 1.0E-7, box.maxZ - 1.0E-7);
             if (entity.getWorld().isRegionLoaded(min, max)) {
                 BlockPos.Mutable mutable = new BlockPos.Mutable();
                 for (int i = min.getX(); i <= max.getX(); ++i) {
