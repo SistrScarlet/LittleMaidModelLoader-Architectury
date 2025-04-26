@@ -101,10 +101,10 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
     @Override
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (player.isSneaking()) {
-            if (!getWorld().isClient()) {
+            if (!getEntityWorld().isClient()) {
                 this.setSneaking(!this.isSneaking());
             }
-            return ActionResult.success(player.getWorld().isClient);
+            return ActionResult.success(player.getEntityWorld().isClient);
         }
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() instanceof ArmorItem) {
