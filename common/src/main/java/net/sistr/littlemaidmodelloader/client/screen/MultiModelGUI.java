@@ -36,6 +36,10 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
         return Optional.ofNullable(this.selectColor);
     }
 
+    public void setSelectColor(TextureColors selectColor) {
+        this.selectColor = selectColor;
+    }
+
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         var fontRenderer = MinecraftClient.getInstance().textRenderer;

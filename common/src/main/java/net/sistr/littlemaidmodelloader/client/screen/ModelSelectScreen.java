@@ -52,11 +52,8 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     private final ArmorSets<ArmorModelGUI> armors = new ArmorSets<>();
     private final int scale = 15;
     private final int heightRatio = 3;
-    private final int heightStack = 4;
-    private ScrollBar modelScrollBar;
-    private ScrollBar armorScrollBar;
-    private ListGUI<MultiModelGUI> modelListGUI;
-    private ListGUI<ArmorModelGUI> armorListGUI;
+    private FilterableListGUI<MultiModelGUI> modelListGUI;
+    private FilterableListGUI<ArmorModelGUI> armorListGUI;
     private boolean guiSwitch = true;
     private boolean isContract = true;
 
@@ -80,11 +77,23 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     protected void initModelGUI(Collection<TextureHolder> textureHolders, Map<String, TextureHolder> textureHolderMap) {
         int allColor = 16;
         LMModelManager modelManager = LMModelManager.INSTANCE;
-        this.modelListGUI = new ListGUI<>(
-                (width - scale * allColor) / 2,
-                (height - scale * heightRatio * heightStack) / 2,
-                1, heightStack, scale * allColor, scale * heightRatio,
-                textureHolders.stream()
+
+        // レイアウト計算（4列時と同じ位置・サイズを維持）
+        int searchInputHeight = 20;
+        int listWidth = scale * allColor;
+        int listHeight = scale * heightRatio * 4; // 4列時のサイズを維持
+
+        // MultiModelGUI用のFilterPredicate（テクスチャ名で検索）
+        FilterPredicate<MultiModelGUI> multiModelFilter = (multiModelGUI, filterText) -> {
+            String textureName = multiModelGUI.getTexture().getTextureName().toLowerCase();
+            return textureName.contains(filterText.toLowerCase());
+        };
+
+        this.modelListGUI = FilterableListGUI.<MultiModelGUI>builder()
+                .position((width - listWidth) / 2, (height - listHeight) / 2)
+                .size(listWidth, listHeight)
+                .elementSize(listWidth, scale * heightRatio)
+                .items(textureHolders.stream()
                         .map(TextureHolder::getTextureName)
                         .map(String::toLowerCase)
                         .sorted(Comparator.naturalOrder())
@@ -94,35 +103,37 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                                         modelManager.getModel(textureHolder.getModelName(), IHasMultiModel.Layer.SKIN)
                                                 .isPresent())
                         .map(t -> new MultiModelGUI(t, this.isContract, scale, this.dummy))
-                        .collect(Collectors.toList())
-        );
-        this.modelScrollBar = new ScrollBar(
-                (width + GUI_WIDTH) / 2 + 4, (height - GUI_HEIGHT) / 2,
-                8, GUI_HEIGHT, this.modelListGUI.size(),
-                new TextureAddress(0, 200, 8, 8, 256, 256),
-                new TextureAddress(0, 208, 8, 8, 256, 256),
-                new TextureAddress(0, 216, 8, 8, 256, 256),
-                new TextureAddress(0, 224, 10, 6, 256, 256),
-                MODEL_SELECT_GUI_TEXTURE);
-        TextureHolder ownerSkinTex = entity.getTextureHolder(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
-        int index = 0;
-        for (MultiModelGUI g : this.modelListGUI.getAllElements()) {
-            if (g.getTexture() == ownerSkinTex) {
-                modelScrollBar.setPoint(index);
-                modelListGUI.setScroll(index);
-            }
-            index++;
-        }
+                        .collect(Collectors.toList()))
+                .filterBy(multiModelFilter)
+                .withScrollBar()
+                .searchInputHeight(searchInputHeight)
+                .withPlaceholder("Search skin textures...")
+                .build();
+
+        // 初期選択状態の復元
+        restoreModelSelection();
     }
 
     protected void initArmorGUI(Collection<TextureHolder> textureHolders, Map<String, TextureHolder> map) {
         LMModelManager modelManager = LMModelManager.INSTANCE;
         int allColor = 16;
-        this.armorListGUI = new ListGUI<>(
-                (width - scale * allColor) / 2,
-                (height - scale * heightRatio * heightStack) / 2,
-                1, heightStack, scale * allColor, scale * heightRatio,
-                textureHolders.stream()
+
+        // レイアウト計算（4列時と同じ位置・サイズを維持）
+        int searchInputHeight = 20;
+        int listWidth = scale * allColor;
+        int listHeight = scale * heightRatio * 4; // 4列時のサイズを維持
+
+        // ArmorModelGUI用のFilterPredicate（テクスチャ名で検索）
+        FilterPredicate<ArmorModelGUI> armorModelFilter = (armorModelGUI, filterText) -> {
+            String textureName = armorModelGUI.getTexture().getTextureName().toLowerCase();
+            return textureName.contains(filterText.toLowerCase());
+        };
+
+        this.armorListGUI = FilterableListGUI.<ArmorModelGUI>builder()
+                .position((width - listWidth) / 2, (height - listHeight) / 2)
+                .size(listWidth, listHeight)
+                .elementSize(listWidth, scale * heightRatio)
+                .items(textureHolders.stream()
                         .map(TextureHolder::getTextureName)
                         .map(String::toLowerCase)
                         .sorted(Comparator.naturalOrder())
@@ -132,25 +143,15 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                                         modelManager.getModel(textureHolder.getModelName(), IHasMultiModel.Layer.INNER)
                                                 .isPresent())
                         .map(t -> new ArmorModelGUI(t, scale, this.dummy, this.armors))
-                        .collect(Collectors.toList())
-        );
-        this.armorScrollBar = new ScrollBar(
-                (width + GUI_WIDTH) / 2 + 4, (height - GUI_HEIGHT) / 2,
-                8, GUI_HEIGHT, this.armorListGUI.size(),
-                new TextureAddress(0, 200, 8, 8, 256, 256),
-                new TextureAddress(0, 208, 8, 8, 256, 256),
-                new TextureAddress(0, 216, 8, 8, 256, 256),
-                new TextureAddress(0, 224, 10, 6, 256, 256),
-                MODEL_SELECT_GUI_TEXTURE);
-        TextureHolder ownerArmorTex = entity.getTextureHolder(IHasMultiModel.Layer.INNER, IHasMultiModel.Part.HEAD);
-        int index = 0;
-        for (ArmorModelGUI g : this.armorListGUI.getAllElements()) {
-            if (g.getTexture() == ownerArmorTex) {
-                armorScrollBar.setPoint(index);
-                armorListGUI.setScroll(index);
-            }
-            index++;
-        }
+                        .collect(Collectors.toList()))
+                .filterBy(armorModelFilter)
+                .withScrollBar()
+                .searchInputHeight(searchInputHeight)
+                .withPlaceholder("Search armor textures...")
+                .build();
+
+        // 初期選択状態の復元
+        restoreArmorSelection();
     }
 
     public static void renderColor(DrawContext context, int minX, int minY, int maxX, int maxY, int rgba) {
@@ -171,7 +172,7 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
 
         if (guiSwitch) {
             modelListGUI.render(context, mouseX, mouseY, partialTicks);
-            modelListGUI.getSelectElement()
+            modelListGUI.getSelectedItem()
                     .filter(MultiModelGUI::isSelected)
                     .ifPresent(g -> g.getSelectColor().ifPresent(color -> {
                         TextureHolder texture = g.getTexture();
@@ -187,7 +188,6 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                             );
                         });
                     }));
-            modelScrollBar.render(context, mouseX, mouseY, partialTicks);
         } else {
             armorListGUI.render(context, mouseX, mouseY, partialTicks);
             this.armors.foreach((p, g) -> {
@@ -200,7 +200,6 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
                             mouseX, mouseY, scale, model, armorData, p, this.dummy);
                 });
             });
-            armorScrollBar.render(context, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -223,45 +222,26 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
             return true;
         }
         if (guiSwitch) {
-            if (modelScrollBar.mouseClicked(x, y, button)) {
-                modelListGUI.setScroll(modelScrollBar.getPoint());
-                return true;
-            } else {
-                return modelListGUI.mouseClicked(x, y, button);
-            }
+            return modelListGUI.mouseClicked(x, y, button);
         } else {
-            if (armorScrollBar.mouseClicked(x, y, button)) {
-                armorListGUI.setScroll(armorScrollBar.getPoint());
-                return true;
-            } else {
-                return armorListGUI.mouseClicked(x, y, button);
-            }
+            return armorListGUI.mouseClicked(x, y, button);
         }
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (guiSwitch) {
-            if (modelScrollBar.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
-                modelListGUI.setScroll(modelScrollBar.getPoint());
-                return true;
-            }
+            return modelListGUI.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         } else {
-            if (armorScrollBar.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
-                armorListGUI.setScroll(armorScrollBar.getPoint());
-                return true;
-            }
+            return armorListGUI.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
-        return false;
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (guiSwitch) {
-            modelScrollBar.mouseReleased(mouseX, mouseY, button);
             return modelListGUI.mouseReleased(mouseX, mouseY, button);
         } else {
-            armorScrollBar.mouseReleased(mouseX, mouseY, button);
             return armorListGUI.mouseReleased(mouseX, mouseY, button);
         }
     }
@@ -269,34 +249,43 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     @Override
     public boolean mouseScrolled(double x, double y, double scrollAmount) {
         if (guiSwitch) {
-            if (modelScrollBar.mouseScrolled(x, y, scrollAmount)) {
-                modelListGUI.setScroll(modelScrollBar.getPoint());
-                return true;
-            } else {
-                if (modelListGUI.mouseScrolled(x, y, scrollAmount)) {
-                    modelScrollBar.setPoint(modelListGUI.getScroll());
-                    return true;
-                }
-                return false;
-            }
+            return modelListGUI.mouseScrolled(x, y, scrollAmount);
         } else {
-            if (armorScrollBar.mouseScrolled(x, y, scrollAmount)) {
-                armorListGUI.setScroll(armorScrollBar.getPoint());
-                return true;
-            } else {
-                if (armorListGUI.mouseScrolled(x, y, scrollAmount)) {
-                    armorScrollBar.setPoint(armorListGUI.getScroll());
-                    return true;
-                }
-                return false;
-            }
+            return armorListGUI.mouseScrolled(x, y, scrollAmount);
         }
     }
 
     @Override
-    public void close() {
-        super.close();
-        modelListGUI.getSelectElement().ifPresent(g ->
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // こちらが先でないとESCで画面を閉じれない
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        if (guiSwitch) {
+            return modelListGUI.keyPressed(keyCode, scanCode, modifiers);
+        } else {
+            return armorListGUI.keyPressed(keyCode, scanCode, modifiers);
+        }
+    }
+
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        if (guiSwitch) {
+            if (modelListGUI.charTyped(chr, modifiers)) {
+                return true;
+            }
+        } else {
+            if (armorListGUI.charTyped(chr, modifiers)) {
+                return true;
+            }
+        }
+        return super.charTyped(chr, modifiers);
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+        modelListGUI.getSelectedItem().ifPresent(g ->
                 g.getSelectColor().ifPresent(color -> {
                     TextureHolder texture = g.getTexture();
                     //カラーと契約を更新
@@ -319,6 +308,36 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
             armorNames.setArmor(entity.getTextureHolder(IHasMultiModel.Layer.INNER, part).getTextureName(), part);
         }
         SyncMultiModelPacket.sendC2SPacket(entity, entity);
+    }
+
+    /**
+     * モデルリストの初期選択状態を復元
+     */
+    private void restoreModelSelection() {
+        TextureHolder ownerSkinTex = entity.getTextureHolder(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD);
+        var color = entity.getColorMM();
+        if (ownerSkinTex != null) {
+            modelListGUI.setSelectedItemBy(multiModelGUI ->
+                            multiModelGUI.getTexture() == ownerSkinTex,
+                    multiModelGUI -> multiModelGUI.setSelectColor(color)
+            );
+        }
+    }
+
+    /**
+     * アーマーリストの初期選択状態を復元
+     */
+    private void restoreArmorSelection() {
+        // 各部位のアーマーテクスチャを取得して復元
+        for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
+            TextureHolder ownerArmorTex = entity.getTextureHolder(IHasMultiModel.Layer.INNER, part);
+            if (ownerArmorTex != null) {
+                armorListGUI.setSelectedItemBy(
+                        armorModelGUI -> armorModelGUI.getTexture() == ownerArmorTex,
+                        armorModelGUI -> armorModelGUI.setArmorPart(part, true)
+                );
+            }
+        }
     }
 
     public static void playDownSound() {

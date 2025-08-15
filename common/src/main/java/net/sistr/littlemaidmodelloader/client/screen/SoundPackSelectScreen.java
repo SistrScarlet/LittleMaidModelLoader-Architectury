@@ -20,7 +20,7 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 196;
     private final T entity;
-    private ListGUI<SoundPackGUI> soundPackListGUI;
+    private FilterableListGUI<SoundPackGUI> soundPackListGUI;
 
     public SoundPackSelectScreen(Text titleIn, T owner) {
         super(titleIn);
@@ -33,14 +33,32 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
         int allColor = 16;
         int heightRatio = 3;
         int heightStack = 4;
-        this.soundPackListGUI = new ListGUI<>((width - scale * allColor) / 2,
-                (height - scale * heightRatio * heightStack) / 2,
-                1, scale * heightRatio * heightStack / ((this.textRenderer.fontHeight + 1) * 3),
-                scale * allColor, (this.textRenderer.fontHeight + 1) * 3,
-                LMConfigManager.INSTANCE.getAllConfig().stream()
-                        .map(c -> new SoundPackGUI(scale * allColor, (this.textRenderer.fontHeight + 1) * 3,
-                                this.textRenderer, c))
-                        .collect(Collectors.toList()));
+
+        // 検索フィールド分のスペース調整
+        int searchInputHeight = 20;
+        int totalWidth = scale * allColor;
+        int totalHeight = scale * heightRatio * heightStack;
+        int elementHeight = (this.textRenderer.fontHeight + 1) * 3;
+
+        // SoundPackGUI用のFilterPredicate（PackName、ParentName、FileNameを全て検索対象に）
+        FilterPredicate<SoundPackGUI> soundPackFilter = (soundPackGUI, filterText) -> {
+            ConfigHolder config = soundPackGUI.getConfigHolder();
+            String combinedText = (config.getPackName() + " " + config.getParentName() + " " + config.getFileName()).toLowerCase();
+            return combinedText.contains(filterText.toLowerCase());
+        };
+
+        this.soundPackListGUI = FilterableListGUI.<SoundPackGUI>builder()
+                .position((width - totalWidth) / 2, (height - totalHeight) / 2)
+                .size(totalWidth, totalHeight)
+                .elementSize(totalWidth, elementHeight)
+                .items(LMConfigManager.INSTANCE.getAllConfig().stream()
+                        .map(c -> new SoundPackGUI(totalWidth, elementHeight, this.textRenderer, c))
+                        .collect(Collectors.toList()))
+                .filterBy(soundPackFilter)
+                .withScrollBar()
+                .searchInputHeight(searchInputHeight)
+                .withPlaceholder("Search sound packs...")
+                .build();
     }
 
     @Override
@@ -56,13 +74,17 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-
         return this.soundPackListGUI.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         return this.soundPackListGUI.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        return this.soundPackListGUI.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override
@@ -74,9 +96,26 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
     }
 
     @Override
-    public void close() {
-        super.close();
-        soundPackListGUI.getSelectElement()
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // こちらが先でないとESCで画面を閉じれない
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        return this.soundPackListGUI.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        if (this.soundPackListGUI.charTyped(chr, modifiers)) {
+            return true;
+        }
+        return super.charTyped(chr, modifiers);
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+        soundPackListGUI.getSelectedItem()
                 .ifPresent(gui -> SyncSoundPackPacket.sendC2SPacket(this.entity, gui.getConfigHolder()));
     }
 

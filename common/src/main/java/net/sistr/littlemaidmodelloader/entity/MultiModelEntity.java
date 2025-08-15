@@ -118,16 +118,16 @@ public class MultiModelEntity extends PathAwareEntity implements IHasMultiModel,
             this.setStackInHand(Hand.MAIN_HAND, stack);
         }
         if (getWorld().isClient) {
-            openGUI(player.isSneaking());
+            openGUI(!player.isOnGround());
             play(LMSounds.LIVING_DAYTIME);
         }
         return super.interactMob(player, hand);
     }
 
     @Environment(EnvType.CLIENT)
-    public void openGUI(boolean shift) {
+    public void openGUI(boolean isSound) {
         MinecraftClient.getInstance().setScreen(
-                shift ? new SoundPackSelectScreen<>(Text.of(""), this) :
+                isSound ? new SoundPackSelectScreen<>(Text.of(""), this) :
                         new ModelSelectScreen<>(Text.of(""), this.getWorld(), this));
     }
 

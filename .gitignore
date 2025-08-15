@@ -20,3 +20,7 @@ classes/
 
 /logs/
 /.architectury-transformer/
+
+# claude
+.factorypath
+/.lsmcp/cache/symbols.db

@@ -141,6 +141,28 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
         return this.texture;
     }
 
+    /**
+     * 指定された部位でこのアーマーを選択状態にする
+     */
+    public void setArmorPart(IHasMultiModel.Part part, boolean selected) {
+        if (selected) {
+            armors.setArmor(this, part);
+        } else {
+            if (armors.getArmor(part).filter(g -> g == this).isPresent()) {
+                armors.setArmor(null, part);
+            }
+        }
+    }
+
+    /**
+     * 全部位でこのアーマーを選択状態にする
+     */
+    public void setAllArmorParts(boolean selected) {
+        for (IHasMultiModel.Part part : IHasMultiModel.Part.values()) {
+            setArmorPart(part, selected);
+        }
+    }
+
     @Override
     public void setSelected(boolean selected) {
         this.selected = selected;

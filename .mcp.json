@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "lsmcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mizchi/lsmcp@rc",
+        "--bin",
+        "jdtls -configuration ~/.cache/jdtls -data /home/sistr/.cache/jdtls-workspace/LMML"
+      ],
+      "env": {}
+    }
+  }
+}
