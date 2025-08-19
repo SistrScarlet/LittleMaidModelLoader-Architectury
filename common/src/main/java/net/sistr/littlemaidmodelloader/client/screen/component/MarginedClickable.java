@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client.screen;
+package net.sistr.littlemaidmodelloader.client.screen.component;
 
 public class MarginedClickable {
     private final int marginSq;

@@ -5,7 +5,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.RegistryKeys;
-import net.sistr.littlemaidmodelloader.client.screen.MultiModelGUIUtil;
+import net.sistr.littlemaidmodelloader.client.screen.component.MultiModelGUIUtil;
 import net.sistr.littlemaidmodelloader.entity.MultiModelEntity;
 
 import static net.sistr.littlemaidmodelloader.LMMLMod.MODID;

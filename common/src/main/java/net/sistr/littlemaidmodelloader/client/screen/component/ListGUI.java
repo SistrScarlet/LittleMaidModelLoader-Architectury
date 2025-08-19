@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client.screen;
+package net.sistr.littlemaidmodelloader.client.screen.component;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -63,13 +63,6 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
         return Optional.empty();
     }
 
-    protected double getElementX(double mouseX) {
-        return (mouseX - this.x) % this.elementW;
-    }
-
-    protected double getElementY(double mouseY) {
-        return (mouseY - this.y) % this.elementH;
-    }
 
     protected int getIndex(double mouseX, double mouseY) {
         if (this.x <= mouseX && mouseX < this.x + this.elementW * this.widthStack
@@ -137,7 +130,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
         Optional<T> e = getElement(mouseX, mouseY);
         if (e.isPresent()) {
             T element = e.get();
-            element.mouseMoved(getElementX(mouseX), getElementY(mouseY));
+            element.mouseMoved(mouseX, mouseY);
         }
     }
 
@@ -149,7 +142,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
         Optional<T> e = getElement(mouseX, mouseY);
         if (e.isPresent()) {
             T element = e.get();
-            return element.mouseClicked(getElementX(mouseX), getElementY(mouseY), button);
+            return element.mouseClicked(mouseX, mouseY, button);
         }
         return false;
     }
@@ -178,7 +171,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
             }
 
             T element = e.get();
-            return element.mouseReleased(getElementX(mouseX), getElementY(mouseY), button);
+            return element.mouseReleased(mouseX, mouseY, button);
         }
         return false;
     }
@@ -189,7 +182,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
         Optional<T> e = getElement(mouseX, mouseY);
         if (e.isPresent()) {
             T element = e.get();
-            return element.mouseDragged(getElementX(mouseX), getElementY(mouseY), button, deltaX, deltaY);
+            return element.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
         return false;
     }
@@ -199,7 +192,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
         Optional<T> e = getElement(mouseX, mouseY);
         if (e.isPresent()) {
             T element = e.get();
-            if (element.mouseScrolled(getElementX(mouseX), getElementY(mouseY), amount)) {
+            if (element.mouseScrolled(mouseX, mouseY, amount)) {
                 return true;
             }
         }
@@ -228,7 +221,7 @@ public class ListGUI<T extends GUIElement> extends GUIElement {
         Optional<T> e = getElement(mouseX, mouseY);
         if (e.isPresent()) {
             T element = e.get();
-            return element.isMouseOver(getElementX(mouseX), getElementY(mouseY));
+            return element.isMouseOver(mouseX, mouseY);
         }
         return false;
     }

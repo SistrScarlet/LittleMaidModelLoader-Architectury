@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client.screen;
+package net.sistr.littlemaidmodelloader.client.screen.component;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.MinecraftClient;
@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
+import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
@@ -108,9 +109,11 @@ public class ArmorModelGUI extends GUIElement implements ListGUIElement {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (selectBox.release(mouseX, mouseY)) {
                 TextRenderer fontRenderer = MinecraftClient.getInstance().textRenderer;
-                if (this.width - 16 * 4 <= mouseX && mouseX < this.width
-                        && fontRenderer.fontHeight <= mouseY && mouseY < fontRenderer.fontHeight + 16) {
-                    int index = 3 - MathHelper.floor((mouseX - (this.width - 16 * 4)) / 16);
+                double relativeX = mouseX - this.x;
+                double relativeY = mouseY - this.y;
+                if (this.width - 16 * 4 <= relativeX && relativeX < this.width
+                        && fontRenderer.fontHeight <= relativeY && relativeY < fontRenderer.fontHeight + 16) {
+                    int index = 3 - MathHelper.floor((relativeX - (this.width - 16 * 4)) / 16);
                     IHasMultiModel.Part part = IHasMultiModel.Part.getPart(index);
                     if (armors.getArmor(part).filter(g -> g == this).isPresent()) {
                         armors.setArmor(null, part);

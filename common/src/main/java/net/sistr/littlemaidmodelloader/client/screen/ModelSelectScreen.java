@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.LMMLMod;
+import net.sistr.littlemaidmodelloader.client.screen.component.*;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.network.SyncMultiModelPacket;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;

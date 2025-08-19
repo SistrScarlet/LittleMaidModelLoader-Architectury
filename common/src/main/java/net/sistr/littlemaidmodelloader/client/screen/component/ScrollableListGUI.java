@@ -1,8 +1,9 @@
-package net.sistr.littlemaidmodelloader.client.screen;
+package net.sistr.littlemaidmodelloader.client.screen.component;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;

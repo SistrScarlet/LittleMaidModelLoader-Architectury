@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client.screen;
+package net.sistr.littlemaidmodelloader.client.screen.component;
 
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;

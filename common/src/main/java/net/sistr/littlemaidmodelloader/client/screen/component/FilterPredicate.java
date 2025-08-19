@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.client.screen;
+package net.sistr.littlemaidmodelloader.client.screen.component;
 
 /**
  * フィルタリング条件を定義する関数型インターフェース

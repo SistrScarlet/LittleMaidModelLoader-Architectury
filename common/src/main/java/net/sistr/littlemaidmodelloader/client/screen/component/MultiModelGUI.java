@@ -1,8 +1,9 @@
-package net.sistr.littlemaidmodelloader.client.screen;
+package net.sistr.littlemaidmodelloader.client.screen.component;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.MathHelper;
+import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
@@ -92,7 +93,7 @@ public class MultiModelGUI extends GUIElement implements ListGUIElement {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (selectBox.release(mouseX, mouseY)) {
                 //モデル選択
-                this.selectColor = TextureColors.getColor(MathHelper.floor(mouseX / scale));
+                this.selectColor = TextureColors.getColor(MathHelper.floor((mouseX - this.x) / scale));
                 return true;
             }
         }
