@@ -1,16 +1,41 @@
 package net.sistr.littlemaidmodelloader.client.renderer;
 
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderPhase;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.LMMLMod;
 
-public class MultiModelRenderLayer {
+public class MultiModelRenderLayer extends RenderLayer {
 
-    public static RenderLayer getDefault(Identifier identifier) {
-        if (LMMLMod.getConfig().isEnableAlpha()) {
-            return RenderLayer.getEntityTranslucent(identifier);
-        }
-        return RenderLayer.getEntityCutoutNoCull(identifier);
+  // RenderPhase の protected 定数にアクセスするために RenderLayer を継承
+  private MultiModelRenderLayer() {
+    super(null, null, null, 0, false, false, null, null);
+  }
+
+  public static RenderLayer getDefault(Identifier identifier) {
+    if (LMMLMod.getConfig().isEnableAlpha()) {
+      return RenderLayer.getEntityTranslucent(identifier);
     }
+    return RenderLayer.getEntityCutoutNoCull(identifier);
+  }
 
+  public static RenderLayer getEmissive(Identifier identifier) {
+    // テクスチャを動的に設定するため、毎回新しいレイヤーを生成
+    return RenderLayer.of(
+        "lmml_emissive",
+        VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
+        VertexFormat.DrawMode.QUADS,
+        256,
+        false,
+        true,
+        RenderLayer.MultiPhaseParameters.builder()
+            .program(ENTITY_TRANSLUCENT_PROGRAM)
+            .texture(new RenderPhase.Texture(identifier, false, false))
+            .transparency(ADDITIVE_TRANSPARENCY)
+            .writeMaskState(COLOR_MASK)
+            .cull(DISABLE_CULLING)
+            .build(false));
+  }
 }

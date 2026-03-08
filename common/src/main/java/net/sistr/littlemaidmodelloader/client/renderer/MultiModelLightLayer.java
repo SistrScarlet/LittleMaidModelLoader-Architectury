@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
@@ -73,7 +72,8 @@ public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel, M ext
                     .ifPresent(
                         model -> {
                           VertexConsumer builder =
-                              vertexConsumers.getBuffer(RenderLayer.getEyes(resourceLocation));
+                              vertexConsumers.getBuffer(
+                                  MultiModelRenderLayer.getEmissive(resourceLocation));
                           model.animateModel(caps, limbAngle, limbDistance, tickDelta);
                           model.setAngles(
                               caps, limbAngle, limbDistance, animationProgress, headYaw, headPitch);

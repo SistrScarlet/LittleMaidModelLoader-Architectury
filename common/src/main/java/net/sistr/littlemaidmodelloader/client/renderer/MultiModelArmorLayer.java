@@ -204,7 +204,7 @@ public class MultiModelArmorLayer<T extends LivingEntity & IHasMultiModel, M ext
                           model.showArmorParts(part.getIndex(), layer.getPartIndex());
                           RenderLayer type =
                               isLight
-                                  ? RenderLayer.getEyes(resourceLocation)
+                                  ? MultiModelRenderLayer.getEmissive(resourceLocation)
                                   : MultiModelRenderLayer.getDefault(resourceLocation);
                           VertexConsumer builder =
                               ItemRenderer.getArmorGlintConsumer(
