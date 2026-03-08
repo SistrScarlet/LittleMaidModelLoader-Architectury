@@ -73,7 +73,7 @@ public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel, M ext
                         model -> {
                           VertexConsumer builder =
                               vertexConsumers.getBuffer(
-                                  MultiModelRenderLayer.getEmissive(resourceLocation));
+                                  MultiModelRenderLayer.getDefault(resourceLocation));
                           model.animateModel(caps, limbAngle, limbDistance, tickDelta);
                           model.setAngles(
                               caps, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
@@ -84,8 +84,8 @@ public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel, M ext
                                   0xF00000,
                                   OverlayTexture.DEFAULT_UV,
                                   1F,
-                                  1F,
-                                  1F,
+                                  0F,
+                                  0F,
                                   1F));
                         }));
   }
