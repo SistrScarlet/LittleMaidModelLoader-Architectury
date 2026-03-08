@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <!-- Mixin クラスはバイトコード操作のため通常のパターンに従わない -->
+  <Match>
+    <Package name="~.*\.mixin.*"/>
+  </Match>
+
+  <!-- Minecraft の既存クラスを継承するコードでの未使用パラメータ警告を除外 -->
+  <Match>
+    <Bug pattern="URF_UNREAD_FIELD"/>
+    <Or>
+      <Class name="~.*Entity"/>
+      <Class name="~.*Screen"/>
+      <Class name="~.*Renderer"/>
+    </Or>
+  </Match>
+
+  <!-- シリアライズ関連 (Minecraft のNBT保存で不要) -->
+  <Match>
+    <Bug pattern="SE_BAD_FIELD"/>
+  </Match>
+  <Match>
+    <Bug pattern="SE_NO_SERIALVERSIONID"/>
+  </Match>
+
+  <!-- Minecraft mod では内部オブジェクト参照の公開が一般的パターン -->
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+
+  <!-- Minecraft の ScreenHandler 等でコンストラクタ例外は避けられない -->
+  <Match>
+    <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+  </Match>
+
+  <!-- 戻り値 null の可能性: 短絡評価や意味的保証で安全なケースが大半 -->
+  <Match>
+    <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+  </Match>
+
+  <!-- Minecraft mod では型保証済みキャストが頻出 (Mixin 注入、パケット処理等) -->
+  <Match>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+  </Match>
+
+  <!-- Config フィールドやサブクラス向け protected フィールドの未読警告 -->
+  <Match>
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+  </Match>
+
+  <!-- Minecraft mod では public フィールドが一般的パターン -->
+  <Match>
+    <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+  </Match>
+
+  <!-- 自動生成コード -->
+  <Match>
+    <Source name="~.*\.generated\..*"/>
+  </Match>
+</FindBugsFilter>
