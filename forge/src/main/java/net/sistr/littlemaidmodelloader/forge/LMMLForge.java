@@ -22,37 +22,40 @@ import net.sistr.littlemaidmodelloader.setup.Registration;
 @Mod(LMMLMod.MODID)
 public class LMMLForge {
 
-    public LMMLForge() {
-        EventBuses.registerModEventBus(LMMLMod.MODID, FMLJavaModLoadingContext.get().getModEventBus());
-        LMMLMod.init();
+  public LMMLForge() {
+    EventBuses.registerModEventBus(LMMLMod.MODID, FMLJavaModLoadingContext.get().getModEventBus());
+    LMMLMod.init();
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
-                () -> new ConfigScreenHandler.ConfigScreenFactory(
-                        (client, parent) -> AutoConfig.getConfigScreen(LMMLConfig.class, parent).get()));
+    ModLoadingContext.get()
+        .registerExtensionPoint(
+            ConfigScreenHandler.ConfigScreenFactory.class,
+            () ->
+                new ConfigScreenHandler.ConfigScreenFactory(
+                    (client, parent) ->
+                        AutoConfig.getConfigScreen(LMMLConfig.class, parent).get()));
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::packInit);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::packInit);
+  }
+
+  public void modInit(FMLCommonSetupEvent event) {
+    ModSetup.init();
+  }
+
+  public void clientInit(FMLClientSetupEvent event) {
+    ClientSetup.init();
+  }
+
+  public void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
+    event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
+    event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
+  }
+
+  public void packInit(AddPackFindersEvent event) {
+    if (event.getPackType() == ResourceType.CLIENT_RESOURCES) {
+      event.addRepositorySource(new LMPackProvider());
     }
-
-    public void modInit(FMLCommonSetupEvent event) {
-        ModSetup.init();
-    }
-
-    public void clientInit(FMLClientSetupEvent event) {
-        ClientSetup.init();
-    }
-
-    public void rendererInit(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(Registration.MULTI_MODEL_ENTITY.get(), MultiModelRenderer::new);
-        event.registerEntityRenderer(Registration.DUMMY_MODEL_ENTITY.get(), MultiModelRenderer::new);
-    }
-
-    public void packInit(AddPackFindersEvent event) {
-        if (event.getPackType() == ResourceType.CLIENT_RESOURCES) {
-            event.addRepositorySource(new LMPackProvider());
-        }
-    }
-
+  }
 }

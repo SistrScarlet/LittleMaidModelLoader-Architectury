@@ -1,324 +1,320 @@
 package net.sistr.littlemaidmodelloader.client.screen.component;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.math.MathHelper;
-import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
 
 public class MutableListGUI<T extends GUIElement> extends GUIElement {
-    protected final MarginedClickable selectBox = new MarginedClickable(4);
-    protected final int widthStack;
-    protected final int heightStack;
-    protected final int elementW;
-    protected final int elementH;
-    protected final List<T> elements;
-    protected int scroll = 0;
-    protected int selectElem = -1;
+  protected final MarginedClickable selectBox = new MarginedClickable(4);
+  protected final int widthStack;
+  protected final int heightStack;
+  protected final int elementW;
+  protected final int elementH;
+  protected final List<T> elements;
+  protected int scroll = 0;
+  protected int selectElem = -1;
 
-    public MutableListGUI(int x, int y, int widthStack, int heightStack, int elementW, int elementH, Collection<T> elements) {
-        super(widthStack * elementW, heightStack * elementH);
-        this.x = x;
-        this.y = y;
-        this.widthStack = widthStack;
-        this.heightStack = heightStack;
-        this.elementW = elementW;
-        this.elementH = elementH;
-        this.elements = new ArrayList<>(elements);
+  public MutableListGUI(
+      int x,
+      int y,
+      int widthStack,
+      int heightStack,
+      int elementW,
+      int elementH,
+      Collection<T> elements) {
+    super(widthStack * elementW, heightStack * elementH);
+    this.x = x;
+    this.y = y;
+    this.widthStack = widthStack;
+    this.heightStack = heightStack;
+    this.elementW = elementW;
+    this.elementH = elementH;
+    this.elements = new ArrayList<>(elements);
+  }
+
+  public int size() {
+    return elements.size();
+  }
+
+  public void setScroll(int scroll) {
+    this.scroll = scroll;
+    this.scroll = MathHelper.clamp(this.scroll, 0, Math.max(0, size() / widthStack - 1));
+  }
+
+  public int getScroll() {
+    return this.scroll;
+  }
+
+  public List<T> getAllElements() {
+    return Lists.newArrayList(elements);
+  }
+
+  public Optional<T> getSelectElement() {
+    if (checkElementsBounds(selectElem)) {
+      return Optional.of(elements.get(selectElem));
     }
+    return Optional.empty();
+  }
 
-    public int size() {
-        return elements.size();
+  protected Optional<T> getElement(double mouseX, double mouseY) {
+    int index = getIndex(mouseX, mouseY);
+    if (checkElementsBounds(index)) {
+      return Optional.of(this.elements.get(index));
     }
+    return Optional.empty();
+  }
 
-    public void setScroll(int scroll) {
-        this.scroll = scroll;
-        this.scroll = MathHelper.clamp(this.scroll, 0, Math.max(0, size() / widthStack - 1));
+  protected int getIndex(double mouseX, double mouseY) {
+    if (this.x <= mouseX
+        && mouseX < this.x + this.elementW * this.widthStack
+        && this.y <= mouseY
+        && mouseY < this.y + this.elementH * this.heightStack) {
+      int xIndex = MathHelper.floor((float) (mouseX - this.x) / (float) this.elementW);
+      int yIndex = MathHelper.floor((float) (mouseY - this.y) / (float) this.elementH);
+      int index = scroll * this.widthStack + yIndex * this.widthStack + xIndex;
+      if (checkElementsBounds(index)) {
+        return index;
+      }
     }
+    return -1;
+  }
 
-    public int getScroll() {
-        return this.scroll;
+  protected boolean checkElementsBounds(int index) {
+    return 0 <= index && index < this.elements.size();
+  }
+
+  protected boolean isRenderingElement(int index) {
+    return scroll * widthStack <= index && index < scroll * widthStack + widthStack * heightStack;
+  }
+
+  protected int getElementXIndex(int index) {
+    return index % widthStack;
+  }
+
+  protected int getElementYIndex(int index) {
+    return index / widthStack - scroll;
+  }
+
+  @Override
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    for (int i = 0; i < widthStack * heightStack; i++) {
+      int xIndex = i % widthStack;
+      int yIndex = i / widthStack;
+      int x = this.x + elementW * xIndex;
+      int y = this.y + elementH * yIndex;
+      int index = scroll * this.widthStack + yIndex * this.widthStack + xIndex;
+      if (checkElementsBounds(index)) {
+        T elem = elements.get(index);
+        elem.setPos(x, y);
+        elem.render(context, mouseX, mouseY, delta);
+      }
     }
+  }
 
-    public List<T> getAllElements() {
-        return Lists.newArrayList(elements);
+  @Override
+  public void mouseMoved(double mouseX, double mouseY) {
+    Optional<T> e = getElement(mouseX, mouseY);
+    if (e.isPresent()) {
+      T element = e.get();
+      element.mouseMoved(mouseX, mouseY);
     }
+  }
 
-    public Optional<T> getSelectElement() {
-        if (checkElementsBounds(selectElem)) {
-            return Optional.of(elements.get(selectElem));
-        }
-        return Optional.empty();
+  @Override
+  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+      selectBox.click(mouseX, mouseY);
     }
-
-    protected Optional<T> getElement(double mouseX, double mouseY) {
-        int index = getIndex(mouseX, mouseY);
-        if (checkElementsBounds(index)) {
-            return Optional.of(this.elements.get(index));
-        }
-        return Optional.empty();
+    Optional<T> e = getElement(mouseX, mouseY);
+    if (e.isPresent()) {
+      T element = e.get();
+      return element.mouseClicked(mouseX, mouseY, button);
     }
+    return false;
+  }
 
-
-    protected int getIndex(double mouseX, double mouseY) {
-        if (this.x <= mouseX && mouseX < this.x + this.elementW * this.widthStack
-                && this.y <= mouseY && mouseY < this.y + this.elementH * this.heightStack) {
-            int xIndex = MathHelper.floor((float) (mouseX - this.x) / (float) this.elementW);
-            int yIndex = MathHelper.floor((float) (mouseY - this.y) / (float) this.elementH);
-            int index = scroll * this.widthStack + yIndex * this.widthStack + xIndex;
-            if (checkElementsBounds(index)) {
-                return index;
+  @Override
+  public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    Optional<T> e = getElement(mouseX, mouseY);
+    if (e.isPresent()) {
+      if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        if (selectBox.release(mouseX, mouseY)) {
+          int index = getIndex(mouseX, mouseY);
+          if (checkElementsBounds(index)) {
+            if (this.selectElem != index && checkElementsBounds(this.selectElem)) {
+              GUIElement prev = this.elements.get(this.selectElem);
+              if (prev instanceof ListGUIElement) {
+                ((ListGUIElement) prev).setSelected(false);
+              }
             }
-        }
-        return -1;
-    }
-
-    protected boolean checkElementsBounds(int index) {
-        return 0 <= index && index < this.elements.size();
-    }
-
-    protected boolean isRenderingElement(int index) {
-        return scroll * widthStack <= index && index < scroll * widthStack + widthStack * heightStack;
-    }
-
-    protected int getElementXIndex(int index) {
-        return index % widthStack;
-    }
-
-    protected int getElementYIndex(int index) {
-        return index / widthStack - scroll;
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        for (int i = 0; i < widthStack * heightStack; i++) {
-            int xIndex = i % widthStack;
-            int yIndex = i / widthStack;
-            int x = this.x + elementW * xIndex;
-            int y = this.y + elementH * yIndex;
-            int index = scroll * this.widthStack + yIndex * this.widthStack + xIndex;
-            if (checkElementsBounds(index)) {
-                T elem = elements.get(index);
-                elem.setPos(x, y);
-                elem.render(context, mouseX, mouseY, delta);
+            this.selectElem = index;
+            GUIElement now = this.elements.get(this.selectElem);
+            if (now instanceof ListGUIElement) {
+              ((ListGUIElement) now).setSelected(true);
             }
+          }
         }
+      }
+
+      T element = e.get();
+      return element.mouseReleased(mouseX, mouseY, button);
     }
+    return false;
+  }
 
-    @Override
-    public void mouseMoved(double mouseX, double mouseY) {
-        Optional<T> e = getElement(mouseX, mouseY);
-        if (e.isPresent()) {
-            T element = e.get();
-            element.mouseMoved(mouseX, mouseY);
-        }
+  @Override
+  public boolean mouseDragged(
+      double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    Optional<T> e = getElement(mouseX, mouseY);
+    if (e.isPresent()) {
+      T element = e.get();
+      return element.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
+    return false;
+  }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            selectBox.click(mouseX, mouseY);
-        }
-        Optional<T> e = getElement(mouseX, mouseY);
-        if (e.isPresent()) {
-            T element = e.get();
-            return element.mouseClicked(mouseX, mouseY, button);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        Optional<T> e = getElement(mouseX, mouseY);
-        if (e.isPresent()) {
-            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-                if (selectBox.release(mouseX, mouseY)) {
-                    int index = getIndex(mouseX, mouseY);
-                    if (checkElementsBounds(index)) {
-                        if (this.selectElem != index && checkElementsBounds(this.selectElem)) {
-                            GUIElement prev = this.elements.get(this.selectElem);
-                            if (prev instanceof ListGUIElement) {
-                                ((ListGUIElement) prev).setSelected(false);
-                            }
-                        }
-                        this.selectElem = index;
-                        GUIElement now = this.elements.get(this.selectElem);
-                        if (now instanceof ListGUIElement) {
-                            ((ListGUIElement) now).setSelected(true);
-                        }
-                    }
-                }
-            }
-
-            T element = e.get();
-            return element.mouseReleased(mouseX, mouseY, button);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        Optional<T> e = getElement(mouseX, mouseY);
-        if (e.isPresent()) {
-            T element = e.get();
-            return element.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        Optional<T> e = getElement(mouseX, mouseY);
-        if (e.isPresent()) {
-            T element = e.get();
-            if (element.mouseScrolled(mouseX, mouseY, amount)) {
-                return true;
-            }
-        }
-        scroll = scroll + (0 < amount ? -1 : 1);
-        this.scroll = MathHelper.clamp(this.scroll, 0, Math.max(0, size() / widthStack - 1));
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    Optional<T> e = getElement(mouseX, mouseY);
+    if (e.isPresent()) {
+      T element = e.get();
+      if (element.mouseScrolled(mouseX, mouseY, amount)) {
         return true;
+      }
+    }
+    scroll = scroll + (0 < amount ? -1 : 1);
+    this.scroll = MathHelper.clamp(this.scroll, 0, Math.max(0, size() / widthStack - 1));
+    return true;
+  }
+
+  @Override
+  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    return super.keyPressed(keyCode, scanCode, modifiers);
+  }
+
+  @Override
+  public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+    return super.keyPressed(keyCode, scanCode, modifiers);
+  }
+
+  @Override
+  public boolean charTyped(char chr, int modifiers) {
+    return super.charTyped(chr, modifiers);
+  }
+
+  @Override
+  public boolean isMouseOver(double mouseX, double mouseY) {
+    Optional<T> e = getElement(mouseX, mouseY);
+    if (e.isPresent()) {
+      T element = e.get();
+      return element.isMouseOver(mouseX, mouseY);
+    }
+    return false;
+  }
+
+  // 新しいメソッド: 要素の動的変更機能
+
+  /** 要素リストを完全に置き換える */
+  public void setElements(Collection<T> newElements) {
+    elements.clear();
+    elements.addAll(newElements);
+
+    // スクロール位置の再計算
+    if (size() == 0) {
+      scroll = 0;
+    } else if (scroll >= size() / widthStack) {
+      scroll = Math.max(0, size() / widthStack - 1);
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean charTyped(char chr, int modifiers) {
-        return super.charTyped(chr, modifiers);
-    }
-
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        Optional<T> e = getElement(mouseX, mouseY);
-        if (e.isPresent()) {
-            T element = e.get();
-            return element.isMouseOver(mouseX, mouseY);
+    // 選択状態のリセット
+    if (selectElem >= elements.size()) {
+      if (checkElementsBounds(selectElem)) {
+        GUIElement prev = this.elements.get(selectElem);
+        if (prev instanceof ListGUIElement) {
+          ((ListGUIElement) prev).setSelected(false);
         }
-        return false;
+      }
+      selectElem = -1;
     }
+  }
 
-    // 新しいメソッド: 要素の動的変更機能
+  /** 要素を末尾に追加する */
+  public void addElement(T element) {
+    elements.add(element);
+  }
 
-    /**
-     * 要素リストを完全に置き換える
-     */
-    public void setElements(Collection<T> newElements) {
-        elements.clear();
-        elements.addAll(newElements);
+  /** 指定した要素を削除する */
+  public void removeElement(T element) {
+    int index = elements.indexOf(element);
+    if (index != -1) {
+      elements.remove(index);
 
-        // スクロール位置の再計算
-        if (size() == 0) {
-            scroll = 0;
-        } else if (scroll >= size() / widthStack) {
-            scroll = Math.max(0, size() / widthStack - 1);
+      // 選択状態の調整
+      if (selectElem == index) {
+        if (element instanceof ListGUIElement) {
+          ((ListGUIElement) element).setSelected(false);
         }
-
-        // 選択状態のリセット
-        if (selectElem >= elements.size()) {
-            if (checkElementsBounds(selectElem)) {
-                GUIElement prev = this.elements.get(selectElem);
-                if (prev instanceof ListGUIElement) {
-                    ((ListGUIElement) prev).setSelected(false);
-                }
-            }
-            selectElem = -1;
-        }
-    }
-
-    /**
-     * 要素を末尾に追加する
-     */
-    public void addElement(T element) {
-        elements.add(element);
-    }
-
-    /**
-     * 指定した要素を削除する
-     */
-    public void removeElement(T element) {
-        int index = elements.indexOf(element);
-        if (index != -1) {
-            elements.remove(index);
-
-            // 選択状態の調整
-            if (selectElem == index) {
-                if (element instanceof ListGUIElement) {
-                    ((ListGUIElement) element).setSelected(false);
-                }
-                selectElem = -1;
-            } else if (selectElem > index) {
-                selectElem--;
-            }
-
-            // スクロール位置の調整
-            if (size() == 0) {
-                scroll = 0;
-            } else if (scroll >= size() / widthStack) {
-                scroll = Math.max(0, size() / widthStack - 1);
-            }
-        }
-    }
-
-    /**
-     * 指定したインデックスの要素を削除する
-     */
-    public void removeElementAt(int index) {
-        if (checkElementsBounds(index)) {
-            T element = elements.get(index);
-            if (element instanceof ListGUIElement) {
-                ((ListGUIElement) element).setSelected(false);
-            }
-            elements.remove(index);
-
-            // 選択状態の調整
-            if (selectElem == index) {
-                selectElem = -1;
-            } else if (selectElem > index) {
-                selectElem--;
-            }
-
-            // スクロール位置の調整
-            if (size() == 0) {
-                scroll = 0;
-            } else if (scroll >= size() / widthStack) {
-                scroll = Math.max(0, size() / widthStack - 1);
-            }
-        }
-    }
-
-    /**
-     * 全要素をクリアする
-     */
-    public void clearElements() {
-        // 選択状態をクリア
-        if (checkElementsBounds(selectElem)) {
-            GUIElement elem = this.elements.get(selectElem);
-            if (elem instanceof ListGUIElement) {
-                ((ListGUIElement) elem).setSelected(false);
-            }
-        }
-
-        elements.clear();
         selectElem = -1;
+      } else if (selectElem > index) {
+        selectElem--;
+      }
+
+      // スクロール位置の調整
+      if (size() == 0) {
         scroll = 0;
+      } else if (scroll >= size() / widthStack) {
+        scroll = Math.max(0, size() / widthStack - 1);
+      }
+    }
+  }
+
+  /** 指定したインデックスの要素を削除する */
+  public void removeElementAt(int index) {
+    if (checkElementsBounds(index)) {
+      T element = elements.get(index);
+      if (element instanceof ListGUIElement) {
+        ((ListGUIElement) element).setSelected(false);
+      }
+      elements.remove(index);
+
+      // 選択状態の調整
+      if (selectElem == index) {
+        selectElem = -1;
+      } else if (selectElem > index) {
+        selectElem--;
+      }
+
+      // スクロール位置の調整
+      if (size() == 0) {
+        scroll = 0;
+      } else if (scroll >= size() / widthStack) {
+        scroll = Math.max(0, size() / widthStack - 1);
+      }
+    }
+  }
+
+  /** 全要素をクリアする */
+  public void clearElements() {
+    // 選択状態をクリア
+    if (checkElementsBounds(selectElem)) {
+      GUIElement elem = this.elements.get(selectElem);
+      if (elem instanceof ListGUIElement) {
+        ((ListGUIElement) elem).setSelected(false);
+      }
     }
 
-    /**
-     * 要素が空かどうか
-     */
-    public boolean isEmpty() {
-        return elements.isEmpty();
-    }
+    elements.clear();
+    selectElem = -1;
+    scroll = 0;
+  }
+
+  /** 要素が空かどうか */
+  public boolean isEmpty() {
+    return elements.isEmpty();
+  }
 }

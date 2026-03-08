@@ -8,26 +8,26 @@ import net.sistr.littlemaidmodelloader.LMMLMod;
 @Config(name = LMMLMod.MODID)
 public class LMMLConfig implements ConfigData {
 
-	@ConfigEntry.Category("general")
-	private float voiceVolume = 1.0f;
+  @ConfigEntry.Category("general")
+  private float voiceVolume = 1.0f;
 
-	@ConfigEntry.Category("render")
-	private boolean enableAlpha = true;
+  @ConfigEntry.Category("render")
+  private boolean enableAlpha = true;
 
-	//misc
+  // misc
 
-	@ConfigEntry.Category("misc")
-	private boolean debugMode;
+  @ConfigEntry.Category("misc")
+  private boolean debugMode;
 
-	public float getVoiceVolume() {
-		return voiceVolume;
-	}
+  public float getVoiceVolume() {
+    return voiceVolume;
+  }
 
-	public boolean isDebugMode() {
-		return this.debugMode;
-	}
+  public boolean isDebugMode() {
+    return this.debugMode;
+  }
 
-	public boolean isEnableAlpha() {
-		return enableAlpha;
-	}
+  public boolean isEnableAlpha() {
+    return enableAlpha;
+  }
 }

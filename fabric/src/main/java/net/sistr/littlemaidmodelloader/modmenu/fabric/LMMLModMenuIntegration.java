@@ -6,8 +6,8 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.sistr.littlemaidmodelloader.config.LMMLConfig;
 
 public class LMMLModMenuIntegration implements ModMenuApi {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> AutoConfig.getConfigScreen(LMMLConfig.class, parent).get();
-    }
+  @Override
+  public ConfigScreenFactory<?> getModConfigScreenFactory() {
+    return parent -> AutoConfig.getConfigScreen(LMMLConfig.class, parent).get();
+  }
 }
