@@ -68,6 +68,12 @@ Little Maid Model Loader (LMML) is a Minecraft mod that provides a multi-model s
 - `getNavigation()` は `MobEntity` に定義（`LivingEntity` ではない）
 - `initGoals()` は `MobEntity` コンストラクタ内で呼ばれる — サブクラスのフィールドは未初期化。外部委譲時はラムダで遅延参照すること
 
+### Rendering Notes
+- カスタムシェーダーは `assets/minecraft/shaders/core/` に配置する（ShaderProgramコンストラクタが `minecraft` 名前空間前提）
+- 最大輝度の light 値は `LightmapTextureManager.MAX_LIGHT_COORDINATE = 15728880`（`0xF000F0`）
+- `MultiModelRenderLayer` は `RenderLayer` を継承し、`RenderPhase` の protected 定数にアクセスする
+- 発光テクスチャ用カスタムシェーダー `lmml_emissive` は `ClientReloadShadersEvent`（Architectury）で登録
+
 ### API Research
 - Minecraft バニラ・Fabric・Forge などの前提 Mod の API 調査には必ず `mc-api-research` エージェントを使用する
 - `.gradle` キャッシュの jar を直接検索しない
