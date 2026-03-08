@@ -13,6 +13,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.profiler.Profiler;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
+import net.sistr.littlemaidmodelloader.maidmodel.ModelCapsHelper;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 
 // スキンの発光レイヤー、防具の発光レイヤーは防具でやってる
@@ -77,16 +78,29 @@ public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel, M ext
                           model.animateModel(caps, limbAngle, limbDistance, tickDelta);
                           model.setAngles(
                               caps, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
+                          float r = 1F, g = 1F, b = 1F, a = 1F;
+                          if (model instanceof IModelCaps modelCaps) {
+                            float[] lightColor =
+                                (float[])
+                                    ModelCapsHelper.getCapsValue(
+                                        modelCaps, IModelCaps.caps_textureLightColor, caps);
+                            if (lightColor != null && lightColor.length >= 4) {
+                              r = lightColor[0];
+                              g = lightColor[1];
+                              b = lightColor[2];
+                              a = lightColor[3];
+                            }
+                          }
                           model.render(
                               new MMRenderContext(
                                   matrices,
                                   builder,
                                   15728880,
                                   OverlayTexture.DEFAULT_UV,
-                                  1F,
-                                  1F,
-                                  1F,
-                                  1F));
+                                  r,
+                                  g,
+                                  b,
+                                  a));
                         }));
   }
 }
