@@ -24,3 +24,6 @@ classes/
 # claude
 .factorypath
 /.lsmcp/cache/symbols.db
+.claude/tools/
+.claude/agent-memory-local/
+.claude/settings.local.json

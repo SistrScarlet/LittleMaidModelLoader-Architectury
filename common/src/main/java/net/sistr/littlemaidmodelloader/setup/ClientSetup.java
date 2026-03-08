@@ -17,7 +17,7 @@ public class ClientSetup {
             sink.registerShader(
                 new ShaderProgram(
                     provider,
-                    "littlemaidmodelloader:lmml_emissive",
+                    "lmml_emissive",
                     VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL),
                 MultiModelRenderLayer::setEmissiveShader);
           } catch (Exception e) {
