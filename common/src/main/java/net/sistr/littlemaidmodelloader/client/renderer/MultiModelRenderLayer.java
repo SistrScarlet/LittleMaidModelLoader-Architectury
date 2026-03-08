@@ -6,12 +6,19 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 import net.sistr.littlemaidmodelloader.LMMLMod;
+import org.jetbrains.annotations.Nullable;
 
 public class MultiModelRenderLayer extends RenderLayer {
 
   // RenderPhase の protected 定数にアクセスするために RenderLayer を継承
   private MultiModelRenderLayer() {
     super(null, null, null, 0, false, false, null, null);
+  }
+
+  @Nullable private static net.minecraft.client.gl.ShaderProgram emissiveShader;
+
+  public static void setEmissiveShader(net.minecraft.client.gl.ShaderProgram shader) {
+    emissiveShader = shader;
   }
 
   public static RenderLayer getDefault(Identifier identifier) {
@@ -22,7 +29,6 @@ public class MultiModelRenderLayer extends RenderLayer {
   }
 
   public static RenderLayer getEmissive(Identifier identifier) {
-    // テクスチャを動的に設定するため、毎回新しいレイヤーを生成
     return RenderLayer.of(
         "lmml_emissive",
         VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
@@ -31,7 +37,7 @@ public class MultiModelRenderLayer extends RenderLayer {
         false,
         true,
         RenderLayer.MultiPhaseParameters.builder()
-            .program(ENTITY_TRANSLUCENT_PROGRAM)
+            .program(new RenderPhase.ShaderProgram(() -> emissiveShader))
             .texture(new RenderPhase.Texture(identifier, false, false))
             .transparency(TRANSLUCENT_TRANSPARENCY)
             .lightmap(ENABLE_LIGHTMAP)
