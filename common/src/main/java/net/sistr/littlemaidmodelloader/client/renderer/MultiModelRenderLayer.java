@@ -39,7 +39,7 @@ public class MultiModelRenderLayer extends RenderLayer {
         RenderLayer.MultiPhaseParameters.builder()
             .program(new RenderPhase.ShaderProgram(() -> emissiveShader))
             .texture(new RenderPhase.Texture(identifier, false, false))
-            .transparency(TRANSLUCENT_TRANSPARENCY)
+            .transparency(ADDITIVE_TRANSPARENCY)
             .lightmap(ENABLE_LIGHTMAP)
             .writeMaskState(COLOR_MASK)
             .cull(DISABLE_CULLING)
