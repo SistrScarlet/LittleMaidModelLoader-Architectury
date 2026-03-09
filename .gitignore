@@ -27,3 +27,4 @@ classes/
 .claude/tools/
 .claude/agent-memory-local/
 .claude/settings.local.json
+.claude/.setup-vars
