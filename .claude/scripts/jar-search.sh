@@ -14,6 +14,16 @@
 #   デフォルトでは gradle.properties の minecraft_version を読み、
 #   パス内にバージョン文字列を含む jar のみを対象にする。
 #   命名規則が変わった場合は --all で解除すること。
+#
+# Examples:
+#   jar-search.sh find FakePlayer
+#   jar-search.sh find TestContext --dir minecraftMaven
+#   jar-search.sh find SomeClass --all
+#   jar-search.sh grep fabric-events-interaction "class FakePlayer"
+#   jar-search.sh grep minecraft-merged-@common "getWorld" 10
+#   jar-search.sh read fabric-events-interaction net/fabricmc/fabric/api/entity/FakePlayer.java
+#   jar-search.sh list fabric
+#   jar-search.sh list --all
 
 set -euo pipefail
 
@@ -196,13 +206,19 @@ Usage:
 Global options:
   --all   Disable version filter (include all MC versions in loom-cache)
 
+Version filtering:
+  By default, filters jars by minecraft_version from gradle.properties.
+  Use --all if jar naming conventions change or to debug version issues.
+
 Examples:
-  jar-search.sh find FakePlayer
-  jar-search.sh find TestContext --dir minecraftMaven
+  jar-search.sh find FakePlayer                   # Search all jars for current MC version
+  jar-search.sh find TestContext --dir minecraftMaven  # Search Minecraft jars only
+  jar-search.sh find SomeClass --all              # Search all versions
   jar-search.sh grep fabric-events-interaction "class FakePlayer"
+  jar-search.sh grep minecraft-merged-@common "getWorld" 10
   jar-search.sh read fabric-events-interaction net/fabricmc/fabric/api/entity/FakePlayer.java
-  jar-search.sh list fabric
-  jar-search.sh list --all
+  jar-search.sh list fabric                       # List Fabric-related jars
+  jar-search.sh list --all                        # List all jars (no version filter)
 USAGE
     ;;
 esac

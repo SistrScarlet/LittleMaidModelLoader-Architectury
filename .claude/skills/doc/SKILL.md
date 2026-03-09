@@ -29,9 +29,9 @@ docs/{category}/yyyy-mm-dd_{タイトル}.md
 ```
 
 例:
-- `docs/adr/2026-03-08_model-loader-refactoring.md`
-- `docs/plan/2026-03-08_resource-loading-improvement.md`
-- `docs/research/2026-03-08_rendering-api-changes.md`
+- `docs/adr/2026-03-05_targettag-system-migration.md`
+- `docs/plan/2026-03-05_spotbugs-fix-plan.md`
+- `docs/research/2026-03-05_quaternion-api-changes.md`
 
 ## カテゴリ
 

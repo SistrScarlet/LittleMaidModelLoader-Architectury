@@ -19,7 +19,7 @@
   <module name="NewlineAtEndOfFile"/>
 
   <module name="TreeWalker">
-    <!-- インポート -->
+    <!-- インポート (AvoidStarImport は Spotless の removeUnusedImports() で管理) -->
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
 

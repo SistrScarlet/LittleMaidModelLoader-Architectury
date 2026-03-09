@@ -21,8 +21,8 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:${rootProject.junit_version}"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${rootProject.junit_platform_version}"
 }
 
 test {

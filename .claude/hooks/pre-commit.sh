@@ -1,5 +1,5 @@
 #!/bin/bash
-# PreToolUse hook: git commit 前にビルドチェックを実行
+# PreToolUse hook: git commit 前に SpotBugs を実行
 # Bash ツールのコマンドに "git commit" が含まれる場合にトリガー
 
 set -euo pipefail
