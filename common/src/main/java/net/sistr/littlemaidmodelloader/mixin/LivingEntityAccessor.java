@@ -1,4 +1,4 @@
-package net.sistr.littlemaidmodelloader.util;
+package net.sistr.littlemaidmodelloader.mixin;
 
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;

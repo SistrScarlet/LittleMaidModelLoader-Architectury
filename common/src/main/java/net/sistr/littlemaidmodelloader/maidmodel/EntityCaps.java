@@ -20,8 +20,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.sistr.littlemaidmodelloader.mixin.LivingEntityAccessor;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
-import net.sistr.littlemaidmodelloader.util.LivingEntityAccessor;
 
 /** Entityのデータ読み取り用のクラス */
 public class EntityCaps implements IModelCaps {
