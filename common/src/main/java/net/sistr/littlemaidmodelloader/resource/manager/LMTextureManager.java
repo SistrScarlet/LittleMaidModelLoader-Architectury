@@ -15,44 +15,48 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LMTextureManager {
-  public static final LMTextureManager INSTANCE = new LMTextureManager();
-  private static final Logger LOGGER = LogManager.getLogger();
-  private final Map<String, TextureHolder> textures = new HashMap<>();
+    public static final LMTextureManager INSTANCE = new LMTextureManager();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final Map<String, TextureHolder> textures = new HashMap<>();
 
-  public void addTexture(
-      String fileName, String textureName, String modelName, int index, Identifier texturePath) {
-    TextureHolder textureHolder =
-        textures.computeIfAbsent(
-            textureName.toLowerCase(), k -> new TextureHolder(textureName, modelName));
-    if (TextureIndexes.getTextureIndexes(index).isArmor()) {
-      textureHolder.addArmorTexture(getArmorName(fileName), index, texturePath);
-    } else {
-      textureHolder.addTexture(index, texturePath);
+    public void addTexture(
+            String fileName,
+            String textureName,
+            String modelName,
+            int index,
+            Identifier texturePath) {
+        TextureHolder textureHolder =
+                textures.computeIfAbsent(
+                        textureName.toLowerCase(), k -> new TextureHolder(textureName, modelName));
+        if (TextureIndexes.getTextureIndexes(index).isArmor()) {
+            textureHolder.addArmorTexture(getArmorName(fileName), index, texturePath);
+        } else {
+            textureHolder.addTexture(index, texturePath);
+        }
+        if (LMMLMod.getConfig().isDebugMode()) LOGGER.debug("Loaded Texture : " + texturePath);
     }
-    if (LMMLMod.getConfig().isDebugMode()) LOGGER.debug("Loaded Texture : " + texturePath);
-  }
 
-  public String getArmorName(String fileName) {
-    String name = fileName.substring(0, fileName.indexOf('_'));
-    if (name.contains("chainmail")) {
-      return name;
+    public String getArmorName(String fileName) {
+        String name = fileName.substring(0, fileName.indexOf('_'));
+        if (name.contains("chainmail")) {
+            return name;
+        }
+        return name.replace("chain", "chainmail");
     }
-    return name.replace("chain", "chainmail");
-  }
 
-  public Optional<TextureHolder> getTexture(String textureName) {
-    TextureHolder textureHolder = textures.get(textureName.toLowerCase());
-    // サーバー側で読み込んでないテクスチャでもテクスチャ名nだけは保持する
-    if (Platform.getEnv() == EnvType.SERVER && textureHolder == null) {
-      TextureHolder serverHolder =
-          new TextureHolder(textureName, ResourceHelper.getModelName(textureName));
-      textures.put(textureName.toLowerCase(), serverHolder);
-      return Optional.of(serverHolder);
+    public Optional<TextureHolder> getTexture(String textureName) {
+        TextureHolder textureHolder = textures.get(textureName.toLowerCase());
+        // サーバー側で読み込んでないテクスチャでもテクスチャ名nだけは保持する
+        if (Platform.getEnv() == EnvType.SERVER && textureHolder == null) {
+            TextureHolder serverHolder =
+                    new TextureHolder(textureName, ResourceHelper.getModelName(textureName));
+            textures.put(textureName.toLowerCase(), serverHolder);
+            return Optional.of(serverHolder);
+        }
+        return Optional.ofNullable(textureHolder);
     }
-    return Optional.ofNullable(textureHolder);
-  }
 
-  public Collection<TextureHolder> getAllTextures() {
-    return textures.values();
-  }
+    public Collection<TextureHolder> getAllTextures() {
+        return textures.values();
+    }
 }

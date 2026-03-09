@@ -4,7 +4,7 @@ import net.sistr.littlemaidmodelloader.network.Networking;
 
 public class ModSetup {
 
-  public static void init() {
-    Networking.INSTANCE.init();
-  }
+    public static void init() {
+        Networking.INSTANCE.init();
+    }
 }

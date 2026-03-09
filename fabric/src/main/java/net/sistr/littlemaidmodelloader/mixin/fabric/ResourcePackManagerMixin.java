@@ -17,20 +17,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 // Fabricにリソパ追加するやつはあるが、主目的が代替リソパの追加なのでLMMLには適さない。てかめんどくさい
 @Mixin(ResourcePackManager.class)
 public class ResourcePackManagerMixin {
-  @Shadow @Final @Mutable private Set<ResourcePackProvider> providers;
+    @Shadow @Final @Mutable private Set<ResourcePackProvider> providers;
 
-  @Inject(method = "<init>", at = @At("RETURN"))
-  public void construct(ResourcePackProvider[] providers, CallbackInfo ci) {
-    boolean client = false;
-    this.providers = new HashSet<>(this.providers);
-    for (ResourcePackProvider provider : this.providers) {
-      if (provider instanceof DefaultClientResourcePackProvider) {
-        client = true;
-        break;
-      }
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void construct(ResourcePackProvider[] providers, CallbackInfo ci) {
+        boolean client = false;
+        this.providers = new HashSet<>(this.providers);
+        for (ResourcePackProvider provider : this.providers) {
+            if (provider instanceof DefaultClientResourcePackProvider) {
+                client = true;
+                break;
+            }
+        }
+        if (client) {
+            this.providers.add(new LMPackProvider());
+        }
     }
-    if (client) {
-      this.providers.add(new LMPackProvider());
-    }
-  }
 }

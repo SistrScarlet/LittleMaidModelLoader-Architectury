@@ -35,135 +35,140 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LMMLMod {
-  public static final String MODID = "littlemaidmodelloader";
-  public static final Logger LOGGER = LogManager.getLogger();
-  private static ConfigHolder<LMMLConfig> CONFIG_HOLDER;
+    public static final String MODID = "littlemaidmodelloader";
+    public static final Logger LOGGER = LogManager.getLogger();
+    private static ConfigHolder<LMMLConfig> CONFIG_HOLDER;
 
-  public static void init() {
-    AutoConfig.register(LMMLConfig.class, GsonConfigSerializer::new);
-    CONFIG_HOLDER = AutoConfig.getConfigHolder(LMMLConfig.class);
+    public static void init() {
+        AutoConfig.register(LMMLConfig.class, GsonConfigSerializer::new);
+        CONFIG_HOLDER = AutoConfig.getConfigHolder(LMMLConfig.class);
 
-    initFileLoader();
-    initModelLoader();
-    // todo クライアントセットアップ
-    if (Platform.getEnv() == EnvType.CLIENT) {
-      addGhastMaidVoice();
-      initTextureLoader();
-      initSoundLoader();
-      ClientLifecycleEvent.CLIENT_STARTED.register(
-          cs -> {
-            // このパスにあるテクスチャすべてを受け取る(リソパ及びModリソースからも抜ける)
-            Collection<Identifier> resourceLocations =
-                cs.getResourceManager()
-                    .findResources("textures/entity/littlemaid", s -> true)
-                    .keySet();
-            // テクスチャを読み込む
-            resourceLocations.forEach(
-                resourcePath -> {
-                  String path = resourcePath.getPath();
-                  ResourceHelper.getTexturePackName(path, false)
-                      .ifPresent(
-                          textureName -> {
-                            String modelName = ResourceHelper.getModelName(textureName);
-                            int index = ResourceHelper.getIndex(path);
-                            if (index != -1) {
-                              LMTextureManager.INSTANCE.addTexture(
-                                  ResourceHelper.getFileName(path, false),
-                                  textureName,
-                                  modelName,
-                                  index,
-                                  resourcePath);
-                            }
-                          });
-                });
-          });
+        initFileLoader();
+        initModelLoader();
+        // todo クライアントセットアップ
+        if (Platform.getEnv() == EnvType.CLIENT) {
+            addGhastMaidVoice();
+            initTextureLoader();
+            initSoundLoader();
+            ClientLifecycleEvent.CLIENT_STARTED.register(
+                    cs -> {
+                        // このパスにあるテクスチャすべてを受け取る(リソパ及びModリソースからも抜ける)
+                        Collection<Identifier> resourceLocations =
+                                cs.getResourceManager()
+                                        .findResources("textures/entity/littlemaid", s -> true)
+                                        .keySet();
+                        // テクスチャを読み込む
+                        resourceLocations.forEach(
+                                resourcePath -> {
+                                    String path = resourcePath.getPath();
+                                    ResourceHelper.getTexturePackName(path, false)
+                                            .ifPresent(
+                                                    textureName -> {
+                                                        String modelName =
+                                                                ResourceHelper.getModelName(
+                                                                        textureName);
+                                                        int index = ResourceHelper.getIndex(path);
+                                                        if (index != -1) {
+                                                            LMTextureManager.INSTANCE.addTexture(
+                                                                    ResourceHelper.getFileName(
+                                                                            path, false),
+                                                                    textureName,
+                                                                    modelName,
+                                                                    index,
+                                                                    resourcePath);
+                                                        }
+                                                    });
+                                });
+                    });
+        }
+        Registration.init();
+        registerAttribute();
+
+        // ForgeだとModSetupじゃ遅いためここに
+        LMFileLoader.INSTANCE.load();
     }
-    Registration.init();
-    registerAttribute();
 
-    // ForgeだとModSetupじゃ遅いためここに
-    LMFileLoader.INSTANCE.load();
-  }
+    public static void initFileLoader() {
+        LMFileLoader fileLoader = LMFileLoader.INSTANCE;
+        fileLoader.addLoadFolderPath(
+                Paths.get(Platform.getGameFolder().toString(), "LMMLResources"));
+        fileLoader.addLoader(
+                new LMMultiModelLoader(
+                        LMModelManager.INSTANCE,
+                        new MultiModelClassLoader(fileLoader.getFolderPaths())));
+        fileLoader.addLoader(new LMConfigLoader(LMConfigManager.INSTANCE));
+    }
 
-  public static void initFileLoader() {
-    LMFileLoader fileLoader = LMFileLoader.INSTANCE;
-    fileLoader.addLoadFolderPath(Paths.get(Platform.getGameFolder().toString(), "LMMLResources"));
-    fileLoader.addLoader(
-        new LMMultiModelLoader(
-            LMModelManager.INSTANCE, new MultiModelClassLoader(fileLoader.getFolderPaths())));
-    fileLoader.addLoader(new LMConfigLoader(LMConfigManager.INSTANCE));
-  }
+    public static void initModelLoader() {
+        // モデルを読み込む
+        LMModelManager modelManager = LMModelManager.INSTANCE;
+        modelManager.addModel("Default", ModelLittleMaid_Orign.class);
+        modelManager.addModel("SR2", ModelLittleMaid_SR2.class);
+        modelManager.addModel("Aug", ModelLittleMaid_Aug.class);
+        modelManager.addModel("Archetype", ModelLittleMaid_Archetype.class);
+        modelManager.addModel("Steve", ModelMulti_Steve.class);
+        modelManager.addModel("Stef", ModelMulti_Stef.class);
+        modelManager.addModel("Classic64", ModelMulti_Classic64.class);
+        modelManager.addModel("Slim64", ModelMulti_Slim64.class);
+        modelManager.addModel("Beverly7", ModelLittleMaid_Beverly7.class);
+        modelManager.addModel("Chloe2", ModelLittleMaid_Chloe2.class);
+        modelManager.addModel("Elsa5", ModelLittleMaid_Elsa5.class);
+        modelManager.setDefaultModel(
+                modelManager
+                        .getModel("Default", IHasMultiModel.Layer.SKIN)
+                        .orElseThrow(RuntimeException::new));
+    }
 
-  public static void initModelLoader() {
-    // モデルを読み込む
-    LMModelManager modelManager = LMModelManager.INSTANCE;
-    modelManager.addModel("Default", ModelLittleMaid_Orign.class);
-    modelManager.addModel("SR2", ModelLittleMaid_SR2.class);
-    modelManager.addModel("Aug", ModelLittleMaid_Aug.class);
-    modelManager.addModel("Archetype", ModelLittleMaid_Archetype.class);
-    modelManager.addModel("Steve", ModelMulti_Steve.class);
-    modelManager.addModel("Stef", ModelMulti_Stef.class);
-    modelManager.addModel("Classic64", ModelMulti_Classic64.class);
-    modelManager.addModel("Slim64", ModelMulti_Slim64.class);
-    modelManager.addModel("Beverly7", ModelLittleMaid_Beverly7.class);
-    modelManager.addModel("Chloe2", ModelLittleMaid_Chloe2.class);
-    modelManager.addModel("Elsa5", ModelLittleMaid_Elsa5.class);
-    modelManager.setDefaultModel(
-        modelManager
-            .getModel("Default", IHasMultiModel.Layer.SKIN)
-            .orElseThrow(RuntimeException::new));
-  }
+    @Environment(EnvType.CLIENT)
+    public static void initTextureLoader() {
+        LMFileLoader fileLoader = LMFileLoader.INSTANCE;
+        LMTextureLoader textureProcessor = new LMTextureLoader(LMTextureManager.INSTANCE);
+        textureProcessor.addPathConverter("assets/", "");
+        textureProcessor.addPathConverter("mob/", "minecraft/textures/entity/");
+        fileLoader.addLoader(textureProcessor);
+    }
 
-  @Environment(EnvType.CLIENT)
-  public static void initTextureLoader() {
-    LMFileLoader fileLoader = LMFileLoader.INSTANCE;
-    LMTextureLoader textureProcessor = new LMTextureLoader(LMTextureManager.INSTANCE);
-    textureProcessor.addPathConverter("assets/", "");
-    textureProcessor.addPathConverter("mob/", "minecraft/textures/entity/");
-    fileLoader.addLoader(textureProcessor);
-  }
+    @Environment(EnvType.CLIENT)
+    public static void initSoundLoader() {
+        LMFileLoader.INSTANCE.addLoader(new LMSoundLoader(LMSoundManager.INSTANCE));
+    }
 
-  @Environment(EnvType.CLIENT)
-  public static void initSoundLoader() {
-    LMFileLoader.INSTANCE.addLoader(new LMSoundLoader(LMSoundManager.INSTANCE));
-  }
+    public static void registerAttribute() {
+        EntityAttributeRegistry.register(
+                Registration.MULTI_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
+        EntityAttributeRegistry.register(
+                Registration.DUMMY_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
+    }
 
-  public static void registerAttribute() {
-    EntityAttributeRegistry.register(
-        Registration.MULTI_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
-    EntityAttributeRegistry.register(
-        Registration.DUMMY_MODEL_ENTITY, MultiModelEntity::createMobAttributes);
-  }
+    public static LMMLConfig getConfig() {
+        return CONFIG_HOLDER.getConfig();
+    }
 
-  public static LMMLConfig getConfig() {
-    return CONFIG_HOLDER.getConfig();
-  }
+    public static void addGhastMaidVoice() {
+        String packName = "DefaultGhast";
 
-  public static void addGhastMaidVoice() {
-    String packName = "DefaultGhast";
+        var configMap = new ImmutableMap.Builder<String, String>();
+        addVoice(LMSounds.HURT, SoundEvents.ENTITY_GHAST_HURT, configMap);
+        addVoice(LMSounds.HURT_FIRE, SoundEvents.ENTITY_GHAST_HURT, configMap);
+        addVoice(LMSounds.HURT_FALL, SoundEvents.ENTITY_GHAST_HURT, configMap);
+        addVoice(LMSounds.DEATH, SoundEvents.ENTITY_GHAST_DEATH, configMap);
+        addVoice(LMSounds.ATTACK, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.ATTACK_BLOOD_SUCK, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.SHOOT, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.SHOOT_BURST, SoundEvents.ENTITY_GHAST_WARN, configMap);
+        addVoice(LMSounds.LIVING_DAYTIME, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_MORNING, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_NIGHT, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_WHINE, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_RAIN, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_SNOW, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_COLD, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        addVoice(LMSounds.LIVING_HOT, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
+        LMConfigManager.INSTANCE.addConfig(packName, "", "littlemaidmob", configMap.build());
+    }
 
-    var configMap = new ImmutableMap.Builder<String, String>();
-    addVoice(LMSounds.HURT, SoundEvents.ENTITY_GHAST_HURT, configMap);
-    addVoice(LMSounds.HURT_FIRE, SoundEvents.ENTITY_GHAST_HURT, configMap);
-    addVoice(LMSounds.HURT_FALL, SoundEvents.ENTITY_GHAST_HURT, configMap);
-    addVoice(LMSounds.DEATH, SoundEvents.ENTITY_GHAST_DEATH, configMap);
-    addVoice(LMSounds.ATTACK, SoundEvents.ENTITY_GHAST_WARN, configMap);
-    addVoice(LMSounds.ATTACK_BLOOD_SUCK, SoundEvents.ENTITY_GHAST_WARN, configMap);
-    addVoice(LMSounds.SHOOT, SoundEvents.ENTITY_GHAST_WARN, configMap);
-    addVoice(LMSounds.SHOOT_BURST, SoundEvents.ENTITY_GHAST_WARN, configMap);
-    addVoice(LMSounds.LIVING_DAYTIME, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    addVoice(LMSounds.LIVING_MORNING, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    addVoice(LMSounds.LIVING_NIGHT, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    addVoice(LMSounds.LIVING_WHINE, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    addVoice(LMSounds.LIVING_RAIN, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    addVoice(LMSounds.LIVING_SNOW, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    addVoice(LMSounds.LIVING_COLD, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    addVoice(LMSounds.LIVING_HOT, SoundEvents.ENTITY_GHAST_AMBIENT, configMap);
-    LMConfigManager.INSTANCE.addConfig(packName, "", "littlemaidmob", configMap.build());
-  }
-
-  private static void addVoice(
-      String soundName, SoundEvent soundId, ImmutableMap.Builder<String, String> configMap) {
-    configMap.put(soundName, soundId.getId().toString());
-  }
+    private static void addVoice(
+            String soundName, SoundEvent soundId, ImmutableMap.Builder<String, String> configMap) {
+        configMap.put(soundName, soundId.getId().toString());
+    }
 }

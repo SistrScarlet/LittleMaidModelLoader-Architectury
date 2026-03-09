@@ -7,7 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PlayerListImpl {
 
-  public static Collection<ServerPlayerEntity> tracking(Entity entity) {
-    return PlayerLookup.tracking(entity);
-  }
+    public static Collection<ServerPlayerEntity> tracking(Entity entity) {
+        return PlayerLookup.tracking(entity);
+    }
 }

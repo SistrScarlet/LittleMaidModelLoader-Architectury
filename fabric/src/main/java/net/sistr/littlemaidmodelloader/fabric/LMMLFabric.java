@@ -11,16 +11,16 @@ import net.sistr.littlemaidmodelloader.setup.Registration;
 
 public class LMMLFabric implements ModInitializer, ClientModInitializer {
 
-  @Override
-  public void onInitialize() {
-    LMMLMod.init();
-    ModSetup.init();
-  }
+    @Override
+    public void onInitialize() {
+        LMMLMod.init();
+        ModSetup.init();
+    }
 
-  @Override
-  public void onInitializeClient() {
-    ClientSetup.init();
-    EntityRendererRegistry.register(Registration.MULTI_MODEL_ENTITY, MultiModelRenderer::new);
-    EntityRendererRegistry.register(Registration.DUMMY_MODEL_ENTITY, MultiModelRenderer::new);
-  }
+    @Override
+    public void onInitializeClient() {
+        ClientSetup.init();
+        EntityRendererRegistry.register(Registration.MULTI_MODEL_ENTITY, MultiModelRenderer::new);
+        EntityRendererRegistry.register(Registration.DUMMY_MODEL_ENTITY, MultiModelRenderer::new);
+    }
 }

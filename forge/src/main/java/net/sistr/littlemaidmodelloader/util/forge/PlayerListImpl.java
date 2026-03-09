@@ -7,9 +7,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PlayerListImpl {
 
-  public static Collection<ServerPlayerEntity> tracking(Entity entity) {
-    return entity.getWorld().getPlayers().stream()
-        .map(p -> (ServerPlayerEntity) p)
-        .collect(Collectors.toList());
-  }
+    public static Collection<ServerPlayerEntity> tracking(Entity entity) {
+        return entity.getWorld().getPlayers().stream()
+                .map(p -> (ServerPlayerEntity) p)
+                .collect(Collectors.toList());
+    }
 }

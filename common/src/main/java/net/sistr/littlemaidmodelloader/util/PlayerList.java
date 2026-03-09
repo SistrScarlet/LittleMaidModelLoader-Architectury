@@ -7,8 +7,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PlayerList {
 
-  @ExpectPlatform
-  public static Collection<ServerPlayerEntity> tracking(Entity entity) {
-    throw new AssertionError();
-  }
+    @ExpectPlatform
+    public static Collection<ServerPlayerEntity> tracking(Entity entity) {
+        throw new AssertionError();
+    }
 }

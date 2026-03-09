@@ -19,88 +19,102 @@ import net.sistr.littlemaidmodelloader.multimodel.layer.MMRenderContext;
 // スキンの発光レイヤー、防具の発光レイヤーは防具でやってる
 @Environment(EnvType.CLIENT)
 public class MultiModelLightLayer<T extends LivingEntity & IHasMultiModel, M extends MultiModel<T>>
-    extends FeatureRenderer<T, M> {
+        extends FeatureRenderer<T, M> {
 
-  public MultiModelLightLayer(FeatureRendererContext<T, M> context) {
-    super(context);
-  }
+    public MultiModelLightLayer(FeatureRendererContext<T, M> context) {
+        super(context);
+    }
 
-  @Override
-  public void render(
-      MatrixStack matrices,
-      VertexConsumerProvider vertexConsumers,
-      int light,
-      T entity,
-      float limbAngle,
-      float limbDistance,
-      float tickDelta,
-      float animationProgress,
-      float headYaw,
-      float headPitch) {
-    Profiler profiler = MinecraftClient.getInstance().getProfiler();
-    profiler.push("littlemaidmodelloader:mm_eye_layer");
-    renderLightLayer(
-        matrices,
-        vertexConsumers,
-        entity,
-        limbAngle,
-        limbDistance,
-        tickDelta,
-        animationProgress,
-        headYaw,
-        headPitch,
-        entity.getCaps());
-    profiler.pop();
-  }
+    @Override
+    public void render(
+            MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers,
+            int light,
+            T entity,
+            float limbAngle,
+            float limbDistance,
+            float tickDelta,
+            float animationProgress,
+            float headYaw,
+            float headPitch) {
+        Profiler profiler = MinecraftClient.getInstance().getProfiler();
+        profiler.push("littlemaidmodelloader:mm_eye_layer");
+        renderLightLayer(
+                matrices,
+                vertexConsumers,
+                entity,
+                limbAngle,
+                limbDistance,
+                tickDelta,
+                animationProgress,
+                headYaw,
+                headPitch,
+                entity.getCaps());
+        profiler.pop();
+    }
 
-  private void renderLightLayer(
-      MatrixStack matrices,
-      VertexConsumerProvider vertexConsumers,
-      T entity,
-      float limbAngle,
-      float limbDistance,
-      float tickDelta,
-      float animationProgress,
-      float headYaw,
-      float headPitch,
-      IModelCaps caps) {
-    entity
-        .getTexture(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD, true)
-        .ifPresent(
-            resourceLocation ->
-                entity
-                    .getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD)
-                    .ifPresent(
-                        model -> {
-                          VertexConsumer builder =
-                              vertexConsumers.getBuffer(
-                                  MultiModelRenderLayer.getEmissive(resourceLocation));
-                          model.animateModel(caps, limbAngle, limbDistance, tickDelta);
-                          model.setAngles(
-                              caps, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
-                          float r = 1F, g = 1F, b = 1F, a = 1F;
-                          if (model instanceof IModelCaps modelCaps) {
-                            float[] lightColor =
-                                (float[])
-                                    ModelCapsHelper.getCapsValue(
-                                        modelCaps, IModelCaps.caps_textureLightColor, caps);
-                            if (lightColor != null && lightColor.length >= 4) {
-                              r = lightColor[0];
-                              g = lightColor[1];
-                              b = lightColor[2];
-                              a = lightColor[3];
-                            }
-                          }
-                          model.render(
-                              new MMRenderContext(
-                                  matrices,
-                                  builder,
-                                  15728880,
-                                  OverlayTexture.DEFAULT_UV,
-                                  r,
-                                  g,
-                                  b,
-                                  a));
-                        }));
-  }
+    private void renderLightLayer(
+            MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers,
+            T entity,
+            float limbAngle,
+            float limbDistance,
+            float tickDelta,
+            float animationProgress,
+            float headYaw,
+            float headPitch,
+            IModelCaps caps) {
+        entity.getTexture(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD, true)
+                .ifPresent(
+                        resourceLocation ->
+                                entity.getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD)
+                                        .ifPresent(
+                                                model -> {
+                                                    VertexConsumer builder =
+                                                            vertexConsumers.getBuffer(
+                                                                    MultiModelRenderLayer
+                                                                            .getEmissive(
+                                                                                    resourceLocation));
+                                                    model.animateModel(
+                                                            caps,
+                                                            limbAngle,
+                                                            limbDistance,
+                                                            tickDelta);
+                                                    model.setAngles(
+                                                            caps,
+                                                            limbAngle,
+                                                            limbDistance,
+                                                            animationProgress,
+                                                            headYaw,
+                                                            headPitch);
+                                                    float r = 1F, g = 1F, b = 1F, a = 1F;
+                                                    if (model instanceof IModelCaps modelCaps) {
+                                                        float[] lightColor =
+                                                                (float[])
+                                                                        ModelCapsHelper
+                                                                                .getCapsValue(
+                                                                                        modelCaps,
+                                                                                        IModelCaps
+                                                                                                .caps_textureLightColor,
+                                                                                        caps);
+                                                        if (lightColor != null
+                                                                && lightColor.length >= 4) {
+                                                            r = lightColor[0];
+                                                            g = lightColor[1];
+                                                            b = lightColor[2];
+                                                            a = lightColor[3];
+                                                        }
+                                                    }
+                                                    model.render(
+                                                            new MMRenderContext(
+                                                                    matrices,
+                                                                    builder,
+                                                                    15728880,
+                                                                    OverlayTexture.DEFAULT_UV,
+                                                                    r,
+                                                                    g,
+                                                                    b,
+                                                                    a));
+                                                }));
+    }
 }

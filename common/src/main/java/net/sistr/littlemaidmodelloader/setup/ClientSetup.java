@@ -10,19 +10,19 @@ import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderLayer;
 @Environment(EnvType.CLIENT)
 public class ClientSetup {
 
-  public static void init() {
-    ClientReloadShadersEvent.EVENT.register(
-        (provider, sink) -> {
-          try {
-            sink.registerShader(
-                new ShaderProgram(
-                    provider,
-                    "lmml_emissive",
-                    VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL),
-                MultiModelRenderLayer::setEmissiveShader);
-          } catch (Exception e) {
-            throw new RuntimeException("Failed to load LMML emissive shader", e);
-          }
-        });
-  }
+    public static void init() {
+        ClientReloadShadersEvent.EVENT.register(
+                (provider, sink) -> {
+                    try {
+                        sink.registerShader(
+                                new ShaderProgram(
+                                        provider,
+                                        "lmml_emissive",
+                                        VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL),
+                                MultiModelRenderLayer::setEmissiveShader);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to load LMML emissive shader", e);
+                    }
+                });
+    }
 }

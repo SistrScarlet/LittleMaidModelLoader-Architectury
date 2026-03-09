@@ -16,29 +16,31 @@ import org.apache.logging.log4j.Logger;
 // サーバーでは読み込む必要が無いため読み込まない
 @Environment(EnvType.CLIENT)
 public class LMSoundLoader implements LMLoader {
-  private static final Logger LOGGER = LogManager.getLogger();
-  private final LMSoundManager soundManager;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final LMSoundManager soundManager;
 
-  public LMSoundLoader(LMSoundManager soundManager) {
-    this.soundManager = soundManager;
-  }
+    public LMSoundLoader(LMSoundManager soundManager) {
+        this.soundManager = soundManager;
+    }
 
-  @Override
-  public boolean canLoad(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
-    return path.endsWith(".ogg") && ResourceHelper.getParentFolderName(path, isArchive).isPresent();
-  }
+    @Override
+    public boolean canLoad(
+            String path, Path folderPath, InputStream inputStream, boolean isArchive) {
+        return path.endsWith(".ogg")
+                && ResourceHelper.getParentFolderName(path, isArchive).isPresent();
+    }
 
-  @Override
-  public void load(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
-    String packName = ResourceHelper.getFirstParentName(path, folderPath, isArchive).orElse("");
-    String parent = ResourceHelper.getParentFolderName(path, isArchive).orElse("");
-    String fileName = ResourceHelper.getFileName(path, isArchive);
-    Identifier location = ResourceHelper.getLocation("sounds", packName, fileName);
-    fileName = ResourceHelper.removeExtension(fileName);
-    fileName = ResourceHelper.removeNameLastIndex(fileName);
-    soundManager.addSound(packName, parent, fileName, location);
-    ResourceWrapper.addResourcePath(location, path, folderPath, isArchive);
-    if (LMMLMod.getConfig().isDebugMode())
-      LOGGER.debug("Loaded Sound : " + packName + " : " + fileName);
-  }
+    @Override
+    public void load(String path, Path folderPath, InputStream inputStream, boolean isArchive) {
+        String packName = ResourceHelper.getFirstParentName(path, folderPath, isArchive).orElse("");
+        String parent = ResourceHelper.getParentFolderName(path, isArchive).orElse("");
+        String fileName = ResourceHelper.getFileName(path, isArchive);
+        Identifier location = ResourceHelper.getLocation("sounds", packName, fileName);
+        fileName = ResourceHelper.removeExtension(fileName);
+        fileName = ResourceHelper.removeNameLastIndex(fileName);
+        soundManager.addSound(packName, parent, fileName, location);
+        ResourceWrapper.addResourcePath(location, path, folderPath, isArchive);
+        if (LMMLMod.getConfig().isDebugMode())
+            LOGGER.debug("Loaded Sound : " + packName + " : " + fileName);
+    }
 }
