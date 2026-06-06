@@ -24,7 +24,7 @@ public class Registration {
                     () ->
                             EntityType.Builder.<MultiModelEntity>create(
                                             MultiModelEntity::new, SpawnGroup.MISC)
-                                    .setDimensions(0.5F, 1.35F)
+                                    .dimensions(0.5F, 1.35F)
                                     .build("multi_model_entity"));
     public static final RegistrySupplier<EntityType<MultiModelGUIUtil.DummyModelEntity>>
             DUMMY_MODEL_ENTITY =
@@ -34,7 +34,7 @@ public class Registration {
                                     EntityType.Builder.<MultiModelGUIUtil.DummyModelEntity>create(
                                                     MultiModelGUIUtil.DummyModelEntity::new,
                                                     SpawnGroup.MISC)
-                                            .setDimensions(0.5F, 1.35F)
+                                            .dimensions(0.5F, 1.35F)
                                             .disableSummon()
                                             .build("dummy_model_entity"));
 }

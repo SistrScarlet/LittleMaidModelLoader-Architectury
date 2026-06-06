@@ -24,7 +24,7 @@ import net.sistr.littlemaidmodelloader.resource.util.TexturePair;
 /** モデル/テクスチャの管理クラス */
 public class MultiModelCompound implements IHasMultiModel {
 
-    private final Entity entity;
+    private final LivingEntity entity;
     private final IModelCaps caps;
 
     private final TextureHolder defaultMainPackage;
@@ -85,8 +85,12 @@ public class MultiModelCompound implements IHasMultiModel {
 
     private String getName(Item item) {
         // クライアント限定
-        if (entity.getWorld().isClient && item instanceof ArmorItem) {
-            return ((ArmorItem) item).getMaterial().getName().toLowerCase();
+        if (entity.getWorld().isClient && item instanceof ArmorItem armorItem) {
+            return armorItem
+                    .getMaterial()
+                    .getKey()
+                    .map(key -> key.getValue().getPath().toLowerCase())
+                    .orElseGet(() -> Registries.ITEM.getId(item).toString());
         }
         Identifier location = Registries.ITEM.getId(item);
         return location.toString();

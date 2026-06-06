@@ -20,6 +20,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -138,50 +139,14 @@ public class MultiModelEntity extends PathAwareEntity
                                 : new ModelSelectScreen<>(Text.of(""), this.getWorld(), this));
     }
 
-    // このままだとEntityDimensionsが作っては捨てられてを繰り返すのでパフォーマンスはよろしくない
-    @Override
-    public EntityDimensions getDimensions(EntityPose pose) {
-        EntityDimensions dimensions;
-        IMultiModel model =
-                getModel(Layer.SKIN, Part.HEAD).orElse(LMModelManager.INSTANCE.getDefaultModel());
-        IModelCaps caps = getCaps();
-        MMPose mmPose = MMPose.convertPose(pose);
-        float height = model.getHeight(caps, mmPose);
-        float width = model.getWidth(caps, mmPose);
-        dimensions = EntityDimensions.changing(width, height);
-        return dimensions.scaled(getScaleFactor());
-    }
-
-    // 視点調整
-    @Override
-    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-        // 初期化前に呼ばれることがあるためチェック
-        if (multiModel == null) return dimensions.height * 0.85F;
-        return getModel(Layer.SKIN, Part.HEAD)
-                .orElse(LMModelManager.INSTANCE.getDefaultModel())
-                .getEyeHeight(getCaps(), MMPose.convertPose(pose));
-    }
-
-    // 上になんか乗ってるやつのオフセット
-    @Override
-    public double getMountedHeightOffset() {
-        IMultiModel model =
-                getModel(Layer.SKIN, Part.HEAD).orElse(LMModelManager.INSTANCE.getDefaultModel());
-        return model.getMountedYOffset(getCaps());
-    }
-
-    // 騎乗時のオフセット
-    @Override
-    public double getHeightOffset() {
-        IMultiModel model =
-                getModel(Layer.SKIN, Part.HEAD).orElse(LMModelManager.INSTANCE.getDefaultModel());
-        return model.getyOffset(getCaps()) - getHeight();
-    }
+    // TODO(1.21 移植): 動的 dimensions / eye height / mount offset は EntityAttachments
+    //   ベースに移行された。EntityType.Builder で固定値を設定するか、
+    //   別途設計判断が必要。当面は EntityType.Builder の固定値で運用する。
 
     // 防具の更新
     @Override
     public void equipStack(EquipmentSlot slot, ItemStack stack) {
-        if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+        if (slot.isArmorSlot()) {
             multiModel.updateArmor();
         }
         super.equipStack(slot, stack);
@@ -272,7 +237,7 @@ public class MultiModelEntity extends PathAwareEntity
     }
 
     @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
-        return NetworkManager.createAddEntityPacket(this);
+    public Packet<ClientPlayPacketListener> createSpawnPacket(EntityTrackerEntry trackerEntry) {
+        return NetworkManager.createAddEntityPacket(this, trackerEntry);
     }
 }

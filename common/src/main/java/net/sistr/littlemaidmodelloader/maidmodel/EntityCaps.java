@@ -52,7 +52,7 @@ public class EntityCaps implements IModelCaps {
                 "currentEquippedItem",
                 caps_currentEquippedItem,
                 (entity, arg) -> {
-                    List<ItemStack> items = Lists.newArrayList(entity.getItemsEquipped());
+                    List<ItemStack> items = Lists.newArrayList(entity.getEquippedItems());
                     ItemStack item = items.get((Integer) arg[0]);
                     if (item.isEmpty()) item = null;
                     return item;
@@ -210,10 +210,8 @@ public class EntityCaps implements IModelCaps {
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
 
-        register(
-                "renderRidingYOffset",
-                caps_renderRidingYOffset,
-                (entity, arg) -> entity.getMountedHeightOffset());
+        // TODO(1.21 移植): getMountedHeightOffset 廃止 → EntityAttachments.PASSENGER 経由
+        register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> 0.0D);
 
         register(
                 "PosBlockID",
@@ -292,18 +290,17 @@ public class EntityCaps implements IModelCaps {
 
         register("height", caps_height, (entity, arg) -> entity.getHeight());
         register("width", caps_width, (entity, arg) -> entity.getWidth());
-        register("YOffset", caps_YOffset, (entity, arg) -> entity.getHeightOffset());
-        register(
-                "mountedYOffset",
-                caps_mountedYOffset,
-                (entity, arg) -> entity.getMountedHeightOffset());
+        // TODO(1.21 移植): getHeightOffset / getMountedHeightOffset 廃止 → EntityAttachments 経由
+        register("YOffset", caps_YOffset, (entity, arg) -> 0.0D);
+        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> 0.0D);
         register(
                 "dominantArm",
                 caps_dominantArm,
                 (entity, arg) -> entity.getMainArm() == Arm.LEFT ? 0 : 1);
 
         register("isSwimming", caps_isSwimming, (entity, arg) -> entity.isSwimming());
-        register("roll", caps_roll, (entity, arg) -> entity.getRoll());
+        // TODO(1.21 移植): LivingEntity.getRoll() 廃止
+        register("roll", caps_roll, (entity, arg) -> 0F);
         register("leaningPitch", caps_leaningPitch, (entity, arg) -> entity.getLeaningPitch(1F));
         register(
                 "lastLeaningPitch",
