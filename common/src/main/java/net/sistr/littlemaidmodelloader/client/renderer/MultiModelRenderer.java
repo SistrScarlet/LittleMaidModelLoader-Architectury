@@ -47,8 +47,9 @@ public class MultiModelRenderer<T extends LivingEntity & IHasMultiModel>
             MatrixStack matrices,
             float animationProgress,
             float bodyYaw,
-            float tickDelta) {
-        super.setupTransforms(entity, matrices, animationProgress, bodyYaw, tickDelta);
+            float tickDelta,
+            float scale) {
+        super.setupTransforms(entity, matrices, animationProgress, bodyYaw, tickDelta, scale);
         entity.getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD)
                 .ifPresent(
                         model ->

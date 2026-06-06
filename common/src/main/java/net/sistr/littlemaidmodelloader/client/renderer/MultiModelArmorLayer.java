@@ -212,10 +212,7 @@ public class MultiModelArmorLayer<T extends LivingEntity & IHasMultiModel, M ext
                                                                                     resourceLocation);
                                                     VertexConsumer builder =
                                                             ItemRenderer.getArmorGlintConsumer(
-                                                                    vertexConsumers,
-                                                                    type,
-                                                                    false,
-                                                                    glint);
+                                                                    vertexConsumers, type, glint);
                                                     int light0 = isLight ? 15728880 : light;
                                                     model.animateModel(
                                                             caps,

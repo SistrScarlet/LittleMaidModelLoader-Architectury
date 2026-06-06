@@ -49,17 +49,14 @@ public class MultiModel<T extends LivingEntity & IHasMultiModel> extends EntityM
 
     @Override
     public void render(
-            MatrixStack matrices,
-            VertexConsumer vertices,
-            int light,
-            int overlay,
-            float red,
-            float green,
-            float blue,
-            float alpha) {
+            MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
         if (this.entity == null) {
             return;
         }
+        float alpha = ((color >> 24) & 0xFF) / 255.0F;
+        float red = ((color >> 16) & 0xFF) / 255.0F;
+        float green = ((color >> 8) & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
         this.entity
                 .getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD)
                 .ifPresent(
