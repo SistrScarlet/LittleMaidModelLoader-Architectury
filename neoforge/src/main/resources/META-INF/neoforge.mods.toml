@@ -1,0 +1,47 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+issueTrackerURL = "https://github.com/SistrScarlet/LittleMaidModelLoader-Fabric/issues"
+license = "https://github.com/SistrScarlet/LittleMaidModelLoader-Fabric/blob/1.16_Architectury/LICENCE.md"
+
+[[mods]]
+modId = "littlemaidmodelloader"
+version = "${version}"
+displayName = "LittleMaid ModelLoader"
+credits = "Created by MMM, remixed by EMB4 & Verclene, patched by firis-games, remade by Sistr, some models created by voms"
+authors = "Sistr"
+description = "メイドさんのモデルローダーです。"
+logoFile = "icon.png"
+
+[[mixins]]
+config = "littlemaidmodelloader-common.mixins.json"
+
+[[mixins]]
+config = "littlemaidmodelloader.mixins.json"
+
+[[dependencies.littlemaidmodelloader]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.littlemaidmodelloader]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.littlemaidmodelloader]]
+modId = "architectury"
+type = "required"
+versionRange = "[13.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.littlemaidmodelloader]]
+modId = "cloth_config"
+type = "required"
+versionRange = "[15.0.0,)"
+ordering = "NONE"
+side = "BOTH"
