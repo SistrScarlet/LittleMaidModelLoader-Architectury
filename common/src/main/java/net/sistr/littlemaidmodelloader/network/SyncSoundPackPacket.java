@@ -1,13 +1,15 @@
 package net.sistr.littlemaidmodelloader.network;
 
 import dev.architectury.networking.NetworkManager;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.LMMLMod;
@@ -16,42 +18,39 @@ import net.sistr.littlemaidmodelloader.resource.holder.ConfigHolder;
 import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.util.PlayerList;
 
-public class SyncSoundPackPacket {
-    public static final Identifier ID = Identifier.of(LMMLMod.MODID, "sync_sound_pack");
+public record SyncSoundPackPacket(int entityId, String soundPackName) implements CustomPayload {
+    public static final CustomPayload.Id<SyncSoundPackPacket> ID =
+            new CustomPayload.Id<>(Identifier.of(LMMLMod.MODID, "sync_sound_pack"));
+
+    public static final PacketCodec<RegistryByteBuf, SyncSoundPackPacket> CODEC =
+            PacketCodec.tuple(
+                    PacketCodecs.VAR_INT, SyncSoundPackPacket::entityId,
+                    PacketCodecs.STRING, SyncSoundPackPacket::soundPackName,
+                    SyncSoundPackPacket::new);
+
+    @Override
+    public CustomPayload.Id<? extends CustomPayload> getId() {
+        return ID;
+    }
 
     @Environment(EnvType.CLIENT)
     public static void sendC2SPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = createC2SPacket(entity, configHolder);
-        NetworkManager.sendToServer(ID, passedData);
-    }
-
-    public static PacketByteBuf createC2SPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeInt(entity.getId());
-        passedData.writeString(configHolder.getName());
-        return passedData;
+        NetworkManager.sendToServer(
+                new SyncSoundPackPacket(entity.getId(), configHolder.getName()));
     }
 
     public static void sendS2CPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = createS2CPacket(entity, configHolder);
-        NetworkManager.sendToPlayers(PlayerList.tracking(entity), ID, passedData);
-    }
-
-    public static PacketByteBuf createS2CPacket(Entity entity, ConfigHolder configHolder) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeInt(entity.getId());
-        passedData.writeString(configHolder.getName());
-        return passedData;
+        NetworkManager.sendToPlayers(
+                PlayerList.tracking(entity),
+                new SyncSoundPackPacket(entity.getId(), configHolder.getName()));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void receiveS2CPacket(PacketByteBuf buf, NetworkManager.PacketContext context) {
-        int entityId = buf.readInt();
-        String soundPackName = buf.readString();
-        context.queue(() -> applyMultiModelClient(entityId, soundPackName));
+    public static void receiveS2CPacket(
+            SyncSoundPackPacket payload, NetworkManager.PacketContext context) {
+        context.queue(() -> applyMultiModelClient(payload.entityId(), payload.soundPackName()));
     }
 
-    // context.getTaskQueue().execute()の中では@Environmentの効力が及ばないため別メソッドに分離
     @Environment(EnvType.CLIENT)
     public static void applyMultiModelClient(int entityId, String soundPackName) {
         World world = MinecraftClient.getInstance().world;
@@ -65,13 +64,14 @@ public class SyncSoundPackPacket {
         soundPlayable.setConfigHolder(configHolder);
     }
 
-    public static void receiveC2SPacket(PacketByteBuf buf, NetworkManager.PacketContext context) {
-        int entityId = buf.readInt();
-        String soundPackName = buf.readString();
-        context.queue(() -> applyMultiModelServer(context.getPlayer(), entityId, soundPackName));
+    public static void receiveC2SPacket(
+            SyncSoundPackPacket payload, NetworkManager.PacketContext context) {
+        context.queue(
+                () ->
+                        applyMultiModelServer(
+                                context.getPlayer(), payload.entityId(), payload.soundPackName()));
     }
 
-    // クライアントに倣って分離
     public static void applyMultiModelServer(
             PlayerEntity player, int entityId, String soundPackName) {
         Entity entity = player.getWorld().getEntityById(entityId);

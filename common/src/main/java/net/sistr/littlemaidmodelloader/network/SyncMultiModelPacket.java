@@ -1,13 +1,14 @@
 package net.sistr.littlemaidmodelloader.network;
 
 import dev.architectury.networking.NetworkManager;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.LMMLMod;
@@ -19,65 +20,87 @@ import net.sistr.littlemaidmodelloader.resource.util.ArmorSets;
 import net.sistr.littlemaidmodelloader.resource.util.TextureColors;
 import net.sistr.littlemaidmodelloader.util.PlayerList;
 
-public class SyncMultiModelPacket {
-    public static final Identifier ID = Identifier.of(LMMLMod.MODID, "sync_multi_model");
+public record SyncMultiModelPacket(
+        int entityId,
+        String textureName,
+        ArmorSets<String> armorTextureName,
+        TextureColors color,
+        boolean isContract)
+        implements CustomPayload {
+    public static final CustomPayload.Id<SyncMultiModelPacket> ID =
+            new CustomPayload.Id<>(Identifier.of(LMMLMod.MODID, "sync_multi_model"));
+
+    public static final PacketCodec<RegistryByteBuf, SyncMultiModelPacket> CODEC =
+            PacketCodec.of(
+                    (packet, buf) -> {
+                        buf.writeInt(packet.entityId);
+                        buf.writeString(packet.textureName);
+                        for (Part part : Part.values()) {
+                            buf.writeString(
+                                    packet.armorTextureName
+                                            .getArmor(part)
+                                            .orElseThrow(
+                                                    () ->
+                                                            new IllegalStateException(
+                                                                    "テクスチャが存在しません。")));
+                        }
+                        buf.writeEnumConstant(packet.color);
+                        buf.writeBoolean(packet.isContract);
+                    },
+                    buf -> {
+                        int entityId = buf.readInt();
+                        String textureName = buf.readString();
+                        ArmorSets<String> armorTextureName = new ArmorSets<>();
+                        for (Part part : Part.values()) {
+                            armorTextureName.setArmor(buf.readString(), part);
+                        }
+                        TextureColors color = buf.readEnumConstant(TextureColors.class);
+                        boolean isContract = buf.readBoolean();
+                        return new SyncMultiModelPacket(
+                                entityId, textureName, armorTextureName, color, isContract);
+                    });
+
+    @Override
+    public CustomPayload.Id<? extends CustomPayload> getId() {
+        return ID;
+    }
+
+    public static SyncMultiModelPacket of(Entity entity, IHasMultiModel hasMultiModel) {
+        ArmorSets<String> armorTextureName = new ArmorSets<>();
+        for (Part part : Part.values()) {
+            armorTextureName.setArmor(
+                    hasMultiModel.getTextureHolder(Layer.INNER, part).getTextureName(), part);
+        }
+        return new SyncMultiModelPacket(
+                entity.getId(),
+                hasMultiModel.getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName(),
+                armorTextureName,
+                hasMultiModel.getColorMM(),
+                hasMultiModel.isContractMM());
+    }
 
     @Environment(EnvType.CLIENT)
     public static void sendC2SPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = createC2SPacket(entity, hasMultiModel);
-        NetworkManager.sendToServer(ID, passedData);
-    }
-
-    public static PacketByteBuf createC2SPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeInt(entity.getId());
-        passedData.writeString(
-                hasMultiModel.getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
-        for (Part part : Part.values()) {
-            passedData.writeString(
-                    hasMultiModel.getTextureHolder(Layer.INNER, part).getTextureName());
-        }
-        passedData.writeEnumConstant(hasMultiModel.getColorMM());
-        passedData.writeBoolean(hasMultiModel.isContractMM());
-        return passedData;
+        NetworkManager.sendToServer(of(entity, hasMultiModel));
     }
 
     public static void sendS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = createS2CPacket(entity, hasMultiModel);
-        NetworkManager.sendToPlayers(PlayerList.tracking(entity), ID, passedData);
-    }
-
-    public static PacketByteBuf createS2CPacket(Entity entity, IHasMultiModel hasMultiModel) {
-        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeInt(entity.getId());
-        passedData.writeString(
-                hasMultiModel.getTextureHolder(Layer.SKIN, Part.HEAD).getTextureName());
-        for (Part part : Part.values()) {
-            passedData.writeString(
-                    hasMultiModel.getTextureHolder(Layer.INNER, part).getTextureName());
-        }
-        passedData.writeEnumConstant(hasMultiModel.getColorMM());
-        passedData.writeBoolean(hasMultiModel.isContractMM());
-        return passedData;
+        NetworkManager.sendToPlayers(PlayerList.tracking(entity), of(entity, hasMultiModel));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void receiveS2CPacket(PacketByteBuf buf, NetworkManager.PacketContext context) {
-        int entityId = buf.readInt();
-        String textureName = buf.readString();
-        ArmorSets<String> armorTextureName = new ArmorSets<>();
-        for (Part part : Part.values()) {
-            armorTextureName.setArmor(buf.readString(), part);
-        }
-        TextureColors color = buf.readEnumConstant(TextureColors.class);
-        boolean isContract = buf.readBoolean();
+    public static void receiveS2CPacket(
+            SyncMultiModelPacket payload, NetworkManager.PacketContext context) {
         context.queue(
                 () ->
                         applyMultiModelClient(
-                                entityId, isContract, color, textureName, armorTextureName));
+                                payload.entityId(),
+                                payload.isContract(),
+                                payload.color(),
+                                payload.textureName(),
+                                payload.armorTextureName()));
     }
 
-    // context.getTaskQueue().execute()の中では@Environmentの効力が及ばないため別メソッドに分離
     @Environment(EnvType.CLIENT)
     public static void applyMultiModelClient(
             int entityId,
@@ -118,27 +141,19 @@ public class SyncMultiModelPacket {
         }
     }
 
-    public static void receiveC2SPacket(PacketByteBuf buf, NetworkManager.PacketContext context) {
-        int entityId = buf.readInt();
-        String textureName = buf.readString();
-        ArmorSets<String> armorTextureName = new ArmorSets<>();
-        for (Part part : Part.values()) {
-            armorTextureName.setArmor(buf.readString(), part);
-        }
-        TextureColors color = buf.readEnumConstant(TextureColors.class);
-        boolean isContract = buf.readBoolean();
+    public static void receiveC2SPacket(
+            SyncMultiModelPacket payload, NetworkManager.PacketContext context) {
         context.queue(
                 () ->
                         applyMultiModelServer(
                                 context.getPlayer(),
-                                entityId,
-                                isContract,
-                                color,
-                                textureName,
-                                armorTextureName));
+                                payload.entityId(),
+                                payload.isContract(),
+                                payload.color(),
+                                payload.textureName(),
+                                payload.armorTextureName()));
     }
 
-    // クライアントに倣って分離
     public static void applyMultiModelServer(
             PlayerEntity player,
             int entityId,
