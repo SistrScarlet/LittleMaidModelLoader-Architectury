@@ -1,8 +1,12 @@
 package net.sistr.littlemaidmodelloader.client.resource;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ResourcePackInfo;
+import net.minecraft.resource.ResourcePackPosition;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
 import net.minecraft.resource.ResourcePackSource;
@@ -34,15 +38,30 @@ public class LMPackProvider implements ResourcePackProvider {
     @Override
     public void register(Consumer<ResourcePackProfile> profileAdder) {
         MutableText title = Text.translatable("pack.name.littlemaidmodelloader");
-        var profile =
-                ResourcePackProfile.create(
+        ResourcePackInfo info =
+                new ResourcePackInfo(
                         "LittleMaid ModelLoader",
                         title,
-                        true,
-                        factory -> ResourceWrapper.INSTANCE,
-                        ResourceType.CLIENT_RESOURCES,
-                        ResourcePackProfile.InsertionPosition.TOP,
-                        RESOURCE_PACK_SOURCE);
+                        RESOURCE_PACK_SOURCE,
+                        Optional.empty());
+        ResourcePackPosition position =
+                new ResourcePackPosition(true, ResourcePackProfile.InsertionPosition.TOP, false);
+        ResourcePackProfile.PackFactory packFactory =
+                new ResourcePackProfile.PackFactory() {
+                    @Override
+                    public ResourcePack open(ResourcePackInfo packInfo) {
+                        return ResourceWrapper.INSTANCE;
+                    }
+
+                    @Override
+                    public ResourcePack openWithOverlays(
+                            ResourcePackInfo packInfo, ResourcePackProfile.Metadata metadata) {
+                        return ResourceWrapper.INSTANCE;
+                    }
+                };
+        var profile =
+                ResourcePackProfile.create(
+                        info, packFactory, ResourceType.CLIENT_RESOURCES, position);
         profileAdder.accept(profile);
     }
 }

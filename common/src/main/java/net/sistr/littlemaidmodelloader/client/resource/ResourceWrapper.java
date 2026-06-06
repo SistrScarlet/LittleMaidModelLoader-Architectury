@@ -12,12 +12,14 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.Optional;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ResourcePackInfo;
+import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -27,9 +29,18 @@ import org.jetbrains.annotations.Nullable;
 @Environment(EnvType.CLIENT)
 public class ResourceWrapper implements ResourcePack {
     public static final ResourceWrapper INSTANCE = new ResourceWrapper();
-    public static final PackResourceMetadata PACK_INFO =
-            new PackResourceMetadata(Text.literal("LittleMaid ModelLoader!!!"), 15);
+    public static final ResourcePackInfo PACK_INFO =
+            new ResourcePackInfo(
+                    "LMModelLoader",
+                    Text.literal("LittleMaid ModelLoader!!!"),
+                    ResourcePackSource.NONE,
+                    Optional.empty());
     protected static final HashMap<Identifier, Resource> PATHS = Maps.newHashMap();
+
+    @Override
+    public ResourcePackInfo getInfo() {
+        return PACK_INFO;
+    }
 
     @Nullable
     @Override
@@ -68,18 +79,14 @@ public class ResourceWrapper implements ResourcePack {
         return Sets.newHashSet("littlemaidmodelloader");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-        if (metaReader.getKey().equals("pack")) {
-            return (T) PACK_INFO;
-        }
         return null;
     }
 
     @Override
-    public String getName() {
-        return "LMModelLoader";
+    public String getId() {
+        return PACK_INFO.id();
     }
 
     @Override
