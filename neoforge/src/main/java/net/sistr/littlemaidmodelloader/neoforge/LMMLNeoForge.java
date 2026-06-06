@@ -1,16 +1,15 @@
 package net.sistr.littlemaidmodelloader.neoforge;
 
-import dev.architectury.platform.forge.EventBuses;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.resource.ResourceType;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.sistr.littlemaidmodelloader.LMMLMod;
 import net.sistr.littlemaidmodelloader.client.renderer.MultiModelRenderer;
 import net.sistr.littlemaidmodelloader.client.resource.LMPackProvider;
@@ -22,24 +21,17 @@ import net.sistr.littlemaidmodelloader.setup.Registration;
 @Mod(LMMLMod.MODID)
 public class LMMLNeoForge {
 
-    public LMMLNeoForge() {
-        EventBuses.registerModEventBus(
-                LMMLMod.MODID, FMLJavaModLoadingContext.get().getModEventBus());
+    public LMMLNeoForge(IEventBus modBus, ModContainer container) {
         LMMLMod.init();
 
-        ModLoadingContext.get()
-                .registerExtensionPoint(
-                        ConfigScreenHandler.ConfigScreenFactory.class,
-                        () ->
-                                new ConfigScreenHandler.ConfigScreenFactory(
-                                        (client, parent) ->
-                                                AutoConfig.getConfigScreen(LMMLConfig.class, parent)
-                                                        .get()));
+        container.registerExtensionPoint(
+                IConfigScreenFactory.class,
+                (mc, parent) -> AutoConfig.getConfigScreen(LMMLConfig.class, parent).get());
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::packInit);
+        modBus.addListener(this::modInit);
+        modBus.addListener(this::clientInit);
+        modBus.addListener(this::rendererInit);
+        modBus.addListener(this::packInit);
     }
 
     public void modInit(FMLCommonSetupEvent event) {
