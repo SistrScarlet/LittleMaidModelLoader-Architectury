@@ -27,19 +27,14 @@ public class LMSoundManager {
 
         soundSet.add(
                 new Sound(
-                        location.toString(),
+                        location,
                         rand -> 1F,
                         rand -> 1F,
                         1,
                         Sound.RegistrationType.FILE,
                         false,
                         false,
-                        16) {
-                    @Override
-                    public Identifier getLocation() {
-                        return getIdentifier();
-                    }
-                });
+                        16));
     }
 
     public Optional<WeightedSoundSet> getSound(String soundFileLocation) {

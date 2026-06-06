@@ -176,9 +176,14 @@ public abstract class ModelBoxBase {
                     GLCompat.textureStack.peek().getPositionMatrix().transform(uv);
                 }
 
+                int color =
+                        ((int) (alpha * 255) & 0xFF) << 24
+                                | ((int) (red * 255) & 0xFF) << 16
+                                | ((int) (green * 255) & 0xFF) << 8
+                                | ((int) (blue * 255) & 0xFF);
                 buffer.vertex(
-                        pos.x(), pos.y(), pos.z(), red, green, blue, alpha, uv.x(), uv.y(), overlay,
-                        light, normalX, normalY, normalZ);
+                        pos.x(), pos.y(), pos.z(), color, uv.x(), uv.y(), overlay, light, normalX,
+                        normalY, normalZ);
             }
         }
 

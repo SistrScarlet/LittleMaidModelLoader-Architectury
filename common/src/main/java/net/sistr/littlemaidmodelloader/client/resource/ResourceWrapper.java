@@ -68,11 +68,6 @@ public class ResourceWrapper implements ResourcePack {
                 .forEach(e -> consumer.accept(e.getKey(), () -> e.getValue().getInputStream()));
     }
 
-    @Override
-    public boolean isAlwaysStable() {
-        return true;
-    }
-
     // 初期化時に読み込まれる
     @Override
     public Set<String> getNamespaces(ResourceType type) {
@@ -80,6 +75,7 @@ public class ResourceWrapper implements ResourcePack {
     }
 
     @Override
+    @Nullable
     public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
         return null;
     }

@@ -146,11 +146,16 @@ public class MultiModelGUIUtil {
             int scale,
             IMultiModel model,
             DummyModelEntity dummy) {
+        // 1.21: drawEntity シグネチャは矩形 (x1, y1, x2, y2) 指定型に変更
+        int halfSize = scale / 2;
         InventoryScreen.drawEntity(
                 context,
-                posX,
+                posX - halfSize,
+                posY - scale,
+                posX + halfSize,
                 posY,
                 scale,
+                model.getEyeHeight(dummy.getCaps(), MMPose.STANDING),
                 posX - mouseX,
                 posY - mouseY - model.getEyeHeight(dummy.getCaps(), MMPose.STANDING) * scale,
                 dummy);

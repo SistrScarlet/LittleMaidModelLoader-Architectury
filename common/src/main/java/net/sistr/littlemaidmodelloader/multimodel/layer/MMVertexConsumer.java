@@ -24,8 +24,12 @@ public class MMVertexConsumer {
             float normalX,
             float normalY,
             float normalZ) {
-        this.vertexConsumer.vertex(
-                x, y, z, red, green, blue, alpha, u, v, overlay, light, normalX, normalY, normalZ);
+        int color =
+                ((int) (alpha * 255) & 0xFF) << 24
+                        | ((int) (red * 255) & 0xFF) << 16
+                        | ((int) (green * 255) & 0xFF) << 8
+                        | ((int) (blue * 255) & 0xFF);
+        this.vertexConsumer.vertex(x, y, z, color, u, v, overlay, light, normalX, normalY, normalZ);
     }
 
     public VertexConsumer getVanillaVertexConsumer() {
