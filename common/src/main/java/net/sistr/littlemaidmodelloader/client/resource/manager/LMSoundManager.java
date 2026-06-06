@@ -47,7 +47,7 @@ public class LMSoundManager {
             return Optional.ofNullable(
                     MinecraftClient.getInstance()
                             .getSoundManager()
-                            .get(new Identifier(soundFileLocation.toLowerCase())));
+                            .get(Identifier.of(soundFileLocation.toLowerCase())));
         }
 
         WeightedSoundSet soundSet = soundPaths.get(soundFileLocation);

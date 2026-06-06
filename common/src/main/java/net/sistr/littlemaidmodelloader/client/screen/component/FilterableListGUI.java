@@ -141,9 +141,10 @@ public class FilterableListGUI<T extends GUIElement> extends GUIElement {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(
+            double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         // リスト部分のスクロール処理のみ
-        return listGUI.mouseScrolled(mouseX, mouseY, amount);
+        return listGUI.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override

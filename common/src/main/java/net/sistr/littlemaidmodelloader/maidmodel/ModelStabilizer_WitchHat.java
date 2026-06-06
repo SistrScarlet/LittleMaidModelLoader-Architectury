@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 public class ModelStabilizer_WitchHat extends ModelStabilizerBase {
 
     public static Identifier ftex =
-            new Identifier("/mob/littleMaid/ALTERNATIVE/Stabilizer_MagicHat.png");
+            Identifier.of("/mob/littleMaid/ALTERNATIVE/Stabilizer_MagicHat.png");
     public ModelRenderer WitchHat;
     public ModelRenderer WitchHat1;
     public ModelRenderer WitchHat2;

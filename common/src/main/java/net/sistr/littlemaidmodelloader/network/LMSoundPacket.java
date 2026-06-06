@@ -14,7 +14,7 @@ import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class LMSoundPacket {
-    public static final Identifier ID = new Identifier(LMMLMod.MODID, "lm_sound");
+    public static final Identifier ID = Identifier.of(LMMLMod.MODID, "lm_sound");
 
     public static void sendS2CPacket(Entity entity, String soundName) {
         PacketByteBuf passedData = createS2CPacket(entity, soundName);

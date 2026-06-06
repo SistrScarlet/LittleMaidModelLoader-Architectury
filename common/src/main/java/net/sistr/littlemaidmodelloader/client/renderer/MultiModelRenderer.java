@@ -24,7 +24,7 @@ import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 @Environment(EnvType.CLIENT)
 public class MultiModelRenderer<T extends LivingEntity & IHasMultiModel>
         extends LivingEntityRenderer<T, MultiModel<T>> {
-    private static final Identifier NULL_TEXTURE = new Identifier(LMMLMod.MODID, "null");
+    private static final Identifier NULL_TEXTURE = Identifier.of(LMMLMod.MODID, "null");
 
     public MultiModelRenderer(EntityRendererFactory.Context ctx) {
         super(ctx, new MultiModel<>(), 0.5F);

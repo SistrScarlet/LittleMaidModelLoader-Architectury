@@ -20,7 +20,7 @@ import net.sistr.littlemaidmodelloader.resource.util.TextureColors;
 import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class SyncMultiModelPacket {
-    public static final Identifier ID = new Identifier(LMMLMod.MODID, "sync_multi_model");
+    public static final Identifier ID = Identifier.of(LMMLMod.MODID, "sync_multi_model");
 
     @Environment(EnvType.CLIENT)
     public static void sendC2SPacket(Entity entity, IHasMultiModel hasMultiModel) {

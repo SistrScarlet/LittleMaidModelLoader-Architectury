@@ -79,6 +79,6 @@ public class LMTextureLoader implements LMLoader {
         texturePath = texturePath.replaceAll("[^a-z0-9/._\\-]", "-");
 
         String namePath = texturePath.substring(firstSplitter + 1);
-        return Optional.of(new Identifier("littlemaidmodelloader", namePath));
+        return Optional.of(Identifier.of("littlemaidmodelloader", namePath));
     }
 }

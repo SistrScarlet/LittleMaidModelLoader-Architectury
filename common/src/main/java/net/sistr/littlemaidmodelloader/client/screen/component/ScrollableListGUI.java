@@ -131,17 +131,18 @@ public class ScrollableListGUI<T extends GUIElement> extends MutableListGUI<T> {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(
+            double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         // スクロールバーが優先
         if (scrollBar != null) {
-            if (scrollBar.mouseScrolled(mouseX, mouseY, amount)) {
+            if (scrollBar.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
                 syncScrollFromScrollBar();
                 return true;
             }
         }
 
         // リスト部分の処理
-        boolean result = super.mouseScrolled(mouseX, mouseY, amount);
+        boolean result = super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
         if (result) {
             syncScrollToScrollBar();
         }

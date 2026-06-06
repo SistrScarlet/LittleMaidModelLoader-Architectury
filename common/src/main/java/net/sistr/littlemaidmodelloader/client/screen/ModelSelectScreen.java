@@ -34,12 +34,12 @@ import net.sistr.littlemaidmodelloader.resource.util.TexturePair;
 @Environment(EnvType.CLIENT)
 public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen {
     public static final Identifier EMPTY_TEXTURE =
-            new Identifier(LMMLMod.MODID, "textures/empty.png");
+            Identifier.of(LMMLMod.MODID, "textures/empty.png");
     public static final TexturePair EMPTY_TEXTURE_PAIR = new TexturePair(EMPTY_TEXTURE, null);
     public static final ArmorPart EMPTY_ARMOR_DATA =
             new ArmorPart(null, null, null, null, null, null);
     public static final Identifier MODEL_SELECT_GUI_TEXTURE =
-            new Identifier(LMMLMod.MODID, "textures/gui/model_select.png");
+            Identifier.of(LMMLMod.MODID, "textures/gui/model_select.png");
     private static final ItemStack ARMOR = Items.DIAMOND_CHESTPLATE.getDefaultStack();
     private static final ItemStack MODEL = Items.ARMOR_STAND.getDefaultStack();
     private static final ItemStack WILD = Items.BONE.getDefaultStack();
@@ -322,11 +322,12 @@ public class ModelSelectScreen<T extends Entity & IHasMultiModel> extends Screen
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double scrollAmount) {
+    public boolean mouseScrolled(
+            double x, double y, double horizontalAmount, double verticalAmount) {
         if (guiSwitch) {
-            return modelListGUI.mouseScrolled(x, y, scrollAmount);
+            return modelListGUI.mouseScrolled(x, y, horizontalAmount, verticalAmount);
         } else {
-            return armorListGUI.mouseScrolled(x, y, scrollAmount);
+            return armorListGUI.mouseScrolled(x, y, horizontalAmount, verticalAmount);
         }
     }
 

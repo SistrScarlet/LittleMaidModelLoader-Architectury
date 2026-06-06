@@ -19,7 +19,7 @@ import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 
 public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Screen {
     public static final Identifier MODEL_SELECT_GUI_TEXTURE =
-            new Identifier(LMMLMod.MODID, "textures/gui/model_select.png");
+            Identifier.of(LMMLMod.MODID, "textures/gui/model_select.png");
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 196;
     private final T entity;
@@ -107,11 +107,13 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if (this.soundPackListGUI.mouseScrolled(mouseX, mouseY, amount)) {
+    public boolean mouseScrolled(
+            double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (this.soundPackListGUI.mouseScrolled(
+                mouseX, mouseY, horizontalAmount, verticalAmount)) {
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, amount);
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override

@@ -17,7 +17,7 @@ import net.sistr.littlemaidmodelloader.resource.manager.LMConfigManager;
 import net.sistr.littlemaidmodelloader.util.PlayerList;
 
 public class SyncSoundPackPacket {
-    public static final Identifier ID = new Identifier(LMMLMod.MODID, "sync_sound_pack");
+    public static final Identifier ID = Identifier.of(LMMLMod.MODID, "sync_sound_pack");
 
     @Environment(EnvType.CLIENT)
     public static void sendC2SPacket(Entity entity, ConfigHolder configHolder) {

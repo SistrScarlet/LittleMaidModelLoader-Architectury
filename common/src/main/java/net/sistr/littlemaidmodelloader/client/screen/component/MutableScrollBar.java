@@ -120,11 +120,12 @@ public class MutableScrollBar extends GUIElement {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(
+            double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (!RangeChecker.checkFromWidth(mouseX, mouseY, this.x, this.y, this.width, this.height)) {
             return false;
         }
-        this.point += 0 < amount ? -1 : 1;
+        this.point += 0 < verticalAmount ? -1 : 1;
         this.point = MathHelper.clamp(this.point, 0, Math.max(0, elemSize - 1));
         return true;
     }
