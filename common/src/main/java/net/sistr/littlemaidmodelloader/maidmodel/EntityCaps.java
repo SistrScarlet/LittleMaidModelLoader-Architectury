@@ -299,8 +299,10 @@ public class EntityCaps implements IModelCaps {
                 (entity, arg) -> entity.getMainArm() == Arm.LEFT ? 0 : 1);
 
         register("isSwimming", caps_isSwimming, (entity, arg) -> entity.isSwimming());
-        // TODO(1.21 移植): LivingEntity.getRoll() 廃止
-        register("roll", caps_roll, (entity, arg) -> 0F);
+        // TODO(1.21 移植): LivingEntity.getRoll() 廃止。
+        // 旧 getRoll() は int (riptideTicks) を返していたため placeholder も int に揃える
+        // (ModelLittleMaidBase#setLivingAnimations が getCapsValueInt で取り出すため)。
+        register("roll", caps_roll, (entity, arg) -> 0);
         register("leaningPitch", caps_leaningPitch, (entity, arg) -> entity.getLeaningPitch(1F));
         register(
                 "lastLeaningPitch",
