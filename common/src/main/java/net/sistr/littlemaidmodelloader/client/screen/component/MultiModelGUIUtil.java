@@ -147,15 +147,18 @@ public class MultiModelGUIUtil {
             DummyModelEntity dummy) {
         // 1.21: drawEntity は矩形指定 + 自動センタリング型に変更
         // - 矩形 (x1, y1, x2, y2) の中心にエンティティを描画する
-        // - yOffset はエンティティ単位の微調整 (vanilla プレイヤーで 0.0625f)。
-        //   旧 API のように eyeHeight を渡すと entity_height/2 + eyeHeight*scale ぶん
-        //   エンティティ原点 (足元) が上に押し上げられ、見かけ上ボディが下方向にズレる
+        // - 矩形外は内部で enableScissor によりクリップされるため、エンティティの
+        //   render height (size * entity_height ≈ 1.35*scale) を収めるだけの矩形高
+        //   が必要。高さ = scale だと頭が上端でクロップされる
+        // - vanilla プレイヤー (size=30, height=1.8 → render 54px) は rect 高 70px と
+        //   render の約 1.3 倍を確保。我々も同等の余裕を取って rect 高 = scale * 2
+        // - yOffset はエンティティ単位の微調整 (vanilla プレイヤーで 0.0625f)
         // - mouseX/mouseY は絶対スクリーン座標 (vanilla 内部で centerX - mouseX_param を計算)
         int halfSize = scale / 2;
         InventoryScreen.drawEntity(
                 context,
                 posX - halfSize,
-                posY - scale,
+                posY - scale * 2,
                 posX + halfSize,
                 posY,
                 scale,
