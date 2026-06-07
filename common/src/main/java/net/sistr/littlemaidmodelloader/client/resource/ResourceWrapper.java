@@ -15,11 +15,13 @@ import java.util.zip.ZipFile;
 import java.util.Optional;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.SharedConstants;
 import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackInfo;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -74,9 +76,21 @@ public class ResourceWrapper implements ResourcePack {
         return Sets.newHashSet("littlemaidmodelloader");
     }
 
+    // 1.21.1: ResourcePackProfile.create() は pack.mcmeta (PackResourceMetadata) が
+    // 取得できないと null を返す。動的注入する LMML pack は実ファイルを持たないため、
+    // PackResourceMetadata.SERIALIZER に対しては最低限のメタデータをここで合成して返す。
     @Override
     @Nullable
+    @SuppressWarnings("unchecked")
     public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
+        if (metaReader == PackResourceMetadata.SERIALIZER) {
+            return (T)
+                    new PackResourceMetadata(
+                            Text.literal("LittleMaid ModelLoader resources"),
+                            SharedConstants.getGameVersion()
+                                    .getResourceVersion(ResourceType.CLIENT_RESOURCES),
+                            Optional.empty());
+        }
         return null;
     }
 
