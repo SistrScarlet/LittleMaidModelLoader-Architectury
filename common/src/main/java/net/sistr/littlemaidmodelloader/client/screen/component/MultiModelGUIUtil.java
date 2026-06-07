@@ -19,7 +19,6 @@ import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.EntityCaps;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
-import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.util.ArmorPart;
@@ -146,7 +145,12 @@ public class MultiModelGUIUtil {
             int scale,
             IMultiModel model,
             DummyModelEntity dummy) {
-        // 1.21: drawEntity シグネチャは矩形 (x1, y1, x2, y2) 指定型に変更
+        // 1.21: drawEntity は矩形指定 + 自動センタリング型に変更
+        // - 矩形 (x1, y1, x2, y2) の中心にエンティティを描画する
+        // - yOffset はエンティティ単位の微調整 (vanilla プレイヤーで 0.0625f)。
+        //   旧 API のように eyeHeight を渡すと entity_height/2 + eyeHeight*scale ぶん
+        //   エンティティ原点 (足元) が上に押し上げられ、見かけ上ボディが下方向にズレる
+        // - mouseX/mouseY は絶対スクリーン座標 (vanilla 内部で centerX - mouseX_param を計算)
         int halfSize = scale / 2;
         InventoryScreen.drawEntity(
                 context,
@@ -155,9 +159,9 @@ public class MultiModelGUIUtil {
                 posX + halfSize,
                 posY,
                 scale,
-                model.getEyeHeight(dummy.getCaps(), MMPose.STANDING),
-                posX - mouseX,
-                posY - mouseY - model.getEyeHeight(dummy.getCaps(), MMPose.STANDING) * scale,
+                0.0625f,
+                mouseX,
+                mouseY,
                 dummy);
     }
 
