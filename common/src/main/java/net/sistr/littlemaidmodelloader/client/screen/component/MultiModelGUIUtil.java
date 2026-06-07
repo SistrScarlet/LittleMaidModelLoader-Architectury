@@ -147,22 +147,26 @@ public class MultiModelGUIUtil {
             DummyModelEntity dummy) {
         // 1.21: drawEntity は矩形指定 + 自動センタリング型に変更
         // - 矩形 (x1, y1, x2, y2) の中心にエンティティを描画する
-        // - 矩形外は内部で enableScissor によりクリップされるため、エンティティの
-        //   render height (size * entity_height ≈ 1.35*scale) を収めるだけの矩形高
-        //   が必要。高さ = scale だと頭が上端でクロップされる
-        // - vanilla プレイヤー (size=30, height=1.8 → render 54px) は rect 高 70px と
-        //   render の約 1.3 倍を確保。我々も同等の余裕を取って rect 高 = scale * 2
-        // - yOffset はエンティティ単位の微調整 (vanilla プレイヤーで 0.0625f)
+        // - 矩形外は内部で enableScissor によりクリップされるため、矩形高は
+        //   model pack が描画する最大ビジュアル高 (hitbox の 1.35 ではなく
+        //   モデルパック側で頭部が上に伸びるケース) を吸収できる必要がある
+        // - rect 高を 3 * scale 確保し、頭が伸びる model でもクリップしないようにする
+        // - エンティティは矩形中心 (centerY = posY - 1.5*scale) に置かれるが、
+        //   yOffset で entity origin (足元) を下方向に押し下げ、見かけ上の足元が
+        //   posY 付近に来るよう調整する:
+        //     feet_screen_y = centerY + (entity_height/2 + yOffset * entity.getScale()) * size
+        //                   = (posY - 1.5*scale) + (0.675 + 1.0) * scale
+        //                   = posY + 0.175 * scale   (posY からわずかに y+ にオフセット)
         // - mouseX/mouseY は絶対スクリーン座標 (vanilla 内部で centerX - mouseX_param を計算)
         int halfSize = scale / 2;
         InventoryScreen.drawEntity(
                 context,
                 posX - halfSize,
-                posY - scale * 2,
+                posY - scale * 3,
                 posX + halfSize,
                 posY,
                 scale,
-                0.0625f,
+                1.0f,
                 mouseX,
                 mouseY,
                 dummy);
