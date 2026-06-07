@@ -9,12 +9,16 @@ public class Networking {
     public static final Networking INSTANCE = new Networking();
 
     public void init() {
-        // S2C 型の登録はサーバ側でも必要 (Architectury 13 仕様)
-        NetworkManager.registerS2CPayloadType(SyncMultiModelPacket.ID, SyncMultiModelPacket.CODEC);
-        NetworkManager.registerS2CPayloadType(SyncSoundPackPacket.ID, SyncSoundPackPacket.CODEC);
-        NetworkManager.registerS2CPayloadType(LMSoundPacket.ID, LMSoundPacket.CODEC);
-
-        if (Platform.getEnv() == EnvType.CLIENT) clientInit();
+        if (Platform.getEnv() == EnvType.CLIENT) {
+            // クライアントでは registerReceiver(S2C, ...) が type 登録も内部で行うため、
+            // 明示登録は不要 (二重登録すると Fabric の PayloadTypeRegistry が IllegalArgumentException)。
+            clientInit();
+        } else {
+            // 専用サーバには S2C receiver が無いため、送信用に type 登録のみ明示する。
+            NetworkManager.registerS2CPayloadType(SyncMultiModelPacket.ID, SyncMultiModelPacket.CODEC);
+            NetworkManager.registerS2CPayloadType(SyncSoundPackPacket.ID, SyncSoundPackPacket.CODEC);
+            NetworkManager.registerS2CPayloadType(LMSoundPacket.ID, LMSoundPacket.CODEC);
+        }
         serverInit();
     }
 
