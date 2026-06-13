@@ -210,8 +210,16 @@ public class EntityCaps implements IModelCaps {
         register("prevRotationPitch", caps_prevRotationPitch, (entity, arg) -> entity.prevPitch);
         register("renderYawOffset", caps_renderYawOffset, (entity, arg) -> entity.bodyYaw);
 
-        // TODO(1.21 移植): getMountedHeightOffset 廃止 → EntityAttachments.PASSENGER 経由
-        register("renderRidingYOffset", caps_renderRidingYOffset, (entity, arg) -> 0.0D);
+        // 1.21 で Entity#getMountedHeightOffset 廃止。vehicle.getPassengerRidingPos(passenger)
+        // は passenger の絶対 Y を返すため vehicle.getY() を引いて相対オフセットに戻す。
+        register(
+                "renderRidingYOffset",
+                caps_renderRidingYOffset,
+                (entity, arg) -> {
+                    Entity vehicle = entity.getVehicle();
+                    if (vehicle == null) return 0.0D;
+                    return vehicle.getPassengerRidingPos(entity).y - vehicle.getY();
+                });
 
         register(
                 "PosBlockID",
@@ -290,19 +298,29 @@ public class EntityCaps implements IModelCaps {
 
         register("height", caps_height, (entity, arg) -> entity.getHeight());
         register("width", caps_width, (entity, arg) -> entity.getWidth());
-        // TODO(1.21 移植): getHeightOffset / getMountedHeightOffset 廃止 → EntityAttachments 経由
+        // 1.21 で Entity#getYOffset は廃止。EntityAttachments 経由でも「自身の Y 描画オフセット」は
+        // 公開されない (LivingEntity 全般で実質 0)。互換のため 0 固定で返す。
         register("YOffset", caps_YOffset, (entity, arg) -> 0.0D);
-        register("mountedYOffset", caps_mountedYOffset, (entity, arg) -> 0.0D);
+        // 旧 getMountedHeightOffset 相当。自分が vehicle のとき先頭 passenger の attachment Y を返す。
+        register(
+                "mountedYOffset",
+                caps_mountedYOffset,
+                (entity, arg) -> {
+                    if (!entity.hasPassengers()) return 0.0D;
+                    Entity passenger = entity.getFirstPassenger();
+                    if (passenger == null) return 0.0D;
+                    return entity.getPassengerRidingPos(passenger).y - entity.getY();
+                });
         register(
                 "dominantArm",
                 caps_dominantArm,
                 (entity, arg) -> entity.getMainArm() == Arm.LEFT ? 0 : 1);
 
         register("isSwimming", caps_isSwimming, (entity, arg) -> entity.isSwimming());
-        // TODO(1.21 移植): LivingEntity.getRoll() 廃止。
-        // 旧 getRoll() は int (riptideTicks) を返していたため placeholder も int に揃える
-        // (ModelLittleMaidBase#setLivingAnimations が getCapsValueInt で取り出すため)。
-        register("roll", caps_roll, (entity, arg) -> 0);
+        // 旧 LivingEntity#getRoll() は fallFlyingTicks を返していた (elytra glide 中の
+        // ロールアニメ係数)。1.21 で同等の公開 getter が getFallFlyingTicks() に変わったので
+        // 直接置換。型は int のままで ModelCapsHelper#getCapsValueInt 経由から参照される。
+        register("roll", caps_roll, (entity, arg) -> entity.getFallFlyingTicks());
         register("leaningPitch", caps_leaningPitch, (entity, arg) -> entity.getLeaningPitch(1F));
         register(
                 "lastLeaningPitch",
