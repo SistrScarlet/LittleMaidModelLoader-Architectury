@@ -21,8 +21,10 @@ public record LMSoundPacket(int entityId, String soundName) implements CustomPay
 
     public static final PacketCodec<RegistryByteBuf, LMSoundPacket> CODEC =
             PacketCodec.tuple(
-                    PacketCodecs.VAR_INT, LMSoundPacket::entityId,
-                    PacketCodecs.STRING, LMSoundPacket::soundName,
+                    PacketCodecs.VAR_INT,
+                    LMSoundPacket::entityId,
+                    PacketCodecs.STRING,
+                    LMSoundPacket::soundName,
                     LMSoundPacket::new);
 
     @Override
@@ -40,7 +42,8 @@ public record LMSoundPacket(int entityId, String soundName) implements CustomPay
     }
 
     @Environment(EnvType.CLIENT)
-    public static void receiveS2CPacket(LMSoundPacket payload, NetworkManager.PacketContext context) {
+    public static void receiveS2CPacket(
+            LMSoundPacket payload, NetworkManager.PacketContext context) {
         context.queue(() -> playSoundClient(payload.entityId(), payload.soundName()));
     }
 

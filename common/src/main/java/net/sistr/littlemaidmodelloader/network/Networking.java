@@ -15,8 +15,10 @@ public class Networking {
             clientInit();
         } else {
             // 専用サーバには S2C receiver が無いため、送信用に type 登録のみ明示する。
-            NetworkManager.registerS2CPayloadType(SyncMultiModelPacket.ID, SyncMultiModelPacket.CODEC);
-            NetworkManager.registerS2CPayloadType(SyncSoundPackPacket.ID, SyncSoundPackPacket.CODEC);
+            NetworkManager.registerS2CPayloadType(
+                    SyncMultiModelS2CPacket.ID, SyncMultiModelS2CPacket.CODEC);
+            NetworkManager.registerS2CPayloadType(
+                    SyncSoundPackS2CPacket.ID, SyncSoundPackS2CPacket.CODEC);
             NetworkManager.registerS2CPayloadType(LMSoundPacket.ID, LMSoundPacket.CODEC);
         }
         serverInit();
@@ -26,14 +28,14 @@ public class Networking {
     private void clientInit() {
         NetworkManager.registerReceiver(
                 NetworkManager.Side.S2C,
-                SyncMultiModelPacket.ID,
-                SyncMultiModelPacket.CODEC,
-                SyncMultiModelPacket::receiveS2CPacket);
+                SyncMultiModelS2CPacket.ID,
+                SyncMultiModelS2CPacket.CODEC,
+                SyncMultiModelS2CPacket::receive);
         NetworkManager.registerReceiver(
                 NetworkManager.Side.S2C,
-                SyncSoundPackPacket.ID,
-                SyncSoundPackPacket.CODEC,
-                SyncSoundPackPacket::receiveS2CPacket);
+                SyncSoundPackS2CPacket.ID,
+                SyncSoundPackS2CPacket.CODEC,
+                SyncSoundPackS2CPacket::receive);
         NetworkManager.registerReceiver(
                 NetworkManager.Side.S2C,
                 LMSoundPacket.ID,
@@ -44,13 +46,13 @@ public class Networking {
     private void serverInit() {
         NetworkManager.registerReceiver(
                 NetworkManager.Side.C2S,
-                SyncMultiModelPacket.ID,
-                SyncMultiModelPacket.CODEC,
-                SyncMultiModelPacket::receiveC2SPacket);
+                SyncMultiModelC2SPacket.ID,
+                SyncMultiModelC2SPacket.CODEC,
+                SyncMultiModelC2SPacket::receive);
         NetworkManager.registerReceiver(
                 NetworkManager.Side.C2S,
-                SyncSoundPackPacket.ID,
-                SyncSoundPackPacket.CODEC,
-                SyncSoundPackPacket::receiveC2SPacket);
+                SyncSoundPackC2SPacket.ID,
+                SyncSoundPackC2SPacket.CODEC,
+                SyncSoundPackC2SPacket::receive);
     }
 }

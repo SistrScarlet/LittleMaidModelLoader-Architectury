@@ -40,10 +40,7 @@ public class LMPackProvider implements ResourcePackProvider {
         MutableText title = Text.translatable("pack.name.littlemaidmodelloader");
         ResourcePackInfo info =
                 new ResourcePackInfo(
-                        "LittleMaid ModelLoader",
-                        title,
-                        RESOURCE_PACK_SOURCE,
-                        Optional.empty());
+                        "LittleMaid ModelLoader", title, RESOURCE_PACK_SOURCE, Optional.empty());
         ResourcePackPosition position =
                 new ResourcePackPosition(true, ResourcePackProfile.InsertionPosition.TOP, false);
         ResourcePackProfile.PackFactory packFactory =
