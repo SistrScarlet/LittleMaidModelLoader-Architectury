@@ -2,11 +2,13 @@ package net.sistr.littlemaidmodelloader.neoforge;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.resource.ResourceType;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
@@ -24,9 +26,11 @@ public class LMMLNeoForge {
     public LMMLNeoForge(IEventBus modBus, ModContainer container) {
         LMMLMod.init();
 
-        container.registerExtensionPoint(
-                IConfigScreenFactory.class,
-                (mc, parent) -> AutoConfig.getConfigScreen(LMMLConfig.class, parent).get());
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            container.registerExtensionPoint(
+                    IConfigScreenFactory.class,
+                    (mc, parent) -> AutoConfig.getConfigScreen(LMMLConfig.class, parent).get());
+        }
 
         modBus.addListener(this::modInit);
         modBus.addListener(this::clientInit);
