@@ -34,7 +34,14 @@ public class LMSoundManager {
                         Sound.RegistrationType.FILE,
                         false,
                         false,
-                        16));
+                        16) {
+                    // location は既に sounds/ prefix と .ogg 付きの完全なリソースパスのため、
+                    // バニラの getLocation() による再付与 (sounds/sounds/...ogg.ogg) を回避する
+                    @Override
+                    public Identifier getLocation() {
+                        return getIdentifier();
+                    }
+                });
     }
 
     public Optional<WeightedSoundSet> getSound(String soundFileLocation) {
