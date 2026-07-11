@@ -82,11 +82,11 @@ public class SoundPackSelectScreen<T extends Entity & SoundPlayable> extends Scr
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         assert this.client != null;
+        // super.render() 冒頭の renderBackground が背景ブラーを適用するため、UI 描画はその後に行う
+        super.render(context, mouseX, mouseY, delta);
         int relX = (this.width - GUI_WIDTH) / 2;
         int relY = (this.height - GUI_HEIGHT) / 2;
         context.drawTexture(MODEL_SELECT_GUI_TEXTURE, relX, relY, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-
-        super.render(context, mouseX, mouseY, delta);
         this.soundPackListGUI.render(context, mouseX, mouseY, delta);
     }
 
