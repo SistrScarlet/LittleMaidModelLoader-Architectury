@@ -154,6 +154,34 @@ TODO.md の「`getDimensions`/`getEyeHeight` は Mixin 不能」「`getHeightOff
 
 `Entity` / `LivingEntity` へ Mixin 対象を広げる必要はない。
 
+## 騎乗オフセットの補正値 0.2875 について (LMML・LMRB・TILM 共通)
+
+`getVehicleAttachmentPos` に置いた `0.2875` は **ボートを基準に逆算した定数**であり、
+原理上は乗り物ごとに正しい値が変わる。
+
+1.20.1 と同じ見た目にするために乗る側が返すべき値は
+
+```
+vehicle の PASSENGER attachment.y − vehicle.getMountedHeightOffset() − passenger.getHeightOffset()
+```
+
+で、ボートの場合だけ前半 2 項が `0.1875 − (−0.1) = 0.2875` になる。
+馬やトロッコなど別の乗り物では前半 2 項の値が異なるため、その差ぶんズレうる。
+
+**検証結果 (2026-07-25、LMML の MultiModelEntity で実機確認)**
+
+- ボート: 問題なし
+- トロッコ: 問題なし
+- 馬など: バニラでは mob を乗せる手段が乏しく検証困難なためスキップ (ユーザー判断)。
+  上記 2 種で問題が出ない以上、他でも大きくズレることはないという判断
+
+将来ズレの報告が出た場合は、定数をやめて `vehicle.getPassengerRidingPos()` と
+`vehicle.getMountedHeightOffset()` 相当から逆算する汎用式に置き換える。
+
+なお「自分が乗り物になる側」(PASSENGER attachment、旧 `getMountedHeightOffset`) は
+LMML のテスト用エンティティでは `interactMob` に乗車処理が無いため通常操作で検証できない。
+`/ride <乗る側> mount <対象>` を使うか、LMRB のメイドさんで確認する。
+
 ## 同期とサーバーサイドの前提
 
 寸法の数値そのものを同期する必要はない。`MultiModelCompound#writeToPacket/readFromPacket` は
