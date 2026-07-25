@@ -95,6 +95,30 @@ override は完全に削除され、`Registration.java:27,37` の `dimensions(0.
 入力値の取得経路は健在 (`IMultiModel#getWidth/getHeight/getEyeHeight/getyOffset/getMountedYOffset`)。
 → `getBaseDimensions` を override し、`withEyeHeight` + `withAttachments` + `scaled` で再構築する。
 
+### LMML — モデル選択 GUI (実装後に判明した波及)
+
+`MultiModelGUIUtil.DummyModelEntity` は `MultiModelEntity` を継承せず `LivingEntity` を
+直接継承する別クラスなので、`getBaseDimensions` の override が届かず hitbox が
+`EntityType` の固定値のままだった。1.21 の `InventoryScreen.drawEntity` は矩形指定 +
+自動センタリング型で、**エンティティの dimensions を基準に配置する**ため、
+GUI プレビュー側も実寸を返さないとモデルを切り替えても表示が変わらない。
+
+さらに hitbox を可変にすると、drawEntity が足元を
+
+```
+feet_screen_y = 矩形中心 + (entity_height / 2 + yOffset) * size
+```
+
+に置く仕様上、身長の高いモデルほど足元が下がる (標準 1.35 / Chloe2 1.8 / Beverly7 1.99)。
+`yOffset` を固定値にせず `FEET_ORIGIN_OFFSET - height/2` として `height/2` を打ち消すことで
+モデル間で足元位置を揃えた。`FEET_ORIGIN_OFFSET` は矩形中心のオフセット 1.5 と一致させる
+(移植当初は実質 1.675 で、超過分の 0.175 = 16px テクスチャの約 3 ドットだけ
+足元が矩形外にはみ出し scissor でクリップされていた)。
+
+**教訓**: エンティティの寸法を可変にする変更は、寸法を前提に位置決めしている描画側にも
+波及する。同じインターフェースを実装する別クラス (ここでは `IHasMultiModel` を実装する
+GUI 用ダミー) を取りこぼしていないか確認すること。
+
 ### LMRB — `LittleMaidEntity` (本体)
 
 計画書に項目が無かったが、**部分的にしか復元されていない**ことが判明した。
