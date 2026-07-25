@@ -32,6 +32,12 @@ import net.sistr.littlemaidmodelloader.setup.Registration;
 
 public class MultiModelGUIUtil {
 
+    /**
+     * プレビューの足元位置を決める定数。矩形中心が posY - 1.5*scale にあるため、1.5 が「足元を矩形下端 posY に合わせる値」で、残る 0.175
+     * が従来の見た目に合わせた微調整分。
+     */
+    private static final float FEET_ORIGIN_OFFSET = 1.675F;
+
     public static Optional<IMultiModel> getModel(
             LMModelManager modelManager, TextureHolder texture) {
         if (modelManager.getModel(texture.getModelName(), IHasMultiModel.Layer.SKIN).isEmpty()) {
@@ -159,11 +165,14 @@ public class MultiModelGUIUtil {
         //   posY 付近に来るよう調整する:
         //     feet_screen_y = centerY + (entity_height/2 + yOffset * entity.getScale()) * size
         //                   = (posY - 1.5*scale) + (entity_height/2 + 1.0) * scale
-        //   dummy の hitbox はモデル実寸に追従するようになったため entity_height は
-        //   モデル依存 (標準メイドさんの 1.35 なら posY + 0.175*scale)。背の高いモデルほど
-        //   足元が下がるので、モデル間で足元を揃えたい場合はここで補正する必要がある
+        //   dummy の hitbox はモデル実寸に追従するため entity_height はモデル依存
+        //   (標準 1.35 / Chloe2 1.8 / Beverly7 1.99)。yOffset を固定値にすると
+        //   背の高いモデルほど足元が下にずれるので、height/2 を打ち消して揃える:
+        //     yOffset = FEET_ORIGIN_OFFSET - entity_height/2
+        //     → feet_screen_y = posY + 0.175*scale (モデルによらず一定)
         // - mouseX/mouseY は絶対スクリーン座標 (vanilla 内部で centerX - mouseX_param を計算)
         int halfSize = scale / 2;
+        float yOffset = FEET_ORIGIN_OFFSET - dummy.getHeight() / 2F;
         InventoryScreen.drawEntity(
                 context,
                 posX - halfSize,
@@ -171,7 +180,7 @@ public class MultiModelGUIUtil {
                 posX + halfSize,
                 posY,
                 scale,
-                1.0f,
+                yOffset,
                 mouseX,
                 mouseY,
                 dummy);
