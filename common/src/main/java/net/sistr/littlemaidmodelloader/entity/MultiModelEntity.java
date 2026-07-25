@@ -25,6 +25,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.sistr.littlemaidmodelloader.client.screen.ModelSelectScreen;
 import net.sistr.littlemaidmodelloader.client.screen.SoundPackSelectScreen;
@@ -34,8 +35,10 @@ import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayableCompound;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
 import net.sistr.littlemaidmodelloader.resource.holder.ConfigHolder;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
+import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.manager.LMTextureManager;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidmodelloader.resource.util.TextureColors;
@@ -137,9 +140,44 @@ public class MultiModelEntity extends PathAwareEntity
                                 : new ModelSelectScreen<>(Text.of(""), this.getWorld(), this));
     }
 
-    // TODO(1.21 移植): 動的 dimensions / eye height / mount offset は EntityAttachments
-    //   ベースに移行された。EntityType.Builder で固定値を設定するか、
-    //   別途設計判断が必要。当面は EntityType.Builder の固定値で運用する。
+    // 1.21 で LivingEntity#getDimensions は final 化され、サブクラスの拡張点は
+    // getBaseDimensions に移された。ここでモデルの実寸を返すことで、hitbox に加えて
+    // 視点高さ (final な getEyeHeight は EntityDimensions#eyeHeight を読むだけ) と
+    // 乗客の座席位置 (PASSENGER attachment、旧 getMountedHeightOffset 相当) も追従する。
+    // scaled() は width/height/eyeHeight/attachments をまとめてスケールするため最後に呼ぶ。
+    // 既定実装が内包している getScaleFactor() の適用は override すると失われるので掛け直す。
+    @Override
+    protected EntityDimensions getBaseDimensions(EntityPose pose) {
+        // 初期化前に呼ばれることがあるためチェック
+        if (multiModel == null) return super.getBaseDimensions(pose);
+        IMultiModel model =
+                getModel(Layer.SKIN, Part.HEAD).orElseGet(LMModelManager.INSTANCE::getDefaultModel);
+        IModelCaps caps = getCaps();
+        MMPose mmPose = MMPose.convertPose(pose);
+        return EntityDimensions.changing(
+                        model.getWidth(caps, mmPose), model.getHeight(caps, mmPose))
+                .withEyeHeight(model.getEyeHeight(caps, mmPose))
+                .withAttachments(
+                        EntityAttachments.builder()
+                                .add(
+                                        EntityAttachmentType.PASSENGER,
+                                        0.0F,
+                                        model.getMountedYOffset(caps),
+                                        0.0F))
+                .scaled(getScaleFactor());
+    }
+
+    // 旧 getHeightOffset (自分が何かに乗るときの自身のオフセット) の後継。
+    // 1.20.1 は vehicleY + vehicle.getMountedHeightOffset() + passenger.getHeightOffset() の
+    // 加算式、1.21.1 は vehicle.getPassengerRidingPos() - passenger.getVehicleAttachmentPos() の
+    // 減算式なので符号が反転する。0.2875 はボートでの見た目を 1.20.1 に合わせるための補正
+    // (getMountedHeightOffset=-0.1 → PASSENGER attachment=0.1875 の差分)。
+    @Override
+    public Vec3d getVehicleAttachmentPos(Entity vehicle) {
+        IMultiModel model =
+                getModel(Layer.SKIN, Part.HEAD).orElseGet(LMModelManager.INSTANCE::getDefaultModel);
+        return new Vec3d(0.0, 0.2875 + getHeight() - model.getyOffset(getCaps()), 0.0);
+    }
 
     // 防具の更新
     @Override

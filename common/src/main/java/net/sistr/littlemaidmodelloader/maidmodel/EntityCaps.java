@@ -20,8 +20,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.mixin.LivingEntityAccessor;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
+import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 
 /** Entityのデータ読み取り用のクラス */
 public class EntityCaps implements IModelCaps {
@@ -298,9 +300,20 @@ public class EntityCaps implements IModelCaps {
 
         register("height", caps_height, (entity, arg) -> entity.getHeight());
         register("width", caps_width, (entity, arg) -> entity.getWidth());
-        // 1.21 で Entity#getYOffset は廃止。EntityAttachments 経由でも「自身の Y 描画オフセット」は
-        // 公開されない (LivingEntity 全般で実質 0)。互換のため 0 固定で返す。
-        register("YOffset", caps_YOffset, (entity, arg) -> 0.0D);
+        // 1.21 で Entity#getYOffset は廃止されたため、エンティティ側 API 経由では取れない。
+        // 値の出所は元々モデル定義なので、モデルから直接引いて復元する
+        // (モデルを持たないエンティティは従来通り 0)。
+        register(
+                "YOffset",
+                caps_YOffset,
+                (entity, arg) -> {
+                    if (!(entity instanceof IHasMultiModel hasMultiModel)) return 0.0D;
+                    return (double)
+                            hasMultiModel
+                                    .getModel(IHasMultiModel.Layer.SKIN, IHasMultiModel.Part.HEAD)
+                                    .orElseGet(LMModelManager.INSTANCE::getDefaultModel)
+                                    .getyOffset(hasMultiModel.getCaps());
+                });
         // 旧 getMountedHeightOffset 相当。自分が vehicle のとき先頭 passenger の attachment Y を返す。
         register(
                 "mountedYOffset",
