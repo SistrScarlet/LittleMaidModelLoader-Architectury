@@ -7,6 +7,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +21,7 @@ import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.maidmodel.EntityCaps;
 import net.sistr.littlemaidmodelloader.maidmodel.IModelCaps;
 import net.sistr.littlemaidmodelloader.multimodel.IMultiModel;
+import net.sistr.littlemaidmodelloader.multimodel.layer.MMPose;
 import net.sistr.littlemaidmodelloader.resource.holder.TextureHolder;
 import net.sistr.littlemaidmodelloader.resource.manager.LMModelManager;
 import net.sistr.littlemaidmodelloader.resource.util.ArmorPart;
@@ -155,8 +158,10 @@ public class MultiModelGUIUtil {
         //   yOffset で entity origin (足元) を下方向に押し下げ、見かけ上の足元が
         //   posY 付近に来るよう調整する:
         //     feet_screen_y = centerY + (entity_height/2 + yOffset * entity.getScale()) * size
-        //                   = (posY - 1.5*scale) + (0.675 + 1.0) * scale
-        //                   = posY + 0.175 * scale   (posY からわずかに y+ にオフセット)
+        //                   = (posY - 1.5*scale) + (entity_height/2 + 1.0) * scale
+        //   dummy の hitbox はモデル実寸に追従するようになったため entity_height は
+        //   モデル依存 (標準メイドさんの 1.35 なら posY + 0.175*scale)。背の高いモデルほど
+        //   足元が下がるので、モデル間で足元を揃えたい場合はここで補正する必要がある
         // - mouseX/mouseY は絶対スクリーン座標 (vanilla 内部で centerX - mouseX_param を計算)
         int halfSize = scale / 2;
         InventoryScreen.drawEntity(
@@ -188,7 +193,25 @@ public class MultiModelGUIUtil {
         }
 
         public void setSkinModel(IMultiModel model) {
+            // 描画のたびに呼ばれるため、モデルが変わったときだけ hitbox を組み直す
+            if (skinModel == model) return;
             skinModel = model;
+            calculateDimensions();
+        }
+
+        // drawEntity はエンティティの dimensions を基準に自動センタリングするため、
+        // GUI プレビューでもモデル実寸を返さないと背の高いモデルで位置がずれる。
+        // MultiModelEntity と同じく getBaseDimensions が 1.21 での拡張点。
+        // 乗客や子どもスケールは GUI では発生しないので PASSENGER attachment と
+        // getScaleFactor() の適用は省く。
+        @Override
+        protected EntityDimensions getBaseDimensions(EntityPose pose) {
+            IMultiModel model = skinModel;
+            if (model == null) return super.getBaseDimensions(pose);
+            MMPose mmPose = MMPose.convertPose(pose);
+            return EntityDimensions.changing(
+                            model.getWidth(caps, mmPose), model.getHeight(caps, mmPose))
+                    .withEyeHeight(model.getEyeHeight(caps, mmPose));
         }
 
         public void setSkinTexture(TexturePair skinTexture) {
