@@ -33,10 +33,10 @@ import net.sistr.littlemaidmodelloader.setup.Registration;
 public class MultiModelGUIUtil {
 
     /**
-     * プレビューの足元位置を決める定数。矩形中心が posY - 1.5*scale にあるため、1.5 が「足元を矩形下端 posY に合わせる値」で、残る 0.175
-     * が従来の見た目に合わせた微調整分。
+     * プレビューの足元位置を決める定数。矩形中心が posY - 1.5*scale にあるため、1.5 で足元がちょうど矩形下端 posY に載る。 移植当初はここが実質 1.675
+     * で、超過分の 0.175 (16px テクスチャの約 3 ドット) だけ足元が矩形外にはみ出し、 scissor でクリップされていた。
      */
-    private static final float FEET_ORIGIN_OFFSET = 1.675F;
+    private static final float FEET_ORIGIN_OFFSET = 1.5F;
 
     public static Optional<IMultiModel> getModel(
             LMModelManager modelManager, TextureHolder texture) {
@@ -169,7 +169,7 @@ public class MultiModelGUIUtil {
         //   (標準 1.35 / Chloe2 1.8 / Beverly7 1.99)。yOffset を固定値にすると
         //   背の高いモデルほど足元が下にずれるので、height/2 を打ち消して揃える:
         //     yOffset = FEET_ORIGIN_OFFSET - entity_height/2
-        //     → feet_screen_y = posY + 0.175*scale (モデルによらず一定)
+        //     → feet_screen_y = posY (モデルによらず矩形下端に載る)
         // - mouseX/mouseY は絶対スクリーン座標 (vanilla 内部で centerX - mouseX_param を計算)
         int halfSize = scale / 2;
         float yOffset = FEET_ORIGIN_OFFSET - dummy.getHeight() / 2F;
